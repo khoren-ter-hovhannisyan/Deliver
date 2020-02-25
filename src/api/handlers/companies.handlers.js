@@ -18,7 +18,7 @@ exports.getCompanyById = async (req, res) => {
     res.status(404).send(err);
   }
 };
-exports.postCompany = async (req, res) => {
+exports.createCompany = async (req, res) => {
   try {
     const newCompany = new Company(req.body) ;
 

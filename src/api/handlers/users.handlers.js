@@ -1,5 +1,5 @@
 const Company = require("../models/company.model");
-const Users = require("../models/company.model");
+const Users = require("../models/users.model");
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -18,19 +18,13 @@ exports.getUserById = async (req, res) => {
     res.status(404).send(err);
   }
 };
-exports.postUser = async (req, res) => {
-  const newUser = req.body;
+exports.createtUser = async (req, res) => {
   try {
-    const company = await Company.findOne({ email: `${newUser.email}` });
-    if (!company) {
-      try {
-        const user = await Users.create(newUser);
-        res.json(user);
-      } catch {
-        res.status(422).send(err);
-      }
-    }
-  } catch (err) {
+    const newUser = new Users(req.body) ;
+
+    const user = await newUser.save();
+    res.json(user);
+  }catch (err) {
     res.status(404).send(err);
-  }
+}
 };
