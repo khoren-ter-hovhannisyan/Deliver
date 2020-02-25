@@ -17,5 +17,14 @@ exports.getCompanyById = async (req, res) => {
     res.status(404).send(err);
   }
 };
+exports.postCompany = async (req, res) => {
+  const newCompany = req.body
+  try {
+    const company = await Company.create(newCompany);
+    res.json(company);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
 
 
