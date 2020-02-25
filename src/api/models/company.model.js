@@ -8,7 +8,6 @@ const companySchema = new Schema({
   email: {
     type: String,
     required: true,
-   // validate: [isEmail, "invalid email"],
     unique: true
   },
   address: {
