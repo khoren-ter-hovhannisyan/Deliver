@@ -1,26 +1,31 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require("mongoose");
 
 const usersSchema = new Schema({
-  username: {
+  name: {
     type: String,
-    unique: true,
     required: true
   },
-  email:{
+  lastName: {
+    type: String,
+    required: true
+  },
+  email: {
     type: String,
     required: true,
-    validate: [isEmail, 'invalid email'],
-    createIndexes: { unique: true },
+   // validate: [isEmail, "invalid email"],
+    createIndexes: { unique: true }
   },
-  password: { 
+  address:{
+    type:String,
+  },
+  password: {
     type: String,
     required: true
   },
-  phoneNumber:{
-    type:Number,
-    required:true
-  },
-
+  phone: {
+    type: Number,
+    required: true
+  }
 });
 
-module.exports = model('User', usersSchema);
+module.exports = model("User", usersSchema);
