@@ -20,9 +20,9 @@ exports.getUserById = async (req, res) => {
 };
 exports.createUser = async (req, res) => {
   try {
-    const company = Company.findOne({email:req.body.email})
-    if(!company.email){
-      console.log(company)
+    Company.findOne({email:req.body.email},async function(err,results){
+      if (err) { res.status(422).send(err)}
+    if(!results){
       try{
         const newUser = new Users(req.body) ;
         const user = await newUser.save();
@@ -30,8 +30,12 @@ exports.createUser = async (req, res) => {
       } catch (err) {
         res.status(404).send(err);
       }
-    }}
-  catch(err){
+    }
+    else{
+      res.status(422).send({'message':'Email is registered'});
+     }
+  })
+}catch(err){
         res.status(422).send(err);
   }    
-};
+}
