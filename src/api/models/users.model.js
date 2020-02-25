@@ -9,7 +9,6 @@ const usersSchema = new Schema({
   email:{
     type: String,
     required: true,
-    validate: [isEmail, 'invalid email'],
     createIndexes: { unique: true },
   },
   password: { 

@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
-const usersRouter = require('./api/routes/users.routes');
+const usersRouter = require('./api/routes/companies.routes');
 
 const config = require('./config');
 

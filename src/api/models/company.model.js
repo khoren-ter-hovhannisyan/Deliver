@@ -8,7 +8,6 @@ const companySchema = new Schema({
   email: {
     type: String,
     required: true,
-    validate: [isEmail, "invalid email"],
     unique: true
   },
   address: {
@@ -26,10 +25,6 @@ const companySchema = new Schema({
     type: String,
     required: true
   },
-  phone: {
-    type: Number,
-    required: true
-  }
 });
 
 module.exports = model("Company", companySchema);
