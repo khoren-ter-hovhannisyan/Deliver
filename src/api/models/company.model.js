@@ -18,7 +18,7 @@ const companySchema = new Schema({
     required: true
   },
   taxNumber:{
-    type:Number
+    type:Number,
   },
   password: {
     type: String,

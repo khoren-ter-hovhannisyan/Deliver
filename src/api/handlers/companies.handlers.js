@@ -1,7 +1,6 @@
 const Company = require("../models/company.model");
 const Users = require("../models/users.model");
 
-
 exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({});
@@ -19,19 +18,19 @@ exports.getCompanyById = async (req, res) => {
     res.status(404).send(err);
   }
 };
-exports.postCompany = async (req, res) => {
-  const newCompany = req.body;
+exports.createCompany = async (req, res) => {
   try {
-    const user = await Users.findOne({ email: `${newCompany.email}` });
-    if (!user) {
-      try {
-        const company = await Company.save(newCompany);
-        res.json(company);
-      } catch {
-        res.status(422).send(err);
+    const user = Users.findOne({email:req.body.email})
+    if(!user.email){
+      try{
+        const newCompany = new Company(req.body) ;
+        const company = await newCompany.save();
+        res.send(company);
+      } catch (err) {
+        res.status(404).send(err);
       }
-    }
-  } catch (err) {
-    res.status(404).send(err);
-  }
+    }}
+  catch(err){
+        res.status(422).send(err);
+  }    
 };

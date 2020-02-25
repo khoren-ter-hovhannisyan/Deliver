@@ -18,19 +18,20 @@ exports.getUserById = async (req, res) => {
     res.status(404).send(err);
   }
 };
-exports.postUser = async (req, res) => {
-  const newUser = req.body;
+exports.createUser = async (req, res) => {
   try {
-    const company = await Company.findOne({ email: `${newUser.email}` });
-    if (!company) {
-      try {
-        const user = await Users.save(newUser);
-        res.json(user);
-      } catch {
-        res.status(422).send(err);
+    const company = Company.findOne({email:req.body.email})
+    if(!company.email){
+      console.log(company)
+      try{
+        const newUser = new Users(req.body) ;
+        const user = await newUser.save();
+        res.send(user);
+      } catch (err) {
+        res.status(404).send(err);
       }
-    }
-  } catch (err) {
-    res.status(404).send(err);
-  }
+    }}
+  catch(err){
+        res.status(422).send(err);
+  }    
 };

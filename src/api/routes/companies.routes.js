@@ -5,7 +5,5 @@ const router = Router();
 
 router.get('/companies', getAllCompanies);
 router.post('/sign-up-company', postCompany);
-router.get('/', (req,res)=>{
-    res.send("hi baby")
-});
+
 module.exports = router;
