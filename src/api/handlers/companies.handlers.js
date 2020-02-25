@@ -20,13 +20,22 @@ exports.getCompanyById = async (req, res) => {
 };
 exports.createCompany = async (req, res) => {
   try {
-    const newCompany = new Company(req.body) ;
-
-    const company = await newCompany.save();
-    res.send(company);
-  } catch (err) {
-    res.status(404).send(err);
-  }
-
-
-};
+    Users.findOne( {email:req.body.email},async function (err, results) {
+         if (err) { res.status(422).send(err)}
+         if (!results) {    
+          try{
+            const newCompany = new Company(req.body) ;
+            const company = await newCompany.save();
+            res.send(company);
+          } catch (err) {
+            res.status(404).send(err);
+          }
+         }
+         else{
+          res.status(422).send({'message':'Email is registered'});
+         }
+       })
+      }catch(err){
+        res.status(422).send(err);
+       }
+}

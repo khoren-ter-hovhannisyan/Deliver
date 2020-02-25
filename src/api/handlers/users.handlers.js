@@ -18,13 +18,24 @@ exports.getUserById = async (req, res) => {
     res.status(404).send(err);
   }
 };
-exports.createtUser = async (req, res) => {
+exports.createUser = async (req, res) => {
   try {
-    const newUser = new Users(req.body) ;
-
-    const user = await newUser.save();
-    res.json(user);
-  }catch (err) {
-    res.status(404).send(err);
+    Company.findOne({email:req.body.email},async function(err,results){
+      if (err) { res.status(422).send(err)}
+    if(!results){
+      try{
+        const newUser = new Users(req.body) ;
+        const user = await newUser.save();
+        res.send(user);
+      } catch (err) {
+        res.status(404).send(err);
+      }
+    }
+    else{
+      res.status(422).send({'message':'Email is registered'});
+     }
+  })
+}catch(err){
+        res.status(422).send(err);
+  }    
 }
-};

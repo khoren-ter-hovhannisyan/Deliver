@@ -4,7 +4,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const companyRouter = require('./api/routes/companies.routes');
-const userRouter = require("./api/routes/users.routes");
+const userRouter = require('./api/routes/users.routes');
 
 const config = require('./config');
 

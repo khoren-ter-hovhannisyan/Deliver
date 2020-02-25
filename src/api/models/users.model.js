@@ -12,11 +12,10 @@ const usersSchema = new Schema({
   email: {
     type: String,
     required: true,
-    createIndexes: { unique: true }
+    unique: true
   },
   address:{
     type:String,
-    createIndexes: { unique: true },
   },
   password: {
     type: String,
