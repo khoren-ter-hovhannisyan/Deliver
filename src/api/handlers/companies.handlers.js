@@ -1,5 +1,6 @@
 const Company = require("../models/company.model");
-const Users = require("../models/company.model");
+const Users = require("../models/users.model");
+
 
 exports.getAllCompanies = async (req, res) => {
   try {
@@ -24,7 +25,7 @@ exports.postCompany = async (req, res) => {
     const user = await Users.findOne({ email: `${newCompany.email}` });
     if (!user) {
       try {
-        const company = await Company.create(newCompany);
+        const company = await Company.save(newCompany);
         res.json(company);
       } catch {
         res.status(422).send(err);
