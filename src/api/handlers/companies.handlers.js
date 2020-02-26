@@ -51,8 +51,8 @@ exports.createCompany =  (req, res, next) => {
   console.log(req.body)
   Users.find({ email: req.body.email })
     .exec()
-    .then(user => {
-      if (user.length>=1) {
+    .then(company => {
+      if (company) {
         return res.status(409).json({
           message: "Mail exists"
         });
@@ -67,10 +67,12 @@ exports.createCompany =  (req, res, next) => {
               ...req.body,
               password: hash
             });
+            
             company.save(function(err, company) {
               if(err) {
-                console.log(err)
-              return  res.status(500).json(err)}
+              return  res.status(500).json({
+                error : "Some input fild is wrong filled or is not existe" 
+              })}
               res.status(201).json({
                 data:{
                   id:company._id,
@@ -85,7 +87,11 @@ exports.createCompany =  (req, res, next) => {
           }
         });
       }
-    });
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(400).send("")
+    })
 };
 
  exports.loginCompany = (req, res, next) => {

@@ -7,6 +7,7 @@ const companySchema = new Schema({
   },
   email: {
     type: String,
+    match:/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     required: true,
     unique: true
   },
@@ -20,16 +21,17 @@ const companySchema = new Schema({
   },
   taxNumber:{
     type:Number,
-    required:true
-  },
+    required:true,},
   password: {
     type: String,
     required: true
   },
   activity:{
-    type: String,
+    type: String, 
     required: true,
   },
 });
+
+
 
 module.exports = model("Company", companySchema);
