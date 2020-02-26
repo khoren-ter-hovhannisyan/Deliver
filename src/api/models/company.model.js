@@ -11,7 +11,8 @@ const companySchema = new Schema({
     unique: true
   },
   address: {
-    type: String
+    type: String,
+    require:true
   },
   phone: {
     type: Number,
@@ -19,6 +20,7 @@ const companySchema = new Schema({
   },
   taxNumber:{
     type:Number,
+    required:true
   },
   password: {
     type: String,

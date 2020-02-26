@@ -4,7 +4,15 @@ const Users = require("../models/users.model");
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await Users.find({});
-    res.json(users);
+    res.json(users.map(el=>{
+      return {
+         name:el.name,
+         lastName:el.lastName,
+         email:el.email,
+         phone:el.phone,
+         address:el.address
+      }
+   }))
   } catch (err) {
     res.status(404).send(err);
   }

@@ -4,7 +4,15 @@ const Users = require("../models/users.model");
 exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({});
-    res.json(companies);
+    res.json(companies.map(el=>{
+       return {
+          name:el.name,
+          email:el.email,
+          phone:el.phone,
+          taxNumber:el.taxNumber?el.taxNumber:"",
+          address:el.address
+       }
+    }))
   } catch (err) {
     res.status(404).send(err);
   }
