@@ -1,7 +1,7 @@
 const Company = require("../models/company.model");
 const Users = require("../models/users.model");
 const bcrypt = require("bcrypt");
-const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken')
 exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({});
@@ -48,6 +48,7 @@ exports.getCompanyById = async (req, res) => {
   }
 };
 exports.createCompany =  (req, res, next) => {
+  console.log(req.body)
   Users.find({ email: req.body.email })
     .exec()
     .then(user => {
@@ -58,20 +59,26 @@ exports.createCompany =  (req, res, next) => {
       } else {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
-            return status(500).json({
-              error: err
+            return res.status(500).json({
+              error: "Something went bad"
             });
           } else {
             const company = new Company({
               ...req.body,
               password: hash
             });
-            const error = company.validateSync()
             company.save(function(err, company) {
               if(err) {
                 console.log(err)
               return  res.status(500).json(err)}
               res.status(201).json({
+                data:{
+                  id:company._id,
+                  name:company.name,
+                  taxNumber:company.taxNumber,
+                  address:company.address,
+                  phone:company.phone
+                },
                 message: "Company created"
               })
             })  
@@ -81,19 +88,48 @@ exports.createCompany =  (req, res, next) => {
     });
 };
 
-exports.loginCompany = (req, res, next) => {
-  Company.findOne({ email: req.body.email })
-    .exec()
+ exports.loginCompany = (req, res, next) => {
+  console.log(req.body)
+  Company.find({ email: req.body.email })
     .then(company => {
-      if (!company.email) {
+      if (company.length<1) {
         return res.status(401).json({
           message: "Auth failed"
         });
       }
+      bcrypt.compare(req.body.password,company[0].password,(err,result)=>{
+          if(err){
+            return res.status(401).json({
+              message:"Auth failed"
+            });
+          }
+          if(result){
+            const token = jwt.sign({
+              email:company[0].email,
+              userId:company[0]._id
+            },process.env.JWT_KEY,{
+              expiresIn:"12h"
+            })
+              return res.status(200).json({
+                data:{
+                  id:company._id,
+                  name:company.name,
+                  taxNumber:company.taxNumber,
+                  address:company.address,
+                  phone:company.phone
+                },
+                token:token,
+                message:"Auth successful"
+              })
+          }
+          res.status(401).json({
+            message:"Auth failed"
+          });
+      })
     })
     .catch(err => {
       res.status(500).json({
         error: err
       });
     });
-};
+ };
