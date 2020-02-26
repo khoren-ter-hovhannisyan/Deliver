@@ -6,6 +6,7 @@ exports.getAllUsers = async (req, res) => {
     const users = await Users.find({});
     res.json(users.map(el=>{
       return {
+        id:el._id,
          name:el.name,
          lastName:el.lastName,
          email:el.email,
@@ -20,8 +21,15 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   const { id: _id } = req.params;
   try {
-    const user = await Users.findOne({ _id });
-    res.json(user);
+    const {_id, name, lastName, email, phone, address } = await Users.findOne({ _id });
+    res.json({
+      id:_id,
+      name,
+      lastName,
+      email,
+      phone,
+      address,
+    });
   } catch (err) {
     res.status(404).send(err);
   }
@@ -33,8 +41,15 @@ exports.createUser = async (req, res) => {
     if(!results){
       try{
         const newUser = new Users(req.body) ;
-        const user = await newUser.save();
-        res.send(user);
+        const {_id, name, lastName, email, phone, address } = await newUser.save();
+        res.json({
+          id:_id,
+          name,
+          lastName,
+          email,
+          phone,
+          address,
+        });
       } catch (err) {
         res.status(404).send(err);
       }

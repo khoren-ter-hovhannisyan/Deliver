@@ -26,6 +26,10 @@ const companySchema = new Schema({
     type: String,
     required: true
   },
+  activity:{
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = model("Company", companySchema);

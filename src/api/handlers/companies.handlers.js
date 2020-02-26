@@ -6,13 +6,15 @@ exports.getAllCompanies = async (req, res) => {
     const companies = await Company.find({});
     res.json(companies.map(el=>{
        return {
+         id:el._id,
           name:el.name,
           email:el.email,
           phone:el.phone,
           taxNumber:el.taxNumber?el.taxNumber:"",
-          address:el.address
+          address:el.address,
+          activity:el.activity
        }
-    }))
+    }));
   } catch (err) {
     res.status(404).send(err);
   }
@@ -20,8 +22,16 @@ exports.getAllCompanies = async (req, res) => {
 exports.getCompanyById = async (req, res) => {
   const { id: _id } = req.params;
   try {
-    const company = await Company.findOne({ _id });
-    res.json(company);
+    const {_id, name, email, phone, taxNumber, address, activity} = await Company.findOne({ _id });
+    res.json({
+        id:_id,
+         name,
+         email,
+         phone,
+         taxNumber,
+         address,
+         activity
+      });
   } catch (err) {
     res.status(404).send(err);
   }
@@ -33,8 +43,16 @@ exports.createCompany = async (req, res) => {
          if (!results) {    
           try{
             const newCompany = new Company(req.body) ;
-            const company = await newCompany.save();
-            res.send(company);
+            const {_id, name, email, phone, taxNumber, address, activity} = await newCompany.save();
+            res.json({
+              id:_id,
+               name,
+               email,
+               phone,
+               taxNumber,
+               address,
+               activity
+            });
           } catch (err) {
             res.status(404).send(err);
           }
