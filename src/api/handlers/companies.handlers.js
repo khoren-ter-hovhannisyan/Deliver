@@ -47,12 +47,11 @@ exports.getCompanyById = async (req, res) => {
     res.status(404).send(err);
   }
 };
-exports.createCompany = async (req, res, next) => {
-  //try {
+exports.createCompany =  (req, res, next) => {
   Users.find({ email: req.body.email })
     .exec()
-    .then(company => {
-      if (company.length>=1) {
+    .then(user => {
+      if (user.length>=1) {
         return res.status(409).json({
           message: "Mail exists"
         });
@@ -64,58 +63,22 @@ exports.createCompany = async (req, res, next) => {
             });
           } else {
             const company = new Company({
-              _id:new mongoose.Types.ObjectId(),
-              email:req.body.email,
-              address:req.body.address,
-              phone:req.body.phone,
-              taxNumber:req.body.taxNumber,
-              name:req.body.name,
+              ...req.body,
               password: hash
             });
-            company
-            .save()
-            .then(result => {
+            const error = company.validateSync()
+            company.save(function(err, company) {
+              if(err) {
+                console.log(err)
+              return  res.status(500).json(err)}
               res.status(201).json({
                 message: "Company created"
-              });
-            }).catch(err=>{
-              res.status(500)
-              console.log("errrrrrr")
-            })
-            
+              })
+            })  
           }
         });
       }
     });
-
-  //   ,async function (err, results) {
-
-  // }
-  //    if (err) { res.status(422).send(err)}
-  //    if (!results) {
-  //     try{
-  //       const newCompany = new Company(req.body) ;
-  //       const {_id, name, email, phone, taxNumber, address, activity} = await newCompany.save();
-  //       res.json({
-  //         id:_id,
-  //          name,
-  //          email,
-  //          phone,
-  //          taxNumber,
-  //          address,
-  //          activity
-  //       });
-  //     } catch (err) {
-  //       res.status(404).send(err);
-  //     }
-  //    }
-  //    else{
-  //     res.status(422).send({'message':'Email is registered'});
-  //    }
-  //  })
-  // }catch(err){
-  //   res.status(422).send(err);
-  //  }
 };
 
 exports.loginCompany = (req, res, next) => {
