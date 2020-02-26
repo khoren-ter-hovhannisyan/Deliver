@@ -49,7 +49,7 @@ exports.getCompanyById = async (req, res) => {
 };
 exports.createCompany = async (req, res, next) => {
   //try {
-  Users.find({ email: req.body.email })
+  await Users.find({ email: req.body.email })
     .exec()
     .then(company => {
       if (company.length>=1) {
