@@ -47,24 +47,24 @@ exports.getCompanyById = async (req, res) => {
     res.status(404).send(err);
   }
 };
-exports.createCompany = async (req, res, next) => {
+exports.createCompany = (req, res, next) => {
   //try {
-  await Users.find({ email: req.body.email })
+  Users.findOne({ email: req.body.email })
     .exec()
     .then(company => {
-      if (company.length>=1) {
+      if (company) {
         return res.status(409).json({
           message: "Mail exists"
         });
       } else {
+        console.log(company);
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
             return status(500).json({
               error: err
             });
           } else {
-            const company = new Company({
-              _id:new mongoose.Types.ObjectId(),
+            const newCompany = new Company({
               email:req.body.email,
               address:req.body.address,
               phone:req.body.phone,
@@ -72,7 +72,8 @@ exports.createCompany = async (req, res, next) => {
               name:req.body.name,
               password: hash
             });
-            company
+            console.log(newCompany)
+            newCompany
             .save()
             .then(result => {
               res.status(201).json({
@@ -80,13 +81,13 @@ exports.createCompany = async (req, res, next) => {
               });
             }).catch(err=>{
               res.status(500)
-              console.log("errrrrrr")
+              console.log("err")
             })
             
           }
         });
       }
-    });
+    }).catch(err=>console.log(err,"888"));
 
   //   ,async function (err, results) {
 
