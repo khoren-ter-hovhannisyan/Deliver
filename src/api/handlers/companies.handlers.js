@@ -54,7 +54,7 @@ exports.createCompany = (req, res, next) => {
   console.log(req.body);
   Users.find({ email: req.body.email })
     .then(company => {
-      if (company) {
+      if (company.length >= 1) {
         return res.status(409).json({
           message: "Mail exists"
         });
