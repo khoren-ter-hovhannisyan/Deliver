@@ -21,9 +21,6 @@ const usersSchema = new Schema({
   },
   password: {
     type: String,
-    minlength:8,
-    maxlength:32,
-    match: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
     required: true
   },
   phone: {

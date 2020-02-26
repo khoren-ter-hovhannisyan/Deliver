@@ -21,19 +21,17 @@ const companySchema = new Schema({
   },
   taxNumber:{
     type:Number,
-    required:true
-  },
+    required:true,},
   password: {
     type: String,
-    minlength:8,
-    maxlength:32,
-    match: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
     required: true
   },
   activity:{
-    type: String,
+    type: String, 
     required: true,
   },
 });
+
+
 
 module.exports = model("Company", companySchema);

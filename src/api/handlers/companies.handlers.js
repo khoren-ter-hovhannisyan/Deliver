@@ -47,39 +47,47 @@ exports.getCompanyById = async (req, res) => {
     res.status(404).send(err);
   }
 };
-exports.createCompany =  (req, res, next) => {
-  Users.find({ email: req.body.email })
+exports.createCompany =  (req, res) => {
+  Users.findOne({ email: req.body.email })
     .exec()
-    .then(user => {
-      if (user.length>=1) {
+    .then(company => {
+      if (company) {
         return res.status(409).json({
           message: "Mail exists"
         });
       } else {
-        console.log(company);
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
             return status(500).json({
-              error: err
+              error: "Something went wrong" 
             });
           } else {
             const company = new Company({
               ...req.body,
               password: hash
             });
-            const error = company.validateSync()
+            
             company.save(function(err, company) {
               if(err) {
                 console.log(err)
-              return  res.status(500).json(err)}
+              return  res.status(500).json({
+                error : "some input fild is wrong filled or is not existe" 
+              })}
               res.status(201).json({
+                data:{
+                  id:company._id
+                },
                 message: "Company created"
               })
             })  
           }
         });
       }
-    });
+    })
+    .catch(err => {
+      console.log(err);
+      return res.status(400).send("")
+    })
 };
 
 exports.loginCompany = (req, res, next) => {
