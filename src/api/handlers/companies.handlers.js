@@ -53,7 +53,6 @@ exports.getCompanyById = async (req, res) => {
 exports.createCompany = (req, res, next) => {
   console.log(req.body);
   Users.find({ email: req.body.email })
-    .exec()
     .then(company => {
       if (company) {
         return res.status(409).json({
