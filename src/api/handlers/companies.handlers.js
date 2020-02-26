@@ -1,20 +1,20 @@
 const Company = require("../models/company.model");
 const Users = require("../models/users.model");
 const bcrypt = require("bcrypt");
-const mongoose = require('mongoose');
+
 exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({});
     res.json(
-      companies.map(el => {
+      companies.map(({activity, address, taxNumber, phone, email, name}) => {
         return {
           id: el._id,
-          name: el.name,
-          email: el.email,
-          phone: el.phone,
-          taxNumber: el.taxNumber ? el.taxNumber : "",
-          address: el.address,
-          activity: el.activity
+          name,
+          email,
+          phone,
+          taxNumber,
+          address,
+          activity
         };
       })
     );
@@ -90,7 +90,7 @@ exports.createCompany =  (req, res) => {
     })
 };
 
-exports.loginCompany = (req, res, next) => {
+exports.loginCompany = (req, res) => {
   Company.findOne({ email: req.body.email })
     .exec()
     .then(company => {
@@ -105,4 +105,35 @@ exports.loginCompany = (req, res, next) => {
         error: err
       });
     });
+
+
+
 };
+
+exports.delCompany = async (req, res) => {
+  const { id: _id } = req.params;
+  try {
+    const company = await Company.findByIdAndRemove({ _id });
+    res.send(company);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+  
+};
+
+exports.updateCompany = async (req, res) => {
+  const { id: _id } = req.body;
+  try {
+    const company = await Company.findByIdAndUpdate(
+      _id,
+      { ...req.body },
+      {
+        new: true
+      }
+    );
+    res.send(company);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+};
+
