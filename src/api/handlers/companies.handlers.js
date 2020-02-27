@@ -7,9 +7,9 @@ exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({});
     res.json(
-      companies.map(({ activity, address, taxNumber, phone, email, name }) => {
+      companies.map(({ _id, activity, address, taxNumber, phone, email, name }) => {
         return {
-          id: el._id,
+          id: _id,
           name,
           email,
           phone,
@@ -67,6 +67,7 @@ exports.createCompany = (req, res, next) => {
           } else {
             const company = new Company({
               ...req.body,
+              approved:false,
               password: hash
             });
 
@@ -82,6 +83,7 @@ exports.createCompany = (req, res, next) => {
                   name: company.name,
                   taxNumber: company.taxNumber,
                   address: company.address,
+                  activity:company.activity,
                   phone: company.phone
                 },
                 message: "Company created"

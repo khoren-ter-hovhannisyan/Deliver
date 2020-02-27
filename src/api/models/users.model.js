@@ -25,6 +25,12 @@ const usersSchema = new Schema({
   phone: {
     type: Number,
     required: true
+  },
+  approved:{
+    type:Boolean
+  },
+  type:{
+    type:String
   }
 });
 
