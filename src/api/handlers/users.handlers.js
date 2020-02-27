@@ -42,6 +42,7 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.createUser = (req, res) => {
+  console.log(req.body)
   Company.find({ email: req.body.email }).then(company => {
     if (company.length >= 1) {
       return res.status(409).json({
@@ -130,8 +131,7 @@ exports.delUser = async (req, res) => {
     const {
       _id,
     } = await Users.findByIdAndRemove({ _id });
-    res.json({
-  });
+    res.json("Deliverer deleted");
   } catch (err) {
     res.status(404).send(err);
   }
