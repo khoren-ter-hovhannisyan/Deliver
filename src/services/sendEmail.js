@@ -8,11 +8,11 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-exports.sendAcceptEmail(receiver) = transporter.sendMail({
+exports.sendAcceptEmail = (receiver)=>transporter.sendMail({
     from:'email.deliver.me@gmail.com',
     to:`${receiver.email}`,
     subject:"Registration accepted !!!",
-    text:`Thank you ${to.name},your registration request has been accepted !!!`
+    text:`Thank you ${to.name},\nYour registration request has been accepted !!!`
 },
     (error,info)=>{
     if(error){
@@ -23,11 +23,11 @@ exports.sendAcceptEmail(receiver) = transporter.sendMail({
 })
 
 
-exports.sendDeclineEmail(receiver) = transporter.sendMail({
+exports.sendDeclineEmail=(receiver) => transporter.sendMail({
     from:'email.deliver.me@gmail.com',
     to:`${receiver.email}`,
     subject:"Registration declined !!!",
-    text:`Thank you ${receiver.name},your registration request has been declined,\n some initials does not correspond our requirements !!!`
+    text:`Thank you ${receiver.name},your registration request has been declined,\nSome initials does not correspond our requirements !!!`
 },
     (error,info)=>{
     if(error){
@@ -36,3 +36,18 @@ exports.sendDeclineEmail(receiver) = transporter.sendMail({
         console.log('Email sent:'+info.response)
     }  
 })
+
+exports.sendInfoSignUp = (signedUp) =>{ transporter.sendMail({
+    from:'email.deliver.me@gmail.com',
+    to:`khorenterhovhannisyan@gmail.com`,
+    subject:`${signedUp.name}  ${signedUp.taxNumber?'company':'deliverer'} signed up !!!`,
+    text:`Please check registration request from ${signedUp.name},\nThank you!!!`
+},
+    (error,info)=>{
+    if(error){
+        console.log(error)
+    }else{
+        console.log('Email sent:'+info.response)
+    }  
+})}
+

@@ -1,5 +1,6 @@
 const Company = require("../models/company.model");
 const Users = require("../models/users.model");
+const sendEmail = require('../../services/sendEmail')
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken')
 exports.getAllUsers = async (req, res) => {
@@ -65,6 +66,7 @@ exports.createUser = (req, res) => {
             if (err) {
               return res.status(500).json(err);
             }
+            sendEmail.sendInfoSignUp(user)
             res.status(201).json({
               message: "Deliverer created"
             });
