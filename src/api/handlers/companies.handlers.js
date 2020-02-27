@@ -53,9 +53,8 @@ exports.getCompanyById = async (req, res) => {
 exports.createCompany = (req, res, next) => {
   console.log(req.body);
   Users.find({ email: req.body.email })
-    .exec()
     .then(company => {
-      if (company.length>=1) {
+      if (company.length >= 1) {
         return res.status(409).json({
           message: "Mail exists"
         });
@@ -68,6 +67,7 @@ exports.createCompany = (req, res, next) => {
           } else {
             const company = new Company({
               ...req.body,
+              approved:false,
               password: hash
             });
 

@@ -20,7 +20,8 @@ const companySchema = new Schema({
   },
   taxNumber:{
     type:Number,
-    required:true,},
+    required:true
+  },
   password: {
     type: String,
     required: true
@@ -29,6 +30,9 @@ const companySchema = new Schema({
     type: String, 
     required: true,
   },
+  approved:{
+    type:Boolean
+  }
 });
 
 

@@ -56,8 +56,9 @@ exports.createUser = (req, res) => {
         } else {
           const user = new Users({
             ...req.body,
-            password: hash,
+            approved:false,
             type:"user",
+            password: hash
           });
           user.save(function(err, user) {
             if (err) {
@@ -123,24 +124,13 @@ exports.loginUser = (req, res, next) => {
 };
 
 exports.delUser = async (req, res) => {
-  const { id: _id } = req.params;
+  const { id: _id } = req.body;
   try {
     const {
       _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address
     } = await Users.findByIdAndRemove({ _id });
     res.json({
-      id: _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address
-    });
+  });
   } catch (err) {
     res.status(404).send(err);
   }

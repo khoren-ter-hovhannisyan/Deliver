@@ -15,8 +15,9 @@ app.use(express.json());
 app.use(morgan('combined'));
 app.use(cors());
 
-app.use(companyRouter);
+
 app.use(userRouter);
+app.use(companyRouter);
 //ymongoose.set('useCreateIndex', true);
 mongoose.connect(config.db.url, { useNewUrlParser: true ,useUnifiedTopology: true}, () => {
   app.listen(config.server.port, () => {
