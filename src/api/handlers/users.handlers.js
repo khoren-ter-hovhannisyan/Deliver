@@ -56,7 +56,8 @@ exports.createUser = (req, res) => {
         } else {
           const user = new Users({
             ...req.body,
-            password: hash
+            password: hash,
+            type:"user",
           });
           user.save(function(err, user) {
             if (err) {
@@ -77,13 +78,13 @@ exports.loginUser = (req, res, next) => {
     .then(user => {
       if (user.length < 1) {
         return res.status(401).json({
-          message: "Auth failed"
+          message: "Auth failed: mail or username is incorrect"
         });
       }
       bcrypt.compare(req.body.password, user[0].password, (err, result) => {
         if (err) {
           return res.status(401).json({
-            message: "Auth failed"
+            message: "Auth failed: mail or username is incorrect"
           });
         }
         if (result) {
@@ -110,7 +111,7 @@ exports.loginUser = (req, res, next) => {
           });
         }
         res.status(401).json({
-          message: "Auth failed"
+          message: "Auth failed: mail or username is incorrect"
         });
       });
     })
@@ -174,3 +175,49 @@ exports.updateUser = async (req, res) => {
     res.status(404).send(err);
   }
 };
+
+exports.loginAdmin = (req, res) => {
+  Users.find({ email: req.body.email , type:"admin"})
+    .then(user => {
+      if (user.length < 1) {
+        return res.status(401).json({
+          message: "Auth failed: login or username is incorrect"
+        });
+      }
+      bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+        if (err) {
+          return res.status(401).json({
+            message: "Auth failed: login or username is incorrect"
+          });
+        }
+        if (result) {
+          const token = jwt.sign(
+            {
+              email: user[0].email,
+              userId: user[0]._id
+            },
+            process.env.JWT_KEY,
+            {
+              expiresIn: "12h"
+            }
+          );
+          return res.status(200).json({
+            data: {
+              id: user._id,
+              name: user.name,
+            },
+            token: token,
+            message: "Auth successful"
+          });
+        }
+        res.status(401).json({
+          message: "Auth failed: login or username is incorrect"
+        });
+      });
+    })
+    .catch(err => {
+      res.status(500).json({
+        error: err
+      });
+    });
+}
