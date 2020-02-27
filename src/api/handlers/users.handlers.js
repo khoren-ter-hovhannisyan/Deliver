@@ -77,7 +77,7 @@ exports.createUser = (req, res) => {
 exports.loginUser = (req, res, next) => {
   Users.findOne({ email: req.body.email })
     .then(user => {
-      if (!user.email) {
+      if (!user) {
         return res.status(401).json({
           message: "Auth failed: email or paswword is incorrect"
         });
@@ -171,7 +171,7 @@ exports.loginAdmin = (req, res) => {
   Users.findOne({ email: req.body.email , type:"admin"})
     .then(user => {
       console.log(user.email)
-      if (!user.email) {
+      if (!user) {
         return res.status(401).json({
           message: "Auth failed: email or password is incorrect"
         });

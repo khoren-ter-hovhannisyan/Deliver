@@ -52,9 +52,9 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = (req, res, next) => {
   console.log(req.body);
-  Users.findOne({ email: req.body.email })
-    .then(company => {
-      if (company) {
+  Users.findOne({ email: req.body.email,taxNumber:req.body.taxNumber})
+    .then(user => {
+      if (user) {
         return res.status(409).json({
           message: "Mail exists"
         });
@@ -74,7 +74,8 @@ exports.createCompany = (req, res, next) => {
             company.save(function(err, company) {
               if (err) {
                 return res.status(500).json({
-                  error: "Some input field is wrong or is not exist"
+                  error: "Some input field is wrong or is not exist",
+                  message:err
                 });
               }
               res.status(201).json({
@@ -104,7 +105,7 @@ exports.loginCompany = (req, res, next) => {
   Company.findOne({ email: req.body.email })
     .then(company => {
       console.log(company)
-      if (!company.email) {
+      if (!company) {
         return res.status(401).json({
           message: "Auth failed"
         });
