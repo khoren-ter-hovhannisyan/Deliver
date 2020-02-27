@@ -127,11 +127,10 @@ exports.loginUser = (req, res, next) => {
 exports.delUser = async (req, res) => {
   const { id: _id } = req.body;
   try {
-    const {
-      _id,
-    } = await Users.findByIdAndRemove({ _id });
-    res.json({
-  });
+    const user = await Users.findByIdAndRemove({ _id });
+    res.json(
+      {msg:"user is deleted"}
+    );
   } catch (err) {
     res.status(404).send(err);
   }
