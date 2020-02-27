@@ -32,6 +32,10 @@ const usersSchema = new Schema({
   },
   approved:{
     type:Boolean
+  },
+  passportURL:{
+    type:String,
+    required:true
   }
 });
 

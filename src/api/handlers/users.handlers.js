@@ -1,5 +1,6 @@
 const Company = require("../models/company.model");
 const Users = require("../models/users.model");
+const sendEmail = require('../../services/sendEmail')
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken')
 exports.getAllUsers = async (req, res) => {
@@ -42,6 +43,7 @@ exports.getUserById = async (req, res) => {
 };
 
 exports.createUser = (req, res) => {
+  console.log(req.body)
   Company.find({ email: req.body.email }).then(company => {
     if (company.length >= 1) {
       return res.status(409).json({
@@ -64,6 +66,7 @@ exports.createUser = (req, res) => {
             if (err) {
               return res.status(500).json(err);
             }
+            sendEmail.sendInfoSignUp(user)
             res.status(201).json({
               message: "Deliverer created"
             });
@@ -127,10 +130,17 @@ exports.loginUser = (req, res, next) => {
 exports.delUser = async (req, res) => {
   const { id: _id } = req.body;
   try {
+<<<<<<< HEAD
     const user = await Users.findByIdAndRemove({ _id });
     res.json(
       {msg:"user is deleted"}
     );
+=======
+    const {
+      _id,
+    } = await Users.findByIdAndRemove({ _id });
+    res.json("Deliverer deleted");
+>>>>>>> khoren
   } catch (err) {
     res.status(404).send(err);
   }

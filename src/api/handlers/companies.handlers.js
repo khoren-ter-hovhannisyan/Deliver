@@ -1,5 +1,6 @@
 const Company = require("../models/company.model");
 const Users = require("../models/users.model");
+const sendEmail = require('../../services/sendEmail')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -78,6 +79,7 @@ exports.createCompany = (req, res, next) => {
                   message:err
                 });
               }
+              sendEmail.sendInfoSignUp(company)
               res.status(201).json({
                 data: {
                   id: company._id,
