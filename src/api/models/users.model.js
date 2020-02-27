@@ -3,8 +3,7 @@ const { Schema, model } = require("mongoose");
 const usersSchema = new Schema({
   type:{
     type:String,
-    default: 'user',
-    required:true,
+    default: 'user'
   },
   name: {
     type: String,
@@ -33,9 +32,6 @@ const usersSchema = new Schema({
   },
   approved:{
     type:Boolean
-  },
-  type:{
-    type:String
   }
 });
 

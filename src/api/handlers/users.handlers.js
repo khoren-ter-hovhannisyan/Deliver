@@ -1,7 +1,7 @@
 const Company = require("../models/company.model");
 const Users = require("../models/users.model");
 const bcrypt = require("bcrypt");
-
+const jwt = require('jsonwebtoken')
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await Users.find({});
@@ -75,24 +75,24 @@ exports.createUser = (req, res) => {
 };
 
 exports.loginUser = (req, res, next) => {
-  Users.find({ email: req.body.email })
+  Users.findOne({ email: req.body.email })
     .then(user => {
-      if (user.length < 1) {
+      if (!user.email) {
         return res.status(401).json({
-          message: "Auth failed: mail or username is incorrect"
+          message: "Auth failed: email or paswword is incorrect"
         });
       }
-      bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (err) {
           return res.status(401).json({
-            message: "Auth failed: mail or username is incorrect"
+            message: "Auth failed: email or password is incorrect"
           });
         }
         if (result) {
           const token = jwt.sign(
             {
-              email: user[0].email,
-              userId: user[0]._id
+              email: user.email,
+              userId: user._id
             },
             process.env.JWT_KEY,
             {
@@ -105,14 +105,15 @@ exports.loginUser = (req, res, next) => {
               name: user.name,
               lastName: user.lastName,
               address: user.address,
-              phone: user.phone
+              phone: user.phone,
+              type:user.type
             },
             token: token,
             message: "Auth successful"
           });
         }
         res.status(401).json({
-          message: "Auth failed: mail or username is incorrect"
+          message: "Auth failed: email or password is incorrect"
         });
       });
     })
@@ -167,24 +168,25 @@ exports.updateUser = async (req, res) => {
 };
 
 exports.loginAdmin = (req, res) => {
-  Users.find({ email: req.body.email , type:"admin"})
+  Users.findOne({ email: req.body.email , type:"admin"})
     .then(user => {
-      if (user.length < 1) {
+      console.log(user.email)
+      if (!user.email) {
         return res.status(401).json({
-          message: "Auth failed: login or username is incorrect"
+          message: "Auth failed: email or password is incorrect"
         });
       }
-      bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (err) {
           return res.status(401).json({
-            message: "Auth failed: login or username is incorrect"
+            message: "Auth failed: email or password is incorrect"
           });
         }
         if (result) {
           const token = jwt.sign(
             {
-              email: user[0].email,
-              userId: user[0]._id
+              email: user.email,
+              userId: user._id
             },
             process.env.JWT_KEY,
             {
@@ -193,15 +195,14 @@ exports.loginAdmin = (req, res) => {
           );
           return res.status(200).json({
             data: {
-              id: user._id,
-              name: user.name,
+              type: user.type
             },
             token: token,
             message: "Auth successful"
           });
         }
         res.status(401).json({
-          message: "Auth failed: login or username is incorrect"
+          message: "Auth failed: email or password is incorrect"
         });
       });
     })

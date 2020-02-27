@@ -52,9 +52,9 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = (req, res, next) => {
   console.log(req.body);
-  Users.find({ email: req.body.email })
+  Users.findOne({ email: req.body.email })
     .then(company => {
-      if (company.length >= 1) {
+      if (company) {
         return res.status(409).json({
           message: "Mail exists"
         });
@@ -74,7 +74,7 @@ exports.createCompany = (req, res, next) => {
             company.save(function(err, company) {
               if (err) {
                 return res.status(500).json({
-                  error: "Some input fild is wrong filled or is not existe"
+                  error: "Some input field is wrong or is not exist"
                 });
               }
               res.status(201).json({
@@ -101,14 +101,15 @@ exports.createCompany = (req, res, next) => {
 
 exports.loginCompany = (req, res, next) => {
   console.log(req.body);
-  Company.find({ email: req.body.email })
+  Company.findOne({ email: req.body.email })
     .then(company => {
-      if (company.length < 1) {
+      console.log(company)
+      if (!company.email) {
         return res.status(401).json({
           message: "Auth failed"
         });
       }
-      bcrypt.compare(req.body.password, company[0].password, (err, result) => {
+      bcrypt.compare(req.body.password, company.password, (err, result) => {
         if (err) {
           return res.status(401).json({
             message: "Auth failed"
@@ -117,8 +118,8 @@ exports.loginCompany = (req, res, next) => {
         if (result) {
           const token = jwt.sign(
             {
-              email: company[0].email,
-              userId: company[0]._id
+              email: company.email,
+              userId: company._id
             },
             process.env.JWT_KEY,
             {
