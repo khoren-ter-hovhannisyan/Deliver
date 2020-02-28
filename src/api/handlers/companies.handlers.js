@@ -80,6 +80,7 @@ exports.createCompany = (req, res, next) => {
                 });
               }
               sendEmail.sendInfoSignUp(company)
+              sendEmail.sendWaitEmailForReceiver(company)
               res.status(201).json({
                 data: {
                   id: company._id,

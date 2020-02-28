@@ -67,6 +67,7 @@ exports.createUser = (req, res) => {
               return res.status(500).json(err);
             }
             sendEmail.sendInfoSignUp(user)
+            sendEmail.sendWaitEmailForReceiver(user)
             res.status(201).json({
               message: "Deliverer created"
             });
