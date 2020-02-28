@@ -133,7 +133,9 @@ exports.delUser = async (req, res) => {
     const {
       _id,
     } = await Users.findByIdAndRemove({ _id });
-    res.json("Deliverer deleted");
+    res.json({
+      message:"Deliverer deleted"
+    });
   } catch (err) {
     res.status(404).send(err);
   }

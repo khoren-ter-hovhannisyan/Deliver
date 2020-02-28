@@ -15,7 +15,6 @@ app.use(express.json());
 app.use(morgan('combined'));
 app.use(cors());
 
-
 app.use(userRouter);
 app.use(companyRouter);
 //ymongoose.set('useCreateIndex', true);
