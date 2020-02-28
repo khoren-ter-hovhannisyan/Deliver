@@ -7,15 +7,17 @@ exports.getAllUsers = async (req, res) => {
   try {
     const users = await Users.find({});
     res.json(
-      users.map(({ _id, name, lastName, email, phone, address }) => {
-        return {
-          id: _id,
-          name,
-          lastName,
-          email,
-          phone,
-          address
+      users.map(({ _id, name, lastName, email, phone, address , type}) => {
+        if(type==="user"){
+          return {
+            id: _id,
+            name,
+            lastName,
+            email,
+            phone,
+            address
         };
+      }
       })
     );
   } catch (err) {
