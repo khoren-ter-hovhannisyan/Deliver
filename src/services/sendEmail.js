@@ -8,23 +8,23 @@ const transporter = nodemailer.createTransport({
         pass:'superadmin'
     }
 });
-//  transporter.use("compile",hbs({
-//     viewEngine: {
-//         extName: '.hbs',
-//         partialsDir: path.resolve('./src/services/view/'),
-//         layoutsDir: path.resolve('./src/services/view/'),
-//         defaultLayout: 'index',
-//     },
-//     viewPath: path.resolve('./src/services/view/'),
-//     extName: '.hbs'
-//   })
-// );
+
+ transporter.use("compile",hbs({
+    viewEngine: {
+        extName: '.hbs',
+        partialsDir: path.resolve('./src/services/view/'),
+        layoutsDir: path.resolve('./src/services/view/'),
+        defaultLayout: 'index',
+    },
+    viewPath: path.resolve('./src/services/view/'),
+  })
+);
 exports.sendAcceptEmail = (receiver)=>transporter.sendMail({
     from:`"Deliver.me" <email.deliver.me@gmail.com>`,
     to:`${receiver.email}`,
     subject:"Registration accepted !!!",
     text:`Thank you ${to.name},\n\nYour registration request has been accepted !!!`,
-   // tempalte:'signature'
+    template:'signature'
 },
     (error,info)=>{
     if(error){
@@ -54,7 +54,7 @@ exports.sendInfoSignUp = (signedUp) =>{ transporter.sendMail({
     to:`khorenterhovhannisyan@gmail.com`,
     subject:`${signedUp.name}  ${signedUp.taxNumber?'company':'deliverer'} signed up !!!`,
     text:`Please check registration request from ${signedUp.name},\n\nThank you!!!`,
-    tempalte:'index',
+    template:'index',
 },
     (error,info)=>{
     if(error){
