@@ -5,10 +5,9 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken')
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await Users.find({});
+    const users = await Users.find({"type":"user"});
     res.json(
       users.map(({ _id, name, lastName, email, phone, address , type}) => {
-        if(type==="user"){
           return {
             id: _id,
             name,
@@ -17,7 +16,6 @@ exports.getAllUsers = async (req, res) => {
             phone,
             address
         };
-      }
       })
     );
   } catch (err) {
