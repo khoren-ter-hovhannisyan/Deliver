@@ -17,7 +17,7 @@ app.use(cors());
 
 app.use(userRouter);
 app.use(companyRouter);
-//ymongoose.set('useCreateIndex', true);
+
 mongoose.connect(config.db.url, { useNewUrlParser: true ,useUnifiedTopology: true}, () => {
   app.listen(config.server.port, () => {
     console.log(`Magic is happening on port ${config.server.port}`);

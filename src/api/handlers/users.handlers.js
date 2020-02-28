@@ -5,16 +5,16 @@ const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken')
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await Users.find({});
+    const users = await Users.find({"type":"user"});
     res.json(
-      users.map(({ _id, name, lastName, email, phone, address }) => {
-        return {
-          id: _id,
-          name,
-          lastName,
-          email,
-          phone,
-          address
+      users.map(({ _id, name, lastName, email, phone, address , type}) => {
+          return {
+            id: _id,
+            name,
+            lastName,
+            email,
+            phone,
+            address
         };
       })
     );
@@ -129,9 +129,9 @@ exports.loginUser = (req, res, next) => {
 
 exports.delUser = async (req, res) => {
   const { id: _id } = req.body;
-  try {
-    const {
-      _id,
+  try { 
+    const { 
+      _id, 
     } = await Users.findByIdAndRemove({ _id });
     res.json({
       message:"Deliverer deleted"
@@ -210,9 +210,9 @@ exports.loginAdmin = (req, res) => {
         });
       });
     })
-    .catch(err => {
-      res.status(500).json({
-        error: err
+    .catch( _ => {
+      res.status(400).json({
+        message: "Auth failed: email or password is incorrect"
       });
     });
 }

@@ -74,7 +74,7 @@ exports.createCompany = (req, res, next) => {
 
             company.save(function(err, company) {
               if (err) {
-                return res.status(500).json({
+                return res.status(400).json({
                   error: "Some input field is wrong or is not exist",
                   message:err
                 });
@@ -154,25 +154,11 @@ exports.loginCompany = (req, res, next) => {
 };
 
 exports.delCompany = async (req, res) => {
-  const { id: _id } = req.params;
+  const { id: _id } = req.body;
   try {
-    const {
-      _id,
-      name,
-      email,
-      phone,
-      taxNumber,
-      address,
-      activity
-    } = await Company.findByIdAndRemove({ _id });
+    const company = await Company.findByIdAndRemove({ _id });
     res.json({
-      id: _id,
-      name,
-      email,
-      phone,
-      taxNumber,
-      address,
-      activity
+      msg:"company is deleted"
     });
   } catch (err) {
     res.status(404).send(err);
