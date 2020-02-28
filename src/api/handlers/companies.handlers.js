@@ -74,7 +74,7 @@ exports.createCompany = (req, res, next) => {
 
             company.save(function(err, company) {
               if (err) {
-                return res.status(500).json({
+                return res.status(400).json({
                   error: "Some input field is wrong or is not exist",
                   message:err
                 });
