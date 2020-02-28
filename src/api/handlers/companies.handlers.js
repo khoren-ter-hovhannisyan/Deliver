@@ -53,7 +53,7 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = (req, res, next) => {
   console.log(req.body);
-  Users.findOne({ email: req.body.email,taxNumber:req.body.taxNumber})
+  Users.findOne({ email: req.body.email})
     .then(user => {
       if (user) {
         return res.status(409).json({
@@ -82,14 +82,6 @@ exports.createCompany = (req, res, next) => {
               sendEmail.sendInfoSignUp(company)
               sendEmail.sendWaitEmailForReceiver(company)
               res.status(201).json({
-                data: {
-                  id: company._id,
-                  name: company.name,
-                  taxNumber: company.taxNumber,
-                  address: company.address,
-                  activity:company.activity,
-                  phone: company.phone
-                },
                 message: "Company created"
               });
             });
