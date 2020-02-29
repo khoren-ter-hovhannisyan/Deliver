@@ -95,56 +95,6 @@ exports.createCompany = (req, res, next) => {
     });
 };
 
-exports.loginCompany = (req, res, next) => {
-  console.log(req.body);
-  Company.findOne({ email: req.body.email })
-    .then(company => {
-      console.log(company)
-      if (!company) {
-        return res.status(401).json({
-          message: "Auth failed"
-        });
-      }
-      bcrypt.compare(req.body.password, company.password, (err, result) => {
-        if (err) {
-          return res.status(401).json({
-            message: "Auth failed"
-          });
-        }
-        if (result) {
-          const token = jwt.sign(
-            {
-              email: company.email,
-              userId: company._id
-            },
-            process.env.JWT_KEY,
-            {
-              expiresIn: "12h"
-            }
-          );
-          return res.status(200).json({
-            data: {
-              id: company._id,
-              name: company.name,
-              taxNumber: company.taxNumber,
-              address: company.address,
-              phone: company.phone
-            },
-            token: token,
-            message: "Auth successful"
-          });
-        }
-        res.status(401).json({
-          message: "Auth failed"
-        });
-      });
-    })
-    .catch(err => {
-      res.status(500).json({
-        error: err
-      });
-    });
-};
 
 exports.delCompany = async (req, res) => {
   const { id: _id } = req.body;
