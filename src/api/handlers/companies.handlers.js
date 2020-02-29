@@ -2,7 +2,6 @@ const Company = require("../models/company.model");
 const Users = require("../models/users.model");
 const sendEmail = require("../../services/sendEmail");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 exports.getAllCompanies = async (req, res) => {
   try {
@@ -55,11 +54,7 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = (req, res, next) => {
   console.log(req.body);
-<<<<<<< HEAD
-  Users.findOne({ email: req.body.email, taxNumber: req.body.taxNumber })
-=======
   Users.findOne({ email: req.body.email})
->>>>>>> dev
     .then(user => {
       if (user) {
         return res.status(409).json({
@@ -86,12 +81,8 @@ exports.createCompany = (req, res, next) => {
                   message: err
                 });
               }
-<<<<<<< HEAD
-              sendEmail.sendInfoSignUp(company);
-=======
               sendEmail.sendInfoSignUp(company)
               sendEmail.sendWaitEmailForReceiver(company)
->>>>>>> dev
               res.status(201).json({
                 message: "Company created"
               });
@@ -106,10 +97,6 @@ exports.createCompany = (req, res, next) => {
     });
 };
 
-<<<<<<< HEAD
-=======
-
->>>>>>> dev
 exports.delCompany = async (req, res) => {
   const { id: _id } = req.body;
   try {

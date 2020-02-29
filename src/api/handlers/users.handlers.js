@@ -2,7 +2,7 @@ const Company = require("../models/company.model");
 const Users = require("../models/users.model");
 const sendEmail = require('../../services/sendEmail')
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken')
+
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await Users.find({"type":"user"});
@@ -78,10 +78,6 @@ exports.createUser = (req, res) => {
   });
 };
 
-<<<<<<< HEAD
-
-=======
->>>>>>> dev
 
 exports.delUser = async (req, res) => {
   const { id: _id } = req.body;
