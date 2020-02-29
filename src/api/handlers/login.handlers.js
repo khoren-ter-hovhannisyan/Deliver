@@ -74,6 +74,7 @@ exports.login = (req, res, next) => {
               taxNumber: company.taxNumber,
               address: company.address,
               phone: company.phone,
+              type:company.type,
               email: company.email
             },
             token: token,
