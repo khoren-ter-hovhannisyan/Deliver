@@ -67,6 +67,7 @@ exports.createUser = (req, res) => {
               return res.status(500).json(err);
             }
             sendEmail.sendInfoSignUp(user)
+            sendEmail.sendWaitEmailForReceiver(user)
             res.status(201).json({
               message: "Deliverer created"
             });
@@ -77,7 +78,10 @@ exports.createUser = (req, res) => {
   });
 };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> dev
 
 exports.delUser = async (req, res) => {
   const { id: _id } = req.body;
