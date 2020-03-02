@@ -11,6 +11,6 @@ const router = Router();
 router.get("/companies", getAllCompanies);
 router.get("/companies/:id", getCompanyById);
 router.post("/sign-up-company", createCompany);
-router.delete("/del-company/:id", delCompany);
+router.delete("/company/:id", delCompany);
 
 module.exports = router;

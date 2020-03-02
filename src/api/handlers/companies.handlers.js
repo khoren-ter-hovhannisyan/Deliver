@@ -100,9 +100,9 @@ exports.createCompany = (req, res, next) => {
 };
 
 exports.delCompany = async (req, res) => {
-  const { id: _id } = req.body;
+  const _id  = req.params.id;
   try {
-    const company = await Company.findByIdAndRemove({ _id });
+    await Company.findByIdAndRemove({ _id });
     res.json({
       msg: "company is deleted"
     });
