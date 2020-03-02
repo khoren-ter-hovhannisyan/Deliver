@@ -8,7 +8,7 @@ exports.getAllCompanies = async (req, res) => {
     const companies = await Company.find({});
     res.json(
       companies.map(
-        ({ _id, activity, address, taxNumber, phone, email, name }) => {
+        ({ _id, activity, address, taxNumber, phone, email, name , approved}) => {
           return {
             id: _id,
             name,
@@ -16,7 +16,8 @@ exports.getAllCompanies = async (req, res) => {
             phone,
             taxNumber,
             address,
-            activity
+            activity,
+            approved
           };
         }
       )

@@ -1,6 +1,7 @@
 const Company = require("../models/company.model");
 const Users = require("../models/users.model");
 const Order = require('../models/order.model');
+const mongoose = require('mongoose')
 
 
 exports.createOrder = async (req, res) => {
@@ -8,9 +9,10 @@ exports.createOrder = async (req, res) => {
     try{
         const newOrder = new Order({
             ...order,
-            order_create_time:Date.now,
             state:"active"
         });
+        console.log(newOrder);
+        
         await newOrder.save((err, newOrder)=>{
             if(err){
                 return res.status(404).send({
@@ -18,25 +20,34 @@ exports.createOrder = async (req, res) => {
                     err
                 });
             }
-            Company.aggregate([{
-                $lookup:{
-                    from:"Order",
-                    localField:newOrder._id,
-                    foreignField:_id,
+            
+            
+        });
+        Company.aggregate([
+                {$match: {_id: mongoose.Types.ObjectId(_id)}},
+                {$lookup:{
+                    from:"orders",
+                    localField:`${newOrder._id}`,
+                    foreignField:`_id`,
                     as:"orders"
             }
             }]).exec((err, orders)=>{
                 if(err){
+                    console.log(err);
+                    
                     return res.status(404).send({
                         massage: "Something went wrong, try again in a few minutes",
                         err
                     });
                 }
+                console.log(orders);
+                console.log(orders[0].orders);
+                
+                
+                return res.status(201).json({
+                    message: "Order created"
+                  });
             });
-            return res.status(201).json({
-                message: "Order created"
-              });
-        });
     }catch (err){
         res.status(404).send({
             massage: "Something went wrong, try again in a few minutes",

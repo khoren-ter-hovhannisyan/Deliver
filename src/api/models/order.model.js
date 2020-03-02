@@ -9,27 +9,23 @@ const orderSchema = new Schema({
     },
     take_address:{
         type:String,
-        required:true
     },
     deliver_address:{
         type:String,
-        required:true
     },
     item_description:{
         type:String,
-        required:true
     },
     order_create_time:{
         type:Date,
+        default:Date.now,
         required:true
     },
     order_start_time:{
         type:Date,
-        required:true
     },
     order_end_time:{
         type:Date,
-        required:true
     },
     comment:{
         type:String,

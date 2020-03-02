@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const companyRouter = require('./api/routes/companies.routes');
 const userRouter = require('./api/routes/users.routes');
 const loginRouter = require('./api/routes/login.routes');
+const orderRouter = require('./api/routes/order.routes');
 const cors = require("cors")
 
 const config = require('./config');
@@ -19,6 +20,7 @@ app.use(cors());
 app.use(userRouter);
 app.use(companyRouter);
 app.use(loginRouter);
+app.use(orderRouter);
 
 mongoose.connect(config.db.url, { useNewUrlParser: true ,useUnifiedTopology: true}, () => {
   app.listen(config.server.port, () => {
