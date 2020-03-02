@@ -83,7 +83,7 @@ exports.createUser = (req, res) => {
 
 
 exports.delUser = async (req, res) => {
-  const { id: _id } = req.body;
+  const { id: _id } = req.params;
   try { 
     const { 
       _id, 

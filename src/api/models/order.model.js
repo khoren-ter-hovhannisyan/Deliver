@@ -34,6 +34,13 @@ const orderSchema = new Schema({
         type:String,
         required:true
     },
+    companyId:{
+        type:String
+    },
+    userId:{
+        type:String
+    }
+
 });
 
 
