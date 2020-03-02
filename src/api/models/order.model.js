@@ -19,7 +19,15 @@ const orderSchema = new Schema({
         type:String,
         required:true
     },
-    time_for_delivery:{
+    order_create_time:{
+        type:Date,
+        required:true
+    },
+    order_start_time:{
+        type:Date,
+        required:true
+    },
+    order_end_time:{
         type:Date,
         required:true
     },
