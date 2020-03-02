@@ -83,11 +83,9 @@ exports.createUser = (req, res) => {
 
 
 exports.delUser = async (req, res) => {
-  const { id: _id } = req.params;
+  const _id = req.params.id;
   try { 
-    const { 
-      _id, 
-    } = await Users.findByIdAndRemove({ _id });
+    await Users.findByIdAndRemove({ _id });
     res.json({
       message:"Deliverer deleted"
     });
