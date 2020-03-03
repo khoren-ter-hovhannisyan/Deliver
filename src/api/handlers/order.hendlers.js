@@ -5,12 +5,11 @@ const mongoose = require('mongoose')
 
 
 exports.createOrder =  (req, res) => {
-    const {companyId:_id, order} = req.body;
+    const {companyId, order} = req.body;
     
         const newOrder = new Order({
             ...order,
-            companyId:_id,
-            state:"active"
+            companyId,
         });
         console.log(newOrder);
         
@@ -21,31 +20,7 @@ exports.createOrder =  (req, res) => {
                     err
                 });
             }
-            Company.aggregate([
-                {$match: {_id: mongoose.Types.ObjectId(_id)}},
-                {$lookup:{
-                    from:"orders",
-                    localField:`${newOrder._id}`,
-                    foreignField:`${_id}`,
-                    as:"orders"
-            }
-            }]).exec((err, orders)=>{
-                if(err){
-                    console.log(err);
-                    
-                    return res.status(404).send({
-                        massage: "Something went wrong, try again in a few minutes",
-                        err
-                    });
-                }
-                console.log(orders);
-                console.log(orders[0].orders);
-                
-                
-                return res.status(201).json({
-                    message: "Order created"
-                  });
-            });
+            return res.status(201).send({msg:"msg"})
             
             
         });

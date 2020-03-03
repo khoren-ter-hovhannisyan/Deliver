@@ -4,7 +4,7 @@ const { Schema, model } = require("mongoose");
 
 const orderSchema = new Schema({
     points:{
-        type:Number,
+        type:String,
         required:true
     },
     take_address:{
@@ -13,7 +13,7 @@ const orderSchema = new Schema({
     deliver_address:{
         type:String,
     },
-    item_description:{
+    order_description:{
         type:String,
     },
     order_create_time:{
@@ -31,8 +31,8 @@ const orderSchema = new Schema({
         type:String,
     },
     state:{
-        type:String,
-        required:true
+        type: String,
+        default: "active",
     },
     companyId:{
         type:String
