@@ -119,22 +119,13 @@ exports.delUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const {
-    id: _id
-  } = req.body;
+  const { id: _id } = req.params
   try {
-    const {
+    const user = await Users.findByIdAndUpdate(
       _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address
-    } = await Users.findByIdAndUpdate(
-      _id, {
-        ...req.body
-      }, {
-        new: true
+      { ...req.body },
+      {
+        new: true,
       }
     )
     res.status(201).send({
@@ -149,6 +140,6 @@ exports.updateUser = async (req, res) => {
       avatar: user.avatar,
     })
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).send(err)
   }
-};
+}
