@@ -88,7 +88,6 @@ exports.createCompany = (req, res, next) => {
               approved: false,
               type: "company",
               password: hash,
-              avatar
             });
 
             company.save(function(err, company) {

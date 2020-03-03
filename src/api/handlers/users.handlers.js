@@ -65,7 +65,6 @@ exports.createUser = (req, res) => {
             approved:false,
             type:"user",
             password: hash,
-            avatar
           });
           user.save(function(err, user) {
             if (err) {

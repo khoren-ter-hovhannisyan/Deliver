@@ -40,7 +40,6 @@ const companySchema = new Schema({
   },
   avatar:{
     type:String,
-    required: true,
     default:"https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png"
   }
 });
