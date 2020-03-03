@@ -57,10 +57,30 @@ exports.getAllActiveOrder = (req, res) => {
         order_end_time: item.order_end_time,
         comment: item.comment,
       }
-        Company.findOne({ _id: item.companyId }).then(company => {
-        order.company_name = company.name
-        order.company_phone = company.phone
-      })
+    const r = await Company.findById({ _id: item.companyId }).then(res => res)
+    console.log(r.name, r.phone);
+        // const i = async () => {
+        //     const order = {
+        //         id: item._id,
+        //         state: item.state,
+        //         points: item.points,
+        //         order_description: item.order_description,
+        //         take_adress: item.take_adress,
+        //         deliver_address: item.deliver_address,
+        //         order_create_time: item.order_create_time,
+        //         order_start_time: item.order_start_time,
+        //         order_end_time: item.order_end_time,
+        //         comment: item.comment,
+        //     }
+        //     const r = await Company.findById({ _id: item.companyId }).then(res => res)
+        //     console.log(r.name, r.phone);
+        //     return order
+            
+        // }
+        // console.log(i().then(res=>res));
+        
+        
+        
         return order
     })
     return res.status(201).send(items)
