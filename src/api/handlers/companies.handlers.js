@@ -112,17 +112,9 @@ exports.delCompany = async (req, res) => {
 };
 
 exports.updateCompany = async (req, res) => {
-  const { id: _id } = req.body;
+  const _id = req.params.id;
   try {
-    const {
-      _id,
-      name,
-      email,
-      phone,
-      taxNumber,
-      address,
-      activity
-    } = await Company.findByIdAndUpdate(
+    await Company.findByIdAndUpdate(
       _id,
       { ...req.body },
       {
@@ -136,7 +128,8 @@ exports.updateCompany = async (req, res) => {
       phone,
       taxNumber,
       address,
-      activity
+      activity,
+      approved,
     });
   } catch (err) {
     res.status(404).send(err);

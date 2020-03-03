@@ -95,16 +95,9 @@ exports.delUser = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  const { id: _id } = req.body;
+  const { id: _id } = req.params;
   try {
-    const {
-      _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address
-    } = await Users.findByIdAndUpdate(
+    await Users.findByIdAndUpdate(
       _id,
       { ...req.body },
       {
@@ -117,7 +110,9 @@ exports.updateUser = async (req, res) => {
       lastName,
       email,
       phone,
-      address
+      address,
+      approved,
+      passportURL
     });
   } catch (err) {
     res.status(404).send(err);
