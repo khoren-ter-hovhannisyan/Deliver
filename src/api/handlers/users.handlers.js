@@ -82,7 +82,6 @@ exports.createUser = (req, res) => {
         } else {
           const user = new Users({
             ...req.body,
-            approved: false,
             type: 'user',
             password: hash,
           })
@@ -118,22 +117,23 @@ exports.delUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   const { id: _id } = req.params
   try {
-    await Users.findByIdAndUpdate(
+    const user = await Users.findByIdAndUpdate(
       _id,
       { ...req.body },
       {
         new: true,
       }
     )
-    res.json({
-      id: _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address,
-      approved,
-      passportURL,
+    res.status(201).send({
+      id: user._id,
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      approved: user.approved,
+      passportURL: user.passportURL,
+      avatar: user.avatar,
     })
   } catch (err) {
     res.status(404).send(err)

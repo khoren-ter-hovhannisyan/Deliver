@@ -31,7 +31,8 @@ const usersSchema = new Schema({
     required: true,
   },
   approved: {
-    type: Boolean,
+    type: String,
+    default: 'panding',
   },
   passportURL: {
     type: String,

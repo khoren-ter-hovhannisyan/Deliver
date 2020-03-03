@@ -85,7 +85,6 @@ exports.createCompany = (req, res, next) => {
           } else {
             const company = new Company({
               ...req.body,
-              approved: false,
               type: 'company',
               password: hash,
             })
@@ -128,23 +127,23 @@ exports.delCompany = async (req, res) => {
 exports.updateCompany = async (req, res) => {
   const _id = req.params.id
   try {
-    await Company.findByIdAndUpdate(
+    const company = await Company.findByIdAndUpdate(
       _id,
       { ...req.body },
       {
         new: true,
       }
     )
-    res.json({
+    res.status(201).send({
       id: _id,
-      name,
-      email,
-      phone,
-      taxNumber,
-      address,
-      activity,
-      approved,
-      avatar,
+      name: company.name,
+      email: company.email,
+      phone: company.phone,
+      taxNumber: company.taxNumber,
+      address: company.address,
+      activity: company.activity,
+      approved: company.approved,
+      avatar: company.avatar,
     })
   } catch (err) {
     res.status(404).send(err)
