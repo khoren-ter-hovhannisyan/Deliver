@@ -11,7 +11,6 @@ const cors = require("cors")
 
 const socket = require('socket.io');
 
-const handlers = require('./api/handlers/users.handlers');
 const config = require('./config');
 
 const app = express();
@@ -35,6 +34,7 @@ mongoose.connect(config.db.url, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
+  useFindAndModify: false
 }, () => {
   server
 });
@@ -47,5 +47,9 @@ io.on('connection', (socket) => {
   });
   socket.on('new_company', (companyData) => {
     socket.broadcast.emit('update_company_list', companyData);
-  })
+    console.log(companyData.data)
+  });
+  socket.on('new_order', (orderData) => {
+    socket.broadcast.emit('update_order_list', orderData);
+  });
 });
