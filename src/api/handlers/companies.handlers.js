@@ -8,7 +8,18 @@ exports.getAllCompanies = async (req, res) => {
     const companies = await Company.find({});
     res.json(
       companies.map(
-        ({ _id, activity, address, taxNumber, phone, email, name , approved, orders}) => {
+        ({
+          _id,
+          activity,
+          address,
+          taxNumber,
+          phone,
+          email,
+          name,
+          approved,
+          orders,
+          avatar
+        }) => {
           return {
             id: _id,
             name,
@@ -18,6 +29,7 @@ exports.getAllCompanies = async (req, res) => {
             address,
             activity,
             approved,
+            avatar,
             orders
           };
         }
@@ -38,7 +50,8 @@ exports.getCompanyById = async (req, res) => {
       phone,
       taxNumber,
       address,
-      activity
+      activity,
+      avatar
     } = await Company.findOne({ _id });
     res.json({
       id: _id,
@@ -47,7 +60,8 @@ exports.getCompanyById = async (req, res) => {
       phone,
       taxNumber,
       address,
-      activity
+      activity,
+      avatar
     });
   } catch (err) {
     res.status(404).send(err);
@@ -56,7 +70,7 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = (req, res, next) => {
   console.log(req.body);
-  Users.findOne({ email: req.body.email})
+  Users.findOne({ email: req.body.email })
     .then(user => {
       if (user) {
         return res.status(409).json({
@@ -72,8 +86,9 @@ exports.createCompany = (req, res, next) => {
             const company = new Company({
               ...req.body,
               approved: false,
-              type:"company",
-              password: hash
+              type: "company",
+              password: hash,
+              avatar
             });
 
             company.save(function(err, company) {
@@ -83,8 +98,8 @@ exports.createCompany = (req, res, next) => {
                   message: err
                 });
               }
-              sendEmail.sendInfoSignUp(company)
-              sendEmail.sendWaitEmailForReceiver(company)
+              sendEmail.sendInfoSignUp(company);
+              sendEmail.sendWaitEmailForReceiver(company);
               res.status(201).json({
                 message: "Company created"
               });
@@ -100,7 +115,7 @@ exports.createCompany = (req, res, next) => {
 };
 
 exports.delCompany = async (req, res) => {
-  const _id  = req.params.id;
+  const _id = req.params.id;
   try {
     await Company.findByIdAndRemove({ _id });
     res.json({
@@ -130,6 +145,7 @@ exports.updateCompany = async (req, res) => {
       address,
       activity,
       approved,
+      avatar
     });
   } catch (err) {
     res.status(404).send(err);

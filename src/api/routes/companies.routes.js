@@ -4,7 +4,7 @@ const {
   getCompanyById,
   createCompany,
   delCompany,
-  updateCompany,
+  updateCompany
 } = require("../handlers/companies.handlers");
 
 const router = Router();
@@ -12,7 +12,7 @@ const router = Router();
 router.get("/companies", getAllCompanies);
 router.get("/companies/:id", getCompanyById);
 router.post("/sign-up-company", createCompany);
-router.delete("/company/:id", delCompany);
-router.put("/company/:id", updateCompany)
+router.delete("/companies/:id", delCompany);
+router.put("/companies/:id", updateCompany);
 
 module.exports = router;

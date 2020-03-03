@@ -36,6 +36,11 @@ const usersSchema = new Schema({
   passportURL:{
     type:String,
     required:true
+  },
+  avatar:{
+    type:String,
+    required: true,
+    default:"https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png"
   }
 });
 

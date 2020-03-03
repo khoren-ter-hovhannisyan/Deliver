@@ -37,6 +37,7 @@ exports.login = (req, res, next) => {
               phone: user.phone,
               type: user.type,
               email: user.email,
+              avatar: user.avatar,
               token: token,
               message: "Auth successful"
             });
@@ -72,6 +73,7 @@ exports.login = (req, res, next) => {
           phone: company.phone,
           type: company.type,
           email: company.email,
+          avatar: company.avatar,
           token: token,
           message: "Auth successful"
         });

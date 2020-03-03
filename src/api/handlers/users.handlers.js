@@ -7,7 +7,7 @@ exports.getAllUsers = async (req, res) => {
   try {
     const users = await Users.find({"type":"user"});
     res.json(
-      users.map(({ _id, name, lastName, email, phone, address , approved, passportURL}) => {
+      users.map(({ _id, name, lastName, email, phone, address , approved, passportURL,avatar}) => {
           return {
             id: _id,
             name,
@@ -16,8 +16,8 @@ exports.getAllUsers = async (req, res) => {
             phone,
             address,
             approved,
-            passportURL
-
+            passportURL,
+            avatar
         };
       })
     );
@@ -29,7 +29,7 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   const { id: _id } = req.params;
   try {
-    const { _id, name, lastName, email, phone, address } = await Users.findOne({
+    const { _id, name, lastName, email, phone, address , avatar} = await Users.findOne({
       _id
     });
     res.json({
@@ -38,7 +38,8 @@ exports.getUserById = async (req, res) => {
       lastName,
       email,
       phone,
-      address
+      address,
+      avatar
     });
   } catch (err) {
     res.status(404).send(err);
@@ -63,7 +64,8 @@ exports.createUser = (req, res) => {
             ...req.body,
             approved:false,
             type:"user",
-            password: hash
+            password: hash,
+            avatar
           });
           user.save(function(err, user) {
             if (err) {
