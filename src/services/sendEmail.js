@@ -6,7 +6,11 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: "email.deliver.me@gmail.com",
     pass: "superadmin"
-  }
+  },
+  tls: {
+    // do not fail on invalid certs
+    rejectUnauthorized: false
+  },
 });
 
 
@@ -18,8 +22,7 @@ const signature = `<div>
 
 
 exports.sendAcceptEmail = receiver =>
-  transporter.sendMail(
-    {
+  transporter.sendMail({
       from: `"Deliver.me" <email.deliver.me@gmail.com>`,
       to: `${receiver.email}`,
       subject: "Registration accepted !!!",
@@ -37,8 +40,7 @@ exports.sendAcceptEmail = receiver =>
   );
 
 exports.sendDeclineEmail = receiver =>
-  transporter.sendMail(
-    {
+  transporter.sendMail({
       from: `"Deliver.me" <email.deliver.me@gmail.com>`,
       to: `${receiver.email}`,
       subject: "Registration declined !!!",
@@ -57,10 +59,9 @@ exports.sendDeclineEmail = receiver =>
   );
 
 exports.sendInfoSignUp = signedUp => {
-  transporter.sendMail(
-    {
+  transporter.sendMail({
       from: `"Deliver.me" <email.deliver.me@gmail.com>`,
-      to: `khorenterhovhannisyan@gmail.com`,
+      to: `anigevorgyan0@gmail.com`,
       subject: `${signedUp.name}  ${
         signedUp.taxNumber ? "company" : "deliverer"
       } signed up !!!`,
@@ -79,8 +80,7 @@ exports.sendInfoSignUp = signedUp => {
 };
 
 exports.sendWaitEmailForReceiver = receiver =>
-  transporter.sendMail(
-    {
+  transporter.sendMail({
       from: `"Deliver.me" <email.deliver.me@gmail.com>`,
       to: `${receiver.email}`,
       subject: "Thank you for registration !!!",

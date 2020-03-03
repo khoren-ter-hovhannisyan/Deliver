@@ -41,7 +41,9 @@ exports.getAllCompanies = async (req, res) => {
 }
 
 exports.getCompanyById = async (req, res) => {
-  const { id: _id } = req.params
+  const {
+    id: _id
+  } = req.params
   try {
     const {
       _id,
@@ -52,7 +54,9 @@ exports.getCompanyById = async (req, res) => {
       address,
       activity,
       avatar,
-    } = await Company.findOne({ _id })
+    } = await Company.findOne({
+      _id
+    })
     res.json({
       id: _id,
       name,
@@ -70,7 +74,9 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = (req, res, next) => {
   console.log(req.body)
-  Users.findOne({ email: req.body.email })
+  Users.findOne({
+      email: req.body.email
+    })
     .then(user => {
       if (user) {
         return res.status(409).json({
@@ -89,7 +95,7 @@ exports.createCompany = (req, res, next) => {
               password: hash,
             })
 
-            company.save(function(err, company) {
+            company.save(function (err, company) {
               if (err) {
                 return res.status(400).json({
                   error: 'Some input field is wrong or is not exist',
@@ -115,7 +121,9 @@ exports.createCompany = (req, res, next) => {
 exports.delCompany = async (req, res) => {
   const _id = req.params.id
   try {
-    await Company.findByIdAndRemove({ _id })
+    await Company.findByIdAndRemove({
+      _id
+    })
     res.json({
       msg: 'company is deleted',
     })
@@ -128,9 +136,9 @@ exports.updateCompany = async (req, res) => {
   const _id = req.params.id
   try {
     const company = await Company.findByIdAndUpdate(
-      _id,
-      { ...req.body },
-      {
+      _id, {
+        ...req.body
+      }, {
         new: true,
       }
     )
