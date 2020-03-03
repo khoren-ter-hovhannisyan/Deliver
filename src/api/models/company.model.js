@@ -36,7 +36,8 @@ const companySchema = new Schema({
     required: true,
   },
   approved: {
-    type: Boolean,
+    type: String,
+    default: 'panding'
   },
   avatar: {
     type: String,

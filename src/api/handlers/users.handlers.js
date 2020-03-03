@@ -79,10 +79,10 @@ exports.createUser = (req, res) => {
         } else {
           const user = new Users({
             ...req.body,
-            approved: false,
-            type: "user",
-            password: hash
-          });
+            type: 'user',
+            password: hash,
+          })
+
           user.save(function (err, user) {
             if (err) {
               return res.status(500).json(err);
@@ -136,15 +136,18 @@ exports.updateUser = async (req, res) => {
       }, {
         new: true
       }
-    );
-    res.json({
-      id: _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address
-    });
+    )
+    res.status(201).send({
+      id: user._id,
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      approved: user.approved,
+      passportURL: user.passportURL,
+      avatar: user.avatar,
+    })
   } catch (err) {
     res.status(404).send(err);
   }
