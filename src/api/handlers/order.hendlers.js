@@ -1,46 +1,68 @@
-const Company = require("../models/company.model");
-const Users = require("../models/users.model");
-const Order = require('../models/order.model');
+const Company = require('../models/company.model')
+const Users = require('../models/users.model')
+const Order = require('../models/order.model')
 
+exports.createOrder = (req, res) => {
+  const { companyId, order } = req.body
 
-exports.createOrder = async (req, res) => {
-    const {companyId:_id, order} = req.body;
-    try{
-        const newOrder = new Order({
-            ...order,
-            order_create_time:Date.now,
-            state:"active"
-        });
-        await newOrder.save((err, newOrder)=>{
-            if(err){
-                return res.status(404).send({
-                    message: "Something went wrong, try again in a few minutes",
-                    err
-                });
-            }
-            Company.aggregate([{
-                $lookup:{
-                    from:"Order",
-                    localField:newOrder._id,
-                    foreignField:_id,
-                    as:"orders"
-            }
-            }]).exec((err, orders)=>{
-                if(err){
-                    return res.status(404).send({
-                        massage: "Something went wrong, try again in a few minutes",
-                        err
-                    });
-                }
-            });
-            return res.status(201).json({
-                message: "Order created"
-              });
-        });
-    }catch (err){
-        res.status(404).send({
-            massage: "Something went wrong, try again in a few minutes",
-            err
-        });
+  const newOrder = new Order({
+    ...order,
+    companyId,
+  })
+
+  newOrder.save((err, newOrder) => {
+    if (err) {
+      return res.status(404).send({
+        message: 'Something went wrong, try again in a few minutes',
+        err,
+      })
     }
-};
+    Company.findOne({ _id: newOrder.companyId })
+      .then(company => {
+        return res.status(201).send({
+          id: newOrder._id,
+          state: newOrder.state,
+          points: newOrder.points,
+          order_description: newOrder.order_description,
+          take_adress: newOrder.take_adress,
+          deliver_address: newOrder.deliver_address,
+          order_create_time: newOrder.order_create_time,
+          order_start_time: newOrder.order_start_time,
+          order_end_time: newOrder.order_end_time,
+          comment: newOrder.comment,
+          company_name: company.name,
+          company_phone: company.phone,
+        })
+      })
+      .catch(err => {
+        return res.status(500).send({
+          message: 'Something went wrong, try later',
+        })
+      })
+  })
+}
+
+exports.getAllActiveOrder = (req, res) => {
+  Order.find({ state: 'active' }).then(orders => {
+    const items = orders.map(item => {
+      const order = {
+        id: item._id,
+        state: item.state,
+        points: item.points,
+        order_description: item.order_description,
+        take_adress: item.take_adress,
+        deliver_address: item.deliver_address,
+        order_create_time: item.order_create_time,
+        order_start_time: item.order_start_time,
+        order_end_time: item.order_end_time,
+        comment: item.comment,
+      }
+        Company.findOne({ _id: item.companyId }).then(company => {
+        order.company_name = company.name
+        order.company_phone = company.phone
+      })
+        return order
+    })
+    return res.status(201).send(items)
+  })
+}

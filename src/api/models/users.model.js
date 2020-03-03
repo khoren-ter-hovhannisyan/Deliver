@@ -1,42 +1,47 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model } = require('mongoose')
 
 const usersSchema = new Schema({
-  type:{
-    type:String,
-    default: 'user'
+  type: {
+    type: String,
+    default: 'user',
   },
   name: {
     type: String,
-    required: true
+    required: true,
   },
   lastName: {
     type: String,
-    required: true
+    required: true,
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
-  address:{
-    type:String,
-    required:true
+  address: {
+    type: String,
+    required: true,
   },
   password: {
     type: String,
-    required: true
+    required: true,
   },
   phone: {
     type: Number,
-    required: true
+    required: true,
   },
-  approved:{
-    type:Boolean
+  approved: {
+    type: Boolean,
   },
-  passportURL:{
-    type:String,
-    required:true
-  }
-});
+  passportURL: {
+    type: String,
+    required: true,
+  },
+  avatar: {
+    type: String,
+    default:
+      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png',
+  },
+})
 
-module.exports = model("User", usersSchema);
+module.exports = model('User', usersSchema)

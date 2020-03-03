@@ -1,14 +1,25 @@
-const Company = require("../models/company.model");
-const Users = require("../models/users.model");
-const sendEmail = require("../../services/sendEmail");
-const bcrypt = require("bcrypt");
+const Company = require('../models/company.model')
+const Users = require('../models/users.model')
+const sendEmail = require('../../services/sendEmail')
+const bcrypt = require('bcrypt')
 
 exports.getAllCompanies = async (req, res) => {
   try {
-    const companies = await Company.find({});
+    const companies = await Company.find({})
     res.json(
       companies.map(
-        ({ _id, activity, address, taxNumber, phone, email, name }) => {
+        ({
+          _id,
+          activity,
+          address,
+          taxNumber,
+          phone,
+          email,
+          name,
+          approved,
+          orders,
+          avatar,
+        }) => {
           return {
             id: _id,
             name,
@@ -16,18 +27,21 @@ exports.getAllCompanies = async (req, res) => {
             phone,
             taxNumber,
             address,
-            activity
-          };
+            activity,
+            approved,
+            avatar,
+            orders,
+          }
         }
       )
-    );
+    )
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).send(err)
   }
-};
+}
 
 exports.getCompanyById = async (req, res) => {
-  const { id: _id } = req.params;
+  const { id: _id } = req.params
   try {
     const {
       _id,
@@ -36,8 +50,9 @@ exports.getCompanyById = async (req, res) => {
       phone,
       taxNumber,
       address,
-      activity
-    } = await Company.findOne({ _id });
+      activity,
+      avatar,
+    } = await Company.findOne({ _id })
     res.json({
       id: _id,
       name,
@@ -45,88 +60,81 @@ exports.getCompanyById = async (req, res) => {
       phone,
       taxNumber,
       address,
-      activity
-    });
+      activity,
+      avatar,
+    })
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).send(err)
   }
-};
+}
 
 exports.createCompany = (req, res, next) => {
-  console.log(req.body);
-  Users.findOne({ email: req.body.email})
+  console.log(req.body)
+  Users.findOne({ email: req.body.email })
     .then(user => {
       if (user) {
         return res.status(409).json({
-          message: "Mail exists"
-        });
+          message: 'Mail exists',
+        })
       } else {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
             return res.status(500).json({
-              error: "Something went bad"
-            });
+              error: 'Something went bad',
+            })
           } else {
             const company = new Company({
               ...req.body,
               approved: false,
-              type:"company",
-              password: hash
-            });
+              type: 'company',
+              password: hash,
+            })
 
             company.save(function(err, company) {
               if (err) {
                 return res.status(400).json({
-                  error: "Some input field is wrong or is not exist",
-                  message: err
-                });
+                  error: 'Some input field is wrong or is not exist',
+                  message: err,
+                })
               }
               sendEmail.sendInfoSignUp(company)
               sendEmail.sendWaitEmailForReceiver(company)
               res.status(201).json({
-                message: "Company created"
-              });
-            });
+                message: 'Company created',
+              })
+            })
           }
-        });
+        })
       }
     })
     .catch(err => {
-      console.log(err);
-      return res.status(400).send("");
-    });
-};
+      console.log(err)
+      return res.status(400).send('')
+    })
+}
 
 exports.delCompany = async (req, res) => {
-  const { id: _id } = req.body;
+  const _id = req.params.id
   try {
-    const company = await Company.findByIdAndRemove({ _id });
+    await Company.findByIdAndRemove({ _id })
     res.json({
-      msg: "company is deleted"
-    });
+      msg: 'company is deleted',
+    })
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).send(err)
   }
-};
+}
 
 exports.updateCompany = async (req, res) => {
-  const { id: _id } = req.body;
+  const _id = req.params.id
   try {
-    const {
-      _id,
-      name,
-      email,
-      phone,
-      taxNumber,
-      address,
-      activity
-    } = await Company.findByIdAndUpdate(
+    await Company.findByIdAndUpdate(
       _id,
       { ...req.body },
       {
-        new: true
+        new: true,
       }
-    );
+    )
     res.json({
       id: _id,
       name,
@@ -134,9 +142,11 @@ exports.updateCompany = async (req, res) => {
       phone,
       taxNumber,
       address,
-      activity
-    });
+      activity,
+      approved,
+      avatar,
+    })
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).send(err)
   }
-};
+}
