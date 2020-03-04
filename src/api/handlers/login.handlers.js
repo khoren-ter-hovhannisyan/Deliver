@@ -31,6 +31,7 @@ exports.login = (req, res, next) => {
             )
             return res.status(200).send({
               id: user._id,
+              type:user.type,
               token: token,
               message: 'Auth successful',
             })
@@ -61,6 +62,7 @@ exports.login = (req, res, next) => {
         )
         return res.status(200).send({
           id: company._id,
+          type:company.type,
           token: token,
           message: 'Auth successful',
         })
