@@ -1,6 +1,7 @@
 const Company = require('../models/company.model')
 const Users = require('../models/users.model')
 const Order = require('../models/order.model')
+const sendEmail = require('../../services/sendEmail')
 
 exports.createOrder = (req, res) => {
   const { companyId, order } = req.body
@@ -32,6 +33,7 @@ exports.createOrder = (req, res) => {
           comment: newOrder.comment,
           company_name: company.name,
           company_phone: company.phone,
+          company_email: company.email,
         })
       })
       .catch(err => {
@@ -61,6 +63,7 @@ exports.getAllActiveOrder = async (req, res) => {
         comment: orders[i].comment,
         company_name: company.name,
         company_phone: company.phone,
+        company_email: company.email,
       }
       ordersOutput.push(order)
     }
@@ -96,19 +99,23 @@ exports.getCompanyOrders = async (req, res) => {
         comment: orders[i].comment,
         company_name: company.name,
         company_phone: company.phone,
+        company_email: company.email,
         user_name: user ? user.name : undefined,
         user_phone: user ? user.phone : undefined,
+        user_email: user ? user.email : undefined,
       }
       ordersOutput.push(order)
     }
     return res.status(201).send(ordersOutput)
   } catch (err) {
-    return res.status(500).send({ message: 'Something went wron try later' })
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }
 
 exports.delOrder = async (req, res) => {
-  const _id = req.params
+  const _id = req.params.id
   try {
     await Order.findByIdAndRemove({
       _id,
@@ -118,5 +125,54 @@ exports.delOrder = async (req, res) => {
     })
   } catch (err) {
     res.status(404).send(err)
+  }
+}
+
+exports.updateOrder = async (req, res) => {
+  const _id = req.params.id
+  try {
+    const order = await Order.findByIdAndUpdate(
+      _id,
+      {
+        ...req.body,
+      },
+      {
+        new: true,
+      }
+    )
+    if (!order) {
+      res.status(400).send({
+        message: 'There is not order like that',
+      })
+    }
+    const company = await Company.findOne({ _id: order.companyId })
+    const user = await Users.findOne({ _id: order.userId })
+    if (order.state === 'pending') {
+      sendEmail.sendAcceptOrderEmail(company, user)
+    } else if (order.state === 'done') {
+      sendEmail.sendDoneOrderEmail(company, user)
+    }
+    res.status(201).send({
+      id: order._id,
+      state: order.state,
+      points: order.points,
+      order_description: order.order_description,
+      take_adress: order.take_adress,
+      deliver_address: order.deliver_address,
+      order_create_time: order.order_create_time,
+      order_start_time: order.order_start_time,
+      order_end_time: order.order_end_time,
+      comment: order.comment,
+      company_name: company.name,
+      company_phone: company.phone,
+      company_email: company.email,
+      user_name: user ? user.name : undefined,
+      user_phone: user ? user.phone : undefined,
+      user_email: user ? user.email : undefined,
+    })
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }

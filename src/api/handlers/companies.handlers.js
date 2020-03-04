@@ -34,7 +34,9 @@ exports.getAllCompanies = async (req, res) => {
       )
     )
   } catch (err) {
-    res.status(404).send(err)
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }
 
@@ -42,7 +44,7 @@ exports.getCompanyById = async (req, res) => {
   const _id = req.params.id
   try {
     const company = await Company.findOne({
-      _id
+      _id,
     })
     res.json({
       id: _id,
@@ -52,18 +54,20 @@ exports.getCompanyById = async (req, res) => {
       taxNumber: company.taxNumber,
       address: company.address,
       activity: company.activity,
-      avatar: company.avatar
+      avatar: company.avatar,
     })
   } catch (err) {
-    res.status(404).send(err)
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }
 
 exports.createCompany = (req, res, next) => {
   console.log(req.body)
   Users.findOne({
-      email: req.body.email,
-    })
+    email: req.body.email,
+  })
     .then(user => {
       if (user) {
         return res.status(409).json({
@@ -82,7 +86,7 @@ exports.createCompany = (req, res, next) => {
               password: hash,
             })
 
-            company.save(function (err, company) {
+            company.save(function(err, company) {
               if (err) {
                 return res.status(400).json({
                   error: 'Some input field is wrong or is not exist',
@@ -123,17 +127,17 @@ exports.updateCompany = async (req, res) => {
   const _id = req.params.id
   try {
     const company = await Company.findByIdAndUpdate(
-      _id, {
+      _id,
+      {
         ...req.body,
-      }, {
+      },
+      {
         new: true,
       }
     )
     if (company.approved === 'accepted') {
-      console.log('company approved!')
       sendEmail.sendAcceptEmail(company)
     } else if (company.approved === 'declined') {
-      console.log('company declined!')
       sendEmail.sendDeclineEmail(company)
     }
     res.status(201).send({
@@ -148,6 +152,8 @@ exports.updateCompany = async (req, res) => {
       avatar: company.avatar,
     })
   } catch (err) {
-    res.status(404).send(err)
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }

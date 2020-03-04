@@ -37,12 +37,16 @@ const companySchema = new Schema({
   },
   approved: {
     type: String,
-    default: 'panding'
+    default: 'panding',
   },
   avatar: {
     type: String,
     default:
       'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
+  },
+  amount: {
+    type: String,
+    default: '0',
   },
 })
 
