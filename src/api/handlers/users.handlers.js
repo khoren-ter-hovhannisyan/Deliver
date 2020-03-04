@@ -23,7 +23,7 @@ exports.getAllUsers = async (req, res) => {
           avatar,
           amount,
           rating,
-          createdTime
+          createdTime,
         }) => {
           return {
             id: _id,
@@ -38,18 +38,16 @@ exports.getAllUsers = async (req, res) => {
             avatar,
             amount,
             rating,
-            createdTime
+            createdTime,
           }
         }
       )
     )
   } catch (err) {
-    return res
-      .status(500)
-      .send({
-        message: 'Something went wron try later',
-        err
-      })
+    return res.status(500).send({
+      message: 'Something went wron try later',
+      err,
+    })
   }
 }
 
@@ -72,15 +70,13 @@ exports.getUserById = async (req, res) => {
       avatar: user.avatar,
       amount: user.amout,
       rating: user.rating,
-      createdTime: user.createdTime
+      createdTime: user.createdTime,
     })
   } catch (err) {
-    return res
-      .status(500)
-      .send({
-        message: 'Something went wron try later',
-        err
-      })
+    return res.status(500).send({
+      message: 'Something went wron try later',
+      err,
+    })
   }
 }
 
@@ -90,13 +86,13 @@ exports.createUser = (req, res) => {
     email: req.body.email,
   }).then(company => {
     if (company.length >= 1) {
-      return res.status(409).json({
+      return res.status(409).send({
         message: 'Mail exists',
       })
     } else {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
-          return status(500).json({
+          return status(500).send({
             error: err,
           })
         } else {
@@ -106,13 +102,13 @@ exports.createUser = (req, res) => {
             password: hash,
           })
 
-          user.save(function (err, user) {
+          user.save(function(err, user) {
             if (err) {
-              return res.status(500).json(err)
+              return res.status(500).send(err)
             }
             sendEmail.sendInfoSignUp(user)
             sendEmail.sendWaitEmailForReceiver(user)
-            res.status(201).json({
+            res.status(201).send({
               message: 'Deliverer created',
             })
           })
@@ -132,12 +128,10 @@ exports.delUser = async (req, res) => {
       message: 'Deliverer deleted',
     })
   } catch (err) {
-    return res
-      .status(500)
-      .send({
-        message: 'Something went wron try later',
-        err
-      })
+    return res.status(500).send({
+      message: 'Something went wron try later',
+      err,
+    })
   }
 }
 
@@ -145,9 +139,11 @@ exports.updateUser = async (req, res) => {
   const _id = req.params.id
   try {
     const user = await Users.findByIdAndUpdate(
-      _id, {
+      _id,
+      {
         ...req.body,
-      }, {
+      },
+      {
         new: true,
       }
     )
@@ -167,14 +163,12 @@ exports.updateUser = async (req, res) => {
       passportURL: user.passportURL,
       avatar: user.avatar,
       amount: user.amount,
-      rating: user.rating
+      rating: user.rating,
     })
   } catch (err) {
-    return res
-      .status(500)
-      .send({
-        message: 'Something went wron try later',
-        err
-      })
+    return res.status(500).send({
+      message: 'Something went wron try later',
+      err,
+    })
   }
 }

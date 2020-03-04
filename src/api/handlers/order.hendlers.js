@@ -4,48 +4,31 @@ const Order = require('../models/order.model')
 const sendEmail = require('../../services/sendEmail')
 
 exports.createOrder = (req, res) => {
-    
   const { companyId, order } = req.body
 
   const newOrder = new Order({
     ...order,
     companyId,
   })
-  
-  newOrder.save((err, newOrder) => {
-    if (err) {
-      return res.status(404).send({
-        message: 'Something went wrong, try again in a few minutes',
-        err,
-      })
-    }
-    Company.findOne({ _id: newOrder.companyId })
-      .then(company => {
-        return res.status(201).send({
-          id: newOrder._id,
-          state: newOrder.state,
-          points: newOrder.points,
-          order_description: newOrder.order_description,
-          take_adress: newOrder.take_adress,
-          deliver_address: newOrder.deliver_address,
-          order_create_time: newOrder.order_create_time,
-          order_start_time: newOrder.order_start_time,
-          order_end_time: newOrder.order_end_time,
-          comment: newOrder.comment,
-          icon: newOrder.icon,
-          company_name: company.name,
-          company_phone: company.phone,
-          company_email: company.email,
+
+  newOrder
+    .save((err, newOrder) => {
+      if (err) {
+        return res.status(404).send({
+          message: 'Something went wrong, try again in a few minutes',
+          err,
         })
-      })
-        .catch(err => {
-          console.log(err);
-          
-        return res.status(500).send({
-          message: 'Something went wrong, try later',
+      }
+      return res.status(201).send({ message: 'Order created' })
+    })
+    .catch(err => {
+      return res
+        .status(500)
+        .send({
+          message: 'Something went wrong, try again in a few minutes',
+          err,
         })
-      })
-  })
+    })
 }
 
 exports.getAllActiveOrder = async (req, res) => {

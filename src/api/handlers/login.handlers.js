@@ -14,7 +14,7 @@ exports.login = (req, res, next) => {
         }
         bcrypt.compare(req.body.password, user.password, (err, result) => {
           if (err) {
-            return res.status(401).json({
+            return res.status(401).send({
               message: 'Auth failed',
             })
           }
@@ -29,20 +29,13 @@ exports.login = (req, res, next) => {
                 expiresIn: '12h',
               }
             )
-            return res.status(200).json({
+            return res.status(200).send({
               id: user._id,
-              name: user.name,
-              lastName: user.lastName,
-              address: user.address,
-              phone: user.phone,
-              type: user.type,
-              email: user.email,
-              avatar: user.avatar,
               token: token,
               message: 'Auth successful',
             })
           }
-          res.status(401).json({
+          res.status(401).send({
             message: 'Auth failed',
           })
         })
@@ -51,7 +44,7 @@ exports.login = (req, res, next) => {
 
     bcrypt.compare(req.body.password, company.password, (err, result) => {
       if (err) {
-        return res.status(401).json({
+        return res.status(401).send({
           message: 'Auth failed',
         })
       }
@@ -66,20 +59,13 @@ exports.login = (req, res, next) => {
             expiresIn: '12h',
           }
         )
-        return res.status(200).json({
+        return res.status(200).send({
           id: company._id,
-          name: company.name,
-          taxNumber: company.taxNumber,
-          address: company.address,
-          phone: company.phone,
-          type: company.type,
-          email: company.email,
-          avatar: company.avatar,
           token: token,
           message: 'Auth successful',
         })
       }
-      res.status(401).json({
+      res.status(401).send({
         message: 'Auth failed',
       })
     })
@@ -88,15 +74,14 @@ exports.login = (req, res, next) => {
 exports.loginAdmin = (req, res) => {
   Users.findOne({ email: req.body.email, type: 'admin' })
     .then(user => {
-      console.log(user.email)
       if (!user) {
-        return res.status(401).json({
+        return res.status(401).send({
           message: 'Auth failed: email or password is incorrect',
         })
       }
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (err) {
-          return res.status(401).json({
+          return res.status(401).send({
             message: 'Auth failed: email or password is incorrect',
           })
         }
@@ -111,7 +96,7 @@ exports.loginAdmin = (req, res) => {
               expiresIn: '12h',
             }
           )
-          return res.status(200).json({
+          return res.status(200).send({
             data: {
               type: user.type,
             },
@@ -119,13 +104,13 @@ exports.loginAdmin = (req, res) => {
             message: 'Auth successful',
           })
         }
-        res.status(401).json({
+        res.status(401).send({
           message: 'Auth failed: email or password is incorrect',
         })
       })
     })
     .catch(_ => {
-      res.status(400).json({
+      res.status(400).send({
         message: 'Auth failed: email or password is incorrect',
       })
     })
