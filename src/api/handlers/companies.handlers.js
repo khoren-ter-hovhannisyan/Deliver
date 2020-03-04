@@ -41,31 +41,20 @@ exports.getAllCompanies = async (req, res) => {
 }
 
 exports.getCompanyById = async (req, res) => {
-  const {
-    id: _id
-  } = req.params
+  const _id = req.params.id
   try {
-    const {
-      _id,
-      name,
-      email,
-      phone,
-      taxNumber,
-      address,
-      activity,
-      avatar,
-    } = await Company.findOne({
+    const company = await Company.findOne({
       _id
     })
     res.json({
       id: _id,
-      name,
-      email,
-      phone,
-      taxNumber,
-      address,
-      activity,
-      avatar,
+      name: company.name,
+      email: company.email,
+      phone: company.phone,
+      taxNumber: company.taxNumber,
+      address: company.address,
+      activity: company.activity,
+      avatar: company.avatar
     })
   } catch (err) {
     res.status(404).send(err)
@@ -142,6 +131,13 @@ exports.updateCompany = async (req, res) => {
         new: true,
       }
     )
+    if (company.approved === 'accepted') {
+      console.log('company approved!')
+      sendEmail.sendAcceptEmail(company)
+    } else if (company.approved === 'declined') {
+      console.log('company declined!')
+      sendEmail.sendDeclineEmail(company)
+    }
     res.status(201).send({
       id: _id,
       name: company.name,
