@@ -47,8 +47,8 @@ const companySchema = new Schema({
     default: 'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
   },
   amount: {
-    type: String,
-    default: '0',
+    type: Number,
+    default: 0,
   },
   created_time: {
     type: Date,

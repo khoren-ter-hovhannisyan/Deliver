@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose')
 
 const orderSchema = new Schema({
   points: {
-    type: String,
+    type: Number,
     required: true,
   },
   take_address: {
@@ -15,6 +15,7 @@ const orderSchema = new Schema({
   },
   order_description: {
     type: String,
+    required: true,
   },
   order_create_time: {
     type: Date,
@@ -44,8 +45,9 @@ const orderSchema = new Schema({
   },
   icon: {
     type: String,
-    default: "http://res.cloudinary.com/dfeoo5iog/image/upload/v1583318024/sadrnalu7ghnqmgymhca.jpg"
-  }
+    default:
+      'http://res.cloudinary.com/dfeoo5iog/image/upload/v1583318024/sadrnalu7ghnqmgymhca.jpg',
+  },
 })
 
 module.exports = model('Order', orderSchema)

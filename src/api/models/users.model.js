@@ -46,8 +46,8 @@ const usersSchema = new Schema({
     default: 'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png',
   },
   amount: {
-    type: String,
-    default: '0',
+    type: Number,
+    default: 0,
   },
   rating: {
     type: Number,
