@@ -11,7 +11,7 @@ const cors = require('cors')
 
 const socket = require('socket.io')
 
-const config = require('./config');
+const config = require('./config')
 
 const app = express()
 const server = app.listen(config.server.port, () => {
@@ -30,11 +30,12 @@ app.use(orderRouter)
 const io = socket(server)
 
 mongoose.connect(
-  config.db.url, {
+  config.db.url,
+  {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-    useFindAndModify: false
+    useFindAndModify: false,
   },
   () => {
     server
@@ -50,7 +51,7 @@ io.on('connection', socket => {
   socket.on('new_company', companyData => {
     socket.broadcast.emit('update_company_list', companyData)
   })
-  socket.on('new_order', (orderData) => {
+  socket.on('new_order', orderData => {
     socket.broadcast.emit('update_order_list', orderData)
   })
 })
