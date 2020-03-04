@@ -21,6 +21,7 @@ exports.getAllUsers = async (req, res) => {
           approved,
           passportURL,
           avatar,
+          amount
         }) => {
           return {
             id: _id,
@@ -33,12 +34,15 @@ exports.getAllUsers = async (req, res) => {
             approved,
             passportURL,
             avatar,
+            amount
           }
         }
       )
     )
   } catch (err) {
-    res.status(404).send(err)
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }
 
@@ -56,6 +60,7 @@ exports.getUserById = async (req, res) => {
       approved,
       passportURL,
       avatar,
+      amount
     } = await Users.findOne({
       _id,
     })
@@ -70,9 +75,12 @@ exports.getUserById = async (req, res) => {
       approved,
       passportURL,
       avatar,
+      amount
     })
   } catch (err) {
-    res.status(404).send(err)
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }
 
@@ -115,7 +123,7 @@ exports.createUser = (req, res) => {
 }
 
 exports.delUser = async (req, res) => {
-  const _id  = req.params.id
+  const _id = req.params.id
   try {
     await Users.findByIdAndRemove({
       _id,
@@ -124,12 +132,14 @@ exports.delUser = async (req, res) => {
       message: 'Deliverer deleted',
     })
   } catch (err) {
-    res.status(404).send(err)
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }
 
 exports.updateUser = async (req, res) => {
-  const _id  = req.params.id
+  const _id = req.params.id
   try {
     const user = await Users.findByIdAndUpdate(
       _id,
@@ -141,10 +151,8 @@ exports.updateUser = async (req, res) => {
       }
     )
     if (user.approved === 'accepted') {
-      console.log('user is approved!!')
       sendEmail.sendAcceptEmail(user)
     } else if (user.approved === 'declined') {
-      console.log('user is declined!!')
       sendEmail.sendDeclineEmail(user)
     }
     res.status(201).send({
@@ -157,8 +165,11 @@ exports.updateUser = async (req, res) => {
       approved: user.approved,
       passportURL: user.passportURL,
       avatar: user.avatar,
+      amount:user.amount,
     })
   } catch (err) {
-    res.status(404).send(err)
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
   }
 }
