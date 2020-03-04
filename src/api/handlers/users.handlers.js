@@ -121,22 +121,22 @@ exports.delUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   const {
     id: _id
-  } = req.body;
+  } = req.params
   try {
-    const {
-      _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address
-    } = await Users.findByIdAndUpdate(
+    const user = await Users.findByIdAndUpdate(
       _id, {
         ...req.body
       }, {
-        new: true
+        new: true,
       }
     )
+    if (user.approved === 'accepted') {
+      console.log('user is approved!!')
+      sendEmail.sendAcceptEmail(user)
+    } else if (user.approved === 'declined') {
+      console.log('user is declined!!')
+      sendEmail.sendDeclineEmail(user)
+    }
     res.status(201).send({
       id: user._id,
       name: user.name,
@@ -149,6 +149,7 @@ exports.updateUser = async (req, res) => {
       avatar: user.avatar,
     })
   } catch (err) {
-    res.status(404).send(err);
+    console.log(err);
+    res.status(404).send(err)
   }
-};
+}

@@ -20,14 +20,16 @@ const signature = `<div>
 <img height="150px"  src="http://res.cloudinary.com/dfeoo5iog/image/upload/v1582890290/ljmmfhjkbd2e1gmoxssl.png">
 </div>`;
 
+const link = 'https://delivermearmenia.herokuapp.com/'
 
 exports.sendAcceptEmail = receiver =>
   transporter.sendMail({
       from: `"Deliver.me" <email.deliver.me@gmail.com>`,
       to: `${receiver.email}`,
       subject: "Registration accepted !!!",
-      html: `Thank you ${to.name},
+      html: `Thank you ${receiver.name},
       Your registration request has been accepted !!!
+      Please follow the link ${link} to login!
       ${signature}`
     },
     (error, info) => {
