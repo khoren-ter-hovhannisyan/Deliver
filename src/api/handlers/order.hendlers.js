@@ -180,3 +180,45 @@ exports.updateOrder = async (req, res) => {
       .send({ message: 'Something went wron try later', err })
   }
 }
+
+exports.getUserOrders = async (req, res) => {
+  const _id = req.params.id
+  try {
+    const user = await Users.findOne({ _id })
+    if (!user) {
+      res.status(400).send({
+        message: 'There is no user',
+      })
+    }
+    const orders = await Order.find({ userId: _id })
+    const ordersOutput = []
+    for (let i = 0; i < orders.length; i++) {
+      const company = await Company.findOne({ _id: orders[i].companyId })
+      const order = {
+        id: orders[i]._id,
+        state: orders[i].state,
+        points: orders[i].points,
+        order_description: orders[i].order_description,
+        take_adress: orders[i].take_adress,
+        deliver_address: orders[i].deliver_address,
+        order_create_time: orders[i].order_create_time,
+        order_start_time: orders[i].order_start_time,
+        order_end_time: orders[i].order_end_time,
+        comment: orders[i].comment,
+        icon: orders[i].icon,
+        company_name: company.name,
+        company_phone: company.phone,
+        company_email: company.email,
+        user_name: user.name,
+        user_phone: user.phone,
+        user_email: user.email,
+      }
+      ordersOutput.push(order)
+    }
+    return res.status(201).send(ordersOutput)
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: 'Something went wron try later', err })
+  }
+}
