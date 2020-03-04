@@ -42,45 +42,39 @@ exports.getAllUsers = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wron try later', err })
+      .send({
+        message: 'Something went wron try later',
+        err
+      })
   }
 }
 
 exports.getUserById = async (req, res) => {
-  const { id: _id } = req.params
+  const _id = req.params.id
   try {
-    const {
-      _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address,
-      type,
-      approved,
-      passportURL,
-      avatar,
-      amount
-    } = await Users.findOne({
+    const user = await Users.findOne({
       _id,
     })
     res.json({
       id: _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address,
-      type,
-      approved,
-      passportURL,
-      avatar,
-      amount
+      name: user.name,
+      lastName: user.name,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      type: user.type,
+      approved: user.approved,
+      passportURL: user.passportURL,
+      avatar: user.avatar,
+      amount: user.amout
     })
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wron try later', err })
+      .send({
+        message: 'Something went wron try later',
+        err
+      })
   }
 }
 
@@ -106,7 +100,7 @@ exports.createUser = (req, res) => {
             password: hash,
           })
 
-          user.save(function(err, user) {
+          user.save(function (err, user) {
             if (err) {
               return res.status(500).json(err)
             }
@@ -134,7 +128,10 @@ exports.delUser = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wron try later', err })
+      .send({
+        message: 'Something went wron try later',
+        err
+      })
   }
 }
 
@@ -142,11 +139,9 @@ exports.updateUser = async (req, res) => {
   const _id = req.params.id
   try {
     const user = await Users.findByIdAndUpdate(
-      _id,
-      {
+      _id, {
         ...req.body,
-      },
-      {
+      }, {
         new: true,
       }
     )
@@ -165,11 +160,14 @@ exports.updateUser = async (req, res) => {
       approved: user.approved,
       passportURL: user.passportURL,
       avatar: user.avatar,
-      amount:user.amount,
+      amount: user.amount,
     })
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wron try later', err })
+      .send({
+        message: 'Something went wron try later',
+        err
+      })
   }
 }
