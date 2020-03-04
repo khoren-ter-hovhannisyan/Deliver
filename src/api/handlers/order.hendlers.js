@@ -43,31 +43,31 @@ exports.createOrder = (req, res) => {
 }
 
 exports.getAllActiveOrder = async (req, res) => {
-    try {
-        const orders = await Order.find({ state: 'active' })
-        const ordersOutput = []
-        for (let i = 0; i < orders.length; i++) {
-            const company = await Company.findOne({ _id: orders[0].companyId })
-            const order = {
-                id: orders[i]._id,
-                state: orders[i].state,
-                points: orders[i].points,
-                order_description: orders[i].order_description,
-                take_adress: orders[i].take_adress,
-                deliver_address: orders[i].deliver_address,
-                order_create_time: orders[i].order_create_time,
-                order_start_time: orders[i].order_start_time,
-                order_end_time: orders[i].order_end_time,
-                comment: orders[i].comment,
-                company_name: company.name,
-                company_phone: company.phone,
-            }
-            ordersOutput.push(order)
-        }
-        return res.status(201).send(ordersOutput)
-    } catch (err) {
-        return res.status(500).send({ message: 'Something went wron try later' })
+  try {
+    const orders = await Order.find({ state: 'active' })
+    const ordersOutput = []
+    for (let i = 0; i < orders.length; i++) {
+      const company = await Company.findOne({ _id: orders[0].companyId })
+      const order = {
+        id: orders[i]._id,
+        state: orders[i].state,
+        points: orders[i].points,
+        order_description: orders[i].order_description,
+        take_adress: orders[i].take_adress,
+        deliver_address: orders[i].deliver_address,
+        order_create_time: orders[i].order_create_time,
+        order_start_time: orders[i].order_start_time,
+        order_end_time: orders[i].order_end_time,
+        comment: orders[i].comment,
+        company_name: company.name,
+        company_phone: company.phone,
+      }
+      ordersOutput.push(order)
     }
+    return res.status(201).send(ordersOutput)
+  } catch (err) {
+    return res.status(500).send({ message: 'Something went wron try later' })
+  }
 }
 
 exports.getCompanyOrders = async (req, res) => {
@@ -104,5 +104,19 @@ exports.getCompanyOrders = async (req, res) => {
     return res.status(201).send(ordersOutput)
   } catch (err) {
     return res.status(500).send({ message: 'Something went wron try later' })
+  }
+}
+
+exports.delOrder = async (req, res) => {
+  const _id = req.params
+  try {
+    await Order.findByIdAndRemove({
+      _id,
+    })
+    res.status(201).send({
+      message: 'Order deleted',
+    })
+  } catch (err) {
+    res.status(404).send(err)
   }
 }

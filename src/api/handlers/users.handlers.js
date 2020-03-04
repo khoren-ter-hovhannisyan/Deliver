@@ -115,12 +115,12 @@ exports.createUser = (req, res) => {
 }
 
 exports.delUser = async (req, res) => {
-  const { id: _id } = req.body
+  const _id  = req.params.id
   try {
-    const { _id } = await Users.findByIdAndRemove({
+    await Users.findByIdAndRemove({
       _id,
     })
-    res.json({
+    res.status(201).send({
       message: 'Deliverer deleted',
     })
   } catch (err) {
@@ -129,7 +129,7 @@ exports.delUser = async (req, res) => {
 }
 
 exports.updateUser = async (req, res) => {
-  const { id: _id } = req.params
+  const _id  = req.params.id
   try {
     const user = await Users.findByIdAndUpdate(
       _id,

@@ -111,7 +111,7 @@ exports.delCompany = async (req, res) => {
     await Company.findByIdAndRemove({
       _id,
     })
-    res.json({
+    res.status(201).send({
       msg: 'company is deleted',
     })
   } catch (err) {
