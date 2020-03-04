@@ -1,4 +1,7 @@
-const { Schema, model } = require('mongoose')
+const {
+  Schema,
+  model
+} = require('mongoose')
 
 const usersSchema = new Schema({
   type: {
@@ -40,13 +43,22 @@ const usersSchema = new Schema({
   },
   avatar: {
     type: String,
-    default:
-      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png',
+    default: 'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png',
   },
   amount: {
     type: String,
     default: '0',
   },
+  rating: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5
+  },
+  createdTime: {
+    type: Date,
+    default: Date.now()
+  }
 })
 
 module.exports = model('User', usersSchema)

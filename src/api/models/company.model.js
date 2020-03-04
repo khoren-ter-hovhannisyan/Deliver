@@ -1,4 +1,7 @@
-const { Schema, model } = require('mongoose')
+const {
+  Schema,
+  model
+} = require('mongoose')
 
 const companySchema = new Schema({
   type: {
@@ -41,13 +44,16 @@ const companySchema = new Schema({
   },
   avatar: {
     type: String,
-    default:
-      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
+    default: 'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
   },
   amount: {
     type: String,
     default: '0',
   },
+  created_time: {
+    type: Date,
+    default: Date.now()
+  }
 })
 
 module.exports = model('Company', companySchema)

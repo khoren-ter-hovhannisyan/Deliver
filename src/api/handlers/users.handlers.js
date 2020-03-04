@@ -21,7 +21,9 @@ exports.getAllUsers = async (req, res) => {
           approved,
           passportURL,
           avatar,
-          amount
+          amount,
+          rating,
+          createdTime
         }) => {
           return {
             id: _id,
@@ -34,7 +36,9 @@ exports.getAllUsers = async (req, res) => {
             approved,
             passportURL,
             avatar,
-            amount
+            amount,
+            rating,
+            createdTime
           }
         }
       )
@@ -66,7 +70,9 @@ exports.getUserById = async (req, res) => {
       approved: user.approved,
       passportURL: user.passportURL,
       avatar: user.avatar,
-      amount: user.amout
+      amount: user.amout,
+      rating: user.rating,
+      createdTime: user.createdTime
     })
   } catch (err) {
     return res
@@ -161,6 +167,7 @@ exports.updateUser = async (req, res) => {
       passportURL: user.passportURL,
       avatar: user.avatar,
       amount: user.amount,
+      rating: user.rating
     })
   } catch (err) {
     return res
