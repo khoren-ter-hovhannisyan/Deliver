@@ -64,7 +64,7 @@ exports.getCompanyById = async (req, res) => {
 exports.createCompany = (req, res, next) => {
   console.log(req.body)
   Users.findOne({
-      email: req.body.email
+      email: req.body.email,
     })
     .then(user => {
       if (user) {
@@ -111,7 +111,7 @@ exports.delCompany = async (req, res) => {
   const _id = req.params.id
   try {
     await Company.findByIdAndRemove({
-      _id
+      _id,
     })
     res.json({
       msg: 'company is deleted',
@@ -126,7 +126,7 @@ exports.updateCompany = async (req, res) => {
   try {
     const company = await Company.findByIdAndUpdate(
       _id, {
-        ...req.body
+        ...req.body,
       }, {
         new: true,
       }

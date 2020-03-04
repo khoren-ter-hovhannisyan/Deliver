@@ -114,7 +114,6 @@ exports.getCompanyOrders = async (req, res) => {
   })
   console.log(companyOrders)
 
-
   if (!companyOrders.length) {
     return res.status(201).send({ message: 'The company dose`t have orders' })
   } else {

@@ -1,81 +1,64 @@
-const Company = require("../models/company.model");
-const Users = require("../models/users.model");
+const Company = require('../models/company.model')
+const Users = require('../models/users.model')
 const sendEmail = require('../../services/sendEmail')
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt')
 
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await Users.find({
-      "type": "user"
-    });
+      type: 'user',
+    })
     res.json(
-      users.map(({
-        _id,
-        name,
-        lastName,
-        email,
-        phone,
-        address,
-        type
-      }) => {
+      users.map(({ _id, name, lastName, email, phone, address, type }) => {
         return {
           id: _id,
           name,
           lastName,
           email,
           phone,
-          address
-        };
+          address,
+        }
       })
-    );
+    )
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).send(err)
   }
-};
+}
 
 exports.getUserById = async (req, res) => {
-  const {
-    id: _id
-  } = req.params;
+  const { id: _id } = req.params
   try {
-    const {
+    const { _id, name, lastName, email, phone, address } = await Users.findOne({
       _id,
-      name,
-      lastName,
-      email,
-      phone,
-      address
-    } = await Users.findOne({
-      _id
-    });
+    })
     res.json({
       id: _id,
       name,
       lastName,
       email,
       phone,
-      address
-    });
+      address,
+    })
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).send(err)
   }
-};
+}
 
 exports.createUser = (req, res) => {
   console.log(req.body)
   Company.find({
-    email: req.body.email
+    email: req.body.email,
   }).then(company => {
     if (company.length >= 1) {
       return res.status(409).json({
-        message: "Mail exists"
-      });
+        message: 'Mail exists',
+      })
     } else {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
           return status(500).json({
-            error: err
-          });
+            error: err,
+          })
         } else {
           const user = new Users({
             ...req.body,
@@ -83,50 +66,45 @@ exports.createUser = (req, res) => {
             password: hash,
           })
 
-          user.save(function (err, user) {
+          user.save(function(err, user) {
             if (err) {
-              return res.status(500).json(err);
+              return res.status(500).json(err)
             }
             sendEmail.sendInfoSignUp(user)
             sendEmail.sendWaitEmailForReceiver(user)
             res.status(201).json({
-              message: "Deliverer created"
-            });
-          });
+              message: 'Deliverer created',
+            })
+          })
         }
-      });
+      })
     }
-  });
-};
-
+  })
+}
 
 exports.delUser = async (req, res) => {
-  const {
-    id: _id
-  } = req.body;
+  const { id: _id } = req.body
   try {
-    const {
+    const { _id } = await Users.findByIdAndRemove({
       _id,
-    } = await Users.findByIdAndRemove({
-      _id
-    });
+    })
     res.json({
-      message: "Deliverer deleted"
-    });
+      message: 'Deliverer deleted',
+    })
   } catch (err) {
-    res.status(404).send(err);
+    res.status(404).send(err)
   }
-};
+}
 
 exports.updateUser = async (req, res) => {
-  const {
-    id: _id
-  } = req.params
+  const { id: _id } = req.params
   try {
     const user = await Users.findByIdAndUpdate(
-      _id, {
-        ...req.body
-      }, {
+      _id,
+      {
+        ...req.body,
+      },
+      {
         new: true,
       }
     )
