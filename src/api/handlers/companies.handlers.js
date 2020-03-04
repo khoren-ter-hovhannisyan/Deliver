@@ -17,7 +17,6 @@ exports.getAllCompanies = async (req, res) => {
           email,
           name,
           approved,
-          orders,
           avatar,
         }) => {
           return {
@@ -30,7 +29,6 @@ exports.getAllCompanies = async (req, res) => {
             activity,
             approved,
             avatar,
-            orders,
           }
         }
       )

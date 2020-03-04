@@ -9,16 +9,33 @@ exports.getAllUsers = async (req, res) => {
       type: 'user',
     })
     res.json(
-      users.map(({ _id, name, lastName, email, phone, address, type }) => {
-        return {
-          id: _id,
+      users.map(
+        ({
+          _id,
           name,
           lastName,
           email,
           phone,
           address,
+          type,
+          approved,
+          passportURL,
+          avatar,
+        }) => {
+          return {
+            id: _id,
+            name,
+            lastName,
+            email,
+            phone,
+            address,
+            type,
+            approved,
+            passportURL,
+            avatar,
+          }
         }
-      })
+      )
     )
   } catch (err) {
     res.status(404).send(err)
@@ -28,7 +45,18 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   const { id: _id } = req.params
   try {
-    const { _id, name, lastName, email, phone, address } = await Users.findOne({
+    const {
+      _id,
+      name,
+      lastName,
+      email,
+      phone,
+      address,
+      type,
+      approved,
+      passportURL,
+      avatar,
+    } = await Users.findOne({
       _id,
     })
     res.json({
@@ -38,6 +66,10 @@ exports.getUserById = async (req, res) => {
       email,
       phone,
       address,
+      type,
+      approved,
+      passportURL,
+      avatar,
     })
   } catch (err) {
     res.status(404).send(err)
