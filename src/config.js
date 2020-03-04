@@ -5,4 +5,7 @@ module.exports = {
   db: {
     url: process.env.DB_URL,
   },
+  routes: {
+    key: process.env.JWT_KEY,
+  }
 }

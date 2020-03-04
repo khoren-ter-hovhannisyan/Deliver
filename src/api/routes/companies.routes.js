@@ -1,4 +1,6 @@
-const { Router } = require('express')
+const {
+  Router
+} = require('express')
 const {
   getAllCompanies,
   getCompanyById,
@@ -6,13 +8,14 @@ const {
   delCompany,
   updateCompany,
 } = require('../handlers/companies.handlers')
+const checkAuth = require('../middleware/check-auth')
 
 const router = Router()
 
-router.get('/companies', getAllCompanies)
-router.get('/companies/:id', getCompanyById)
+router.get('/companies', checkAuth, getAllCompanies)
+router.get('/companies/:id', checkAuth, getCompanyById)
 router.post('/sign-up-company', createCompany)
-router.delete('/companies/:id', delCompany)
-router.put('/companies/:id', updateCompany)
+router.delete('/companies/:id', checkAuth, delCompany)
+router.put('/companies/:id', checkAuth, updateCompany)
 
 module.exports = router
