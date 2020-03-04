@@ -21,6 +21,7 @@ exports.getAllUsers = async (req, res) => {
           approved,
           passportURL,
           avatar,
+          amount
         }) => {
           return {
             id: _id,
@@ -33,6 +34,7 @@ exports.getAllUsers = async (req, res) => {
             approved,
             passportURL,
             avatar,
+            amount
           }
         }
       )
@@ -58,6 +60,7 @@ exports.getUserById = async (req, res) => {
       approved,
       passportURL,
       avatar,
+      amount
     } = await Users.findOne({
       _id,
     })
@@ -72,6 +75,7 @@ exports.getUserById = async (req, res) => {
       approved,
       passportURL,
       avatar,
+      amount
     })
   } catch (err) {
     return res
@@ -161,6 +165,7 @@ exports.updateUser = async (req, res) => {
       approved: user.approved,
       passportURL: user.passportURL,
       avatar: user.avatar,
+      amount:user.amount,
     })
   } catch (err) {
     return res

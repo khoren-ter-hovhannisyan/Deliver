@@ -18,6 +18,7 @@ exports.getAllCompanies = async (req, res) => {
           name,
           approved,
           avatar,
+          amount,
         }) => {
           return {
             id: _id,
@@ -29,6 +30,7 @@ exports.getAllCompanies = async (req, res) => {
             activity,
             approved,
             avatar,
+            amount
           }
         }
       )
@@ -53,8 +55,10 @@ exports.getCompanyById = async (req, res) => {
       phone: company.phone,
       taxNumber: company.taxNumber,
       address: company.address,
+      approved: company.approved,
       activity: company.activity,
       avatar: company.avatar,
+      amount:company.amount,
     })
   } catch (err) {
     return res
@@ -150,6 +154,7 @@ exports.updateCompany = async (req, res) => {
       activity: company.activity,
       approved: company.approved,
       avatar: company.avatar,
+      amount:company.amount,
     })
   } catch (err) {
     return res
