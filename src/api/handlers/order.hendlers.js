@@ -4,13 +4,14 @@ const Order = require('../models/order.model')
 const sendEmail = require('../../services/sendEmail')
 
 exports.createOrder = (req, res) => {
+    
   const { companyId, order } = req.body
 
   const newOrder = new Order({
     ...order,
     companyId,
   })
-
+  
   newOrder.save((err, newOrder) => {
     if (err) {
       return res.status(404).send({
@@ -31,13 +32,15 @@ exports.createOrder = (req, res) => {
           order_start_time: newOrder.order_start_time,
           order_end_time: newOrder.order_end_time,
           comment: newOrder.comment,
-          icon: orders[i].icon,
+          icon: newOrder.icon,
           company_name: company.name,
           company_phone: company.phone,
           company_email: company.email,
         })
       })
-      .catch(err => {
+        .catch(err => {
+          console.log(err);
+          
         return res.status(500).send({
           message: 'Something went wrong, try later',
         })
