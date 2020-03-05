@@ -54,9 +54,11 @@ io.on('connection', socket => {
       email: accountData.data.email
     })
     if (user) {
+      console.log(user)
       socket.broadcast.emit('update_user_list', user)
     }
     else if (company) {
+      console.log(company)
       socket.broadcast.emit('update_company_list', company)
     }
     else {
