@@ -2,6 +2,7 @@ const Company = require('../models/company.model')
 const Users = require('../models/users.model')
 const Order = require('../models/order.model')
 const sendEmail = require('../../services/sendEmail')
+const moment = require('moment')
 
 exports.createOrder = (req, res) => {
   const { companyId, order } = req.body
@@ -9,6 +10,7 @@ exports.createOrder = (req, res) => {
   const newOrder = new Order({
     ...order,
     companyId,
+    order_create_time:moment().format('LLL'),
   })
 
   newOrder

@@ -19,11 +19,10 @@ const orderSchema = new Schema({
   },
   order_create_time: {
     type: Date,
-    default: Date.now,
   },
   order_start_time: {
     type: Date,
-    default: Date.now,
+    required:true,
   },
   order_end_time: {
     type: Date,
