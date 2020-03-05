@@ -10,7 +10,6 @@ exports.createOrder = (req, res) => {
   const newOrder = new Order({
     ...order,
     companyId,
-    order_create_time:moment().format('LLL'),
   })
 
   newOrder
@@ -24,12 +23,10 @@ exports.createOrder = (req, res) => {
       return res.status(201).send({ message: 'Order created' })
     })
     .catch(err => {
-      return res
-        .status(500)
-        .send({
-          message: 'Something went wrong, try again in a few minutes',
-          err,
-        })
+      return res.status(500).send({
+        message: 'Something went wrong, try again in a few minutes',
+        err,
+      })
     })
 }
 
@@ -46,9 +43,9 @@ exports.getAllActiveOrder = async (req, res) => {
         order_description: orders[i].order_description,
         take_adress: orders[i].take_adress,
         deliver_address: orders[i].deliver_address,
-        order_create_time: orders[i].order_create_time,
-        order_start_time: orders[i].order_start_time,
-        order_end_time: orders[i].order_end_time,
+        order_create_time: moment(orders[i].order_create_time).format('LLL'),
+        order_start_time: moment(orders[i].order_start_time).format('LLL'),
+        order_end_time: moment(orders[i].order_end_time).format('LLL'),
         comment: orders[i].comment,
         company_name: company.name,
         company_phone: company.phone,
