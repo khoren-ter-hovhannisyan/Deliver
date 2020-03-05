@@ -54,48 +54,19 @@ io.on('connection', socket => {
       email: accountData.data.email
     })
     if (user) {
-      console.log('kkk', user);
       socket.broadcast.emit('update_user_list', user)
     }
     else if (company) {
-      console.log('))))', company);
-      socket.broadcast.emit('update_user_list', company)
+      socket.broadcast.emit('update_company_list', company)
     }
     else {
       return res.status(500).send({
         message: 'Something went wrong try later',
       })
     }
-
-
-
-
-    //   .then((data) => {
-    //   socket.broadcast.emit('update_user_list', data)
-    // }).catch(e => {
-    //   return res.status(500).send({
-    //     message: 'Something went wrong try later',
-    //     err,
-    //   })
-    // })
-
-
-
   })
   socket.on('delete_user', () => {
     socket.broadcast.emit('deleted_user', { data: 'User has been deleted, please refresh' })
-  })
-  socket.on('new_company', companyData => {
-    Company.findOne({
-      email: companyData.data.email
-    }).then((data) => {
-      socket.broadcast.emit('update_company_list', data)
-    }).catch(err => {
-      return res.status(500).send({
-        message: 'Something went wrong try later',
-        err,
-      })
-    })
   })
   socket.on('delete_company', () => {
     socket.broadcast.emit('deleted_company', { data: 'Company has been deleted, please refresh' })
