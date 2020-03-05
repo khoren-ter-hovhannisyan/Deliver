@@ -22,12 +22,12 @@ exports.createOrder = (req, res) => {
       }
       return res.status(201).send({ message: 'Order created' })
     })
-    .catch(err => {
-      return res.status(500).send({
-        message: 'Something went wrong, try again in a few minutes',
-        err,
-      })
-    })
+    // .catch(err => {
+    //   return res.status(500).send({
+    //     message: 'Something went wrong, try again in a few minutes',
+    //     err,
+    //   })
+    // })
 }
 
 exports.getAllActiveOrder = async (req, res) => {
