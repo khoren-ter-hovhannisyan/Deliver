@@ -52,7 +52,7 @@ const companySchema = new Schema({
   },
   created_time: {
     type: Date,
-    default: Date.now()
+    default: Date.now
   }
 })
 

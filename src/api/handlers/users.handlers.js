@@ -70,7 +70,7 @@ exports.getUserById = async (req, res) => {
       avatar: user.avatar,
       amount: user.amout,
       rating: user.rating,
-      createdTime: user.createdTime,
+      createdTime: Data.parse(user.createdTime),
     })
   } catch (err) {
     return res.status(500).send({

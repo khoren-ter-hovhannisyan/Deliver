@@ -62,7 +62,7 @@ exports.getCompanyById = async (req, res) => {
       activity: company.activity,
       avatar: company.avatar,
       amount: company.amount,
-      createdTime: company.createdTime,
+      createdTime: Data.parse(company.createdTime),
     })
   } catch (err) {
     return res.status(500).send({
