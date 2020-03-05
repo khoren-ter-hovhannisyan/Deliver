@@ -12,22 +12,15 @@ exports.createOrder = (req, res) => {
     companyId,
   })
 
-  newOrder
-    .save((err, newOrder) => {
-      if (err) {
-        return res.status(404).send({
-          message: 'Something went wrong, try again in a few minutes',
-          err,
-        })
-      }
-      return res.status(201).send({ message: 'Order created' })
-    })
-    // .catch(err => {
-    //   return res.status(500).send({
-    //     message: 'Something went wrong, try again in a few minutes',
-    //     err,
-    //   })
-    // })
+  newOrder.save((err, newOrder) => {
+    if (err) {
+      return res.status(404).send({
+        message: 'Something went wrong, try again in a few minutes',
+        err,
+      })
+    }
+    return res.status(201).send({ message: 'Order created' })
+  })
 }
 
 exports.getAllActiveOrder = async (req, res) => {
@@ -73,9 +66,9 @@ exports.getCompanyOrders = async (req, res) => {
         order_description: orders[i].order_description,
         take_adress: orders[i].take_adress,
         deliver_address: orders[i].deliver_address,
-        order_create_time: orders[i].order_create_time,
-        order_start_time: orders[i].order_start_time,
-        order_end_time: orders[i].order_end_time,
+        order_create_time: moment(orders[i].order_create_time).format('LLL'),
+        order_start_time: moment(orders[i].order_start_time).format('LLL'),
+        order_end_time: moment(orders[i].order_end_time).format('LLL'),
         comment: orders[i].comment,
         user_name: user ? user.name : undefined,
         user_phone: user ? user.phone : undefined,
@@ -136,9 +129,9 @@ exports.updateOrder = async (req, res) => {
       order_description: order.order_description,
       take_adress: order.take_adress,
       deliver_address: order.deliver_address,
-      order_create_time: order.order_create_time,
-      order_start_time: order.order_start_time,
-      order_end_time: order.order_end_time,
+      order_create_time: moment(order.order_create_time).format('LLL'),
+      order_start_time: moment(order.order_start_time).format('LLL'),
+      order_end_time: moment(order.order_end_time).format('LLL'),
       comment: order.comment,
       company_name: company.name,
       company_phone: company.phone,
