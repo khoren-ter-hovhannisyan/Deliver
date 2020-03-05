@@ -46,17 +46,41 @@ mongoose.connect(
 
 io.on('connection', socket => {
   console.log('Socket magic is happening', socket.id)
-  socket.on('new_user', userData => {
-    User.findOne({
-      email: userData.data.email
-    }).then((data) => {
-      socket.broadcast.emit('update_user_list', data)
-    }).catch(e => {
+  socket.on('new_account', async (accountData) => {
+    const user = await User.findOne({
+      email: accountData.data.email
+    })
+    const company = await Company.findOne({
+      email: accountData.data.email
+    })
+    if (user) {
+      console.log('kkk', user);
+      socket.broadcast.emit('update_user_list', user)
+    }
+    else if (company) {
+      console.log('))))', company);
+      socket.broadcast.emit('update_user_list', company)
+    }
+    else {
       return res.status(500).send({
         message: 'Something went wrong try later',
-        err,
       })
-    })
+    }
+
+
+
+
+    //   .then((data) => {
+    //   socket.broadcast.emit('update_user_list', data)
+    // }).catch(e => {
+    //   return res.status(500).send({
+    //     message: 'Something went wrong try later',
+    //     err,
+    //   })
+    // })
+
+
+
   })
   socket.on('delete_user', () => {
     socket.broadcast.emit('deleted_user', { data: 'User has been deleted, please refresh' })
