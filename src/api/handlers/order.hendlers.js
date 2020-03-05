@@ -48,7 +48,6 @@ exports.getAllActiveOrder = async (req, res) => {
         order_start_time: orders[i].order_start_time,
         order_end_time: orders[i].order_end_time,
         comment: orders[i].comment,
-        icon: orders[i].icon,
         company_name: company.name,
         company_phone: company.phone,
         company_email: company.email,
@@ -64,12 +63,6 @@ exports.getAllActiveOrder = async (req, res) => {
 exports.getCompanyOrders = async (req, res) => {
   const _id = req.params.id
   try {
-    const company = await Company.findOne({ _id })
-    if (!company) {
-      res.status(400).send({
-        message: 'There is no company',
-      })
-    }
     const orders = await Order.find({ companyId: _id })
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
@@ -85,10 +78,6 @@ exports.getCompanyOrders = async (req, res) => {
         order_start_time: orders[i].order_start_time,
         order_end_time: orders[i].order_end_time,
         comment: orders[i].comment,
-        icon: orders[i].icon,
-        company_name: company.name,
-        company_phone: company.phone,
-        company_email: company.email,
         user_name: user ? user.name : undefined,
         user_phone: user ? user.phone : undefined,
         user_email: user ? user.email : undefined,
@@ -152,7 +141,6 @@ exports.updateOrder = async (req, res) => {
       order_start_time: order.order_start_time,
       order_end_time: order.order_end_time,
       comment: order.comment,
-      icon: orders[i].icon,
       company_name: company.name,
       company_phone: company.phone,
       company_email: company.email,

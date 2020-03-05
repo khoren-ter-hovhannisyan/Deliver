@@ -43,11 +43,6 @@ const orderSchema = new Schema({
   userId: {
     type: String,
   },
-  icon: {
-    type: String,
-    default:
-      'http://res.cloudinary.com/dfeoo5iog/image/upload/v1583318024/sadrnalu7ghnqmgymhca.jpg',
-  },
 })
 
 module.exports = model('Order', orderSchema)
