@@ -40,7 +40,7 @@ const companySchema = new Schema({
   },
   approved: {
     type: String,
-    default: 'panding',
+    default: 'pending',
   },
   avatar: {
     type: String,
