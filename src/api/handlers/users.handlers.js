@@ -38,7 +38,7 @@ exports.getAllUsers = async (req, res) => {
             avatar,
             amount,
             rating,
-            createdTime:Date.parse(createdTime),
+            createdTime: Date.parse(createdTime),
           }
         }
       )
@@ -70,7 +70,7 @@ exports.getUserById = async (req, res) => {
       avatar: user.avatar,
       amount: user.amout,
       rating: user.rating,
-      createdTime: Data.parse(user.createdTime),
+      createdTime: Date.parse(user.createdTime),
     })
   } catch (err) {
     return res.status(500).send({

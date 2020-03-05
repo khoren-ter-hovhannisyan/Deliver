@@ -32,7 +32,7 @@ exports.getAllCompanies = async (req, res) => {
             approved,
             avatar,
             amount,
-            createdTime:Data.parse(createdTime),
+            createdTime: Date.parse(createdTime),
           }
         }
       )
@@ -62,7 +62,7 @@ exports.getCompanyById = async (req, res) => {
       activity: company.activity,
       avatar: company.avatar,
       amount: company.amount,
-      createdTime: Data.parse(company.createdTime),
+      createdTime: Date.parse(company.createdTime),
     })
   } catch (err) {
     return res.status(500).send({
@@ -113,7 +113,7 @@ exports.createCompany = (req, res, next) => {
       }
     })
     .catch(err => {
-      return res.status(500).send({message:"Something went bad try later"})
+      return res.status(500).send({ message: 'Something went bad try later' })
     })
 }
 
