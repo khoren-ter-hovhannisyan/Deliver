@@ -8,6 +8,8 @@ const userRouter = require('./api/routes/users.routes')
 const loginRouter = require('./api/routes/login.routes')
 const orderRouter = require('./api/routes/order.routes')
 const cors = require('cors')
+const USERS = require('./api/models/users.model')
+const COMPANIES = require('./api/models/company.model')
 
 const socket = require('socket.io')
 
@@ -30,8 +32,7 @@ app.use(orderRouter)
 const io = socket(server)
 
 mongoose.connect(
-  config.db.url,
-  {
+  config.db.url, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
@@ -45,11 +46,22 @@ mongoose.connect(
 io.on('connection', socket => {
   console.log('Socket magic is happening', socket.id)
   socket.on('new_user', userData => {
-    socket.broadcast.emit('update_user_list', userData)
+    USERS.find({
+      email: userData.email
+    }).then((data) => {
+      socket.broadcast.emit('update_user_list', data)
+      console.log('---------------', data)
+    })
+
     console.log('getting all users', userData)
   })
   socket.on('new_company', companyData => {
-    socket.broadcast.emit('update_company_list', companyData)
+    COMPANIES.find({
+      email: companyData.email
+    }).then((data) => {
+      socket.broadcast.emit('update_company_list', data)
+      console.log('+++++++++++', data)
+    })
   })
   socket.on('new_order', orderData => {
     socket.broadcast.emit('update_order_list', orderData)
