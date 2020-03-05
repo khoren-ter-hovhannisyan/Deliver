@@ -33,12 +33,13 @@ app.use(orderRouter)
 const io = socket(server)
 
 mongoose.connect(
-  config.db.url, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  useCreateIndex: true,
-  useFindAndModify: false,
-},
+  config.db.url,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+    useFindAndModify: false,
+  },
   () => {
     server
   }
@@ -46,46 +47,52 @@ mongoose.connect(
 
 io.on('connection', socket => {
   console.log('Socket magic is happening', socket.id)
-  socket.on('new_account', async (accountData) => {
+  socket.on('new_account', async accountData => {
     const user = await User.findOne({
-      email: accountData.data.email
+      email: accountData.data.email,
     })
     const company = await Company.findOne({
-      email: accountData.data.email
+      email: accountData.data.email,
     })
     if (user) {
       console.log(user)
-      socket.broadcast.emit('update_user_list', user)
-    }
-    else if (company) {
+      socket.broadcast.emit('update_user_list', { id: user._id })
+    } else if (company) {
       console.log(company)
-      socket.broadcast.emit('update_company_list', company)
-    }
-    else {
+      socket.broadcast.emit('update_company_list', { id: company._id })
+    } else {
       return res.status(500).send({
         message: 'Something went wrong try later',
       })
     }
   })
   socket.on('delete_user', () => {
-    socket.broadcast.emit('deleted_user', { data: 'User has been deleted, please refresh' })
+    socket.broadcast.emit('deleted_user', {
+      data: 'User has been deleted, please refresh',
+    })
   })
   socket.on('delete_company', () => {
-    socket.broadcast.emit('deleted_company', { data: 'Company has been deleted, please refresh' })
+    socket.broadcast.emit('deleted_company', {
+      data: 'Company has been deleted, please refresh',
+    })
   })
   socket.on('new_order', orderData => {
     Order.findOne({
-      companyId: orderData.data.companyId
-    }).then((data) => {
-      socket.broadcast.emit('update_order_list', data)
-    }).catch(err => {
-      return res.status(500).send({
-        message: 'Something went wrong try later',
-        err,
-      })
+      companyId: orderData.data.companyId,
     })
+      .then(data => {
+        socket.broadcast.emit('update_order_list', data)
+      })
+      .catch(err => {
+        return res.status(500).send({
+          message: 'Something went wrong try later',
+          err,
+        })
+      })
   })
   socket.on('delete_order', () => {
-    socket.broadcast.emit('deleted_order', { data: 'Order has been deleted, please refresh' })
+    socket.broadcast.emit('deleted_order', {
+      data: 'Order has been deleted, please refresh',
+    })
   })
 })
