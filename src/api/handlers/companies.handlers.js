@@ -32,7 +32,7 @@ exports.getAllCompanies = async (req, res) => {
             approved,
             avatar,
             amount,
-            createdTime,
+            createdTime:Data.parse(createdTime),
           }
         }
       )

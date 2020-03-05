@@ -38,7 +38,7 @@ exports.getAllUsers = async (req, res) => {
             avatar,
             amount,
             rating,
-            createdTime,
+            createdTime:Date.parse(createdTime),
           }
         }
       )
