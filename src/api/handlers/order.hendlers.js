@@ -4,15 +4,18 @@ const Order = require('../models/order.model')
 const sendEmail = require('../../services/sendEmail')
 const moment = require('moment')
 
-exports.createOrder = (req, res) => {
+exports.createOrder = async (req, res) => {
   const { companyId, order } = req.body
-
+  const company = await Company.findOne({ _id: companyId })
+  if (order.points > company.amount) {
+    return res.status(400).send({message:"You have not enough money to create order"})
+  }
   const newOrder = new Order({
     ...order,
     companyId,
   })
 
-  newOrder.save((err, newOrder) => {
+  newOrder.save(err => {
     if (err) {
       return res.status(404).send({
         message: 'Something went wrong, try again in a few minutes',
@@ -103,12 +106,8 @@ exports.updateOrder = async (req, res) => {
   try {
     const order = await Order.findByIdAndUpdate(
       _id,
-      {
-        ...req.body,
-      },
-      {
-        new: true,
-      }
+      { ...req.body },
+      { new: true }
     )
     if (!order) {
       res.status(400).send({
@@ -120,6 +119,18 @@ exports.updateOrder = async (req, res) => {
     if (order.state === 'pending') {
       sendEmail.sendAcceptOrderEmail(company, user)
     } else if (order.state === 'done') {
+      await Company.findByIdAndUpdate(
+        company._id,
+        { amount: company.amount - order.points },
+        { new: true }
+      )
+      await user.findByIdAndUpdate(
+        user._id,
+        {
+          amount: user.amount + order.amount,
+        },
+        { new: true }
+      )
       sendEmail.sendDoneOrderEmail(company, user)
     }
     res.status(201).send({

@@ -57,7 +57,7 @@ exports.getUserById = async (req, res) => {
     const user = await Users.findOne({
       _id,
     })
-    res.json({
+    res.status(200).send({
       id: _id,
       name: user.name,
       lastName: user.name,
@@ -81,7 +81,6 @@ exports.getUserById = async (req, res) => {
 }
 
 exports.createUser = (req, res) => {
-  console.log(req.body)
   Company.find({
     email: req.body.email,
   }).then(company => {

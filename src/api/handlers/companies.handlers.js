@@ -113,8 +113,7 @@ exports.createCompany = (req, res, next) => {
       }
     })
     .catch(err => {
-      console.log(err)
-      return res.status(400).send('')
+      return res.status(500).send({message:"Something went bad try later"})
     })
 }
 
@@ -125,7 +124,7 @@ exports.delCompany = async (req, res) => {
       _id,
     })
     res.status(201).send({
-      msg: 'company is deleted',
+      message: 'company is deleted',
     })
   } catch (err) {
     res.status(404).send(err)
