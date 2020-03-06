@@ -8,7 +8,7 @@ exports.getAllUsers = async (req, res) => {
     const users = await Users.find({
       type: 'user',
     })
-    res.json(
+    res.status(200).send(
       users.map(
         ({
           _id,
@@ -45,7 +45,7 @@ exports.getAllUsers = async (req, res) => {
     )
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wron try later',
+      message: 'Something went wrong, try later',
       err,
     })
   }
@@ -74,7 +74,7 @@ exports.getUserById = async (req, res) => {
     })
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wron try later',
+      message: 'Something went wrong, try later',
       err,
     })
   }
@@ -85,7 +85,7 @@ exports.createUser = (req, res) => {
     email: req.body.email,
   }).then(company => {
     if (company.length >= 1) {
-      return res.status(409).send({
+      return res.status(406).send({
         message: 'Mail exists',
       })
     } else {
@@ -103,7 +103,9 @@ exports.createUser = (req, res) => {
 
           user.save(function(err, user) {
             if (err) {
-              return res.status(500).send(err)
+              return res
+                .status(500)
+                .send({ message: 'Something went wrong, try later', err })
             }
             sendEmail.sendInfoSignUp(user)
             sendEmail.sendWaitEmailForReceiver(user)
@@ -123,12 +125,12 @@ exports.delUser = async (req, res) => {
     await Users.findByIdAndRemove({
       _id,
     })
-    res.status(201).send({
+    res.status(202).send({
       message: 'Deliverer deleted',
     })
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wron try later',
+      message: 'Something went wrong, try later',
       err,
     })
   }
@@ -166,7 +168,7 @@ exports.updateUser = async (req, res) => {
     })
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wron try later',
+      message: 'Something went wrong, try later',
       err,
     })
   }

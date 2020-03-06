@@ -8,7 +8,7 @@ exports.login = (req, res, next) => {
     if (!company) {
       Users.findOne({ email: req.body.email }).then(user => {
         if (!user) {
-          return res.status(401).json({
+          return res.status(401).send({
             message: 'Auth failed',
           })
         }
@@ -31,7 +31,7 @@ exports.login = (req, res, next) => {
             )
             return res.status(200).send({
               id: user._id,
-              type:user.type,
+              type: user.type,
               token: token,
               message: 'Auth successful',
             })
@@ -62,7 +62,7 @@ exports.login = (req, res, next) => {
         )
         return res.status(200).send({
           id: company._id,
-          type:company.type,
+          type: company.type,
           token: token,
           message: 'Auth successful',
         })

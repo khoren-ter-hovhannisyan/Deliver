@@ -8,7 +8,9 @@ exports.createOrder = async (req, res) => {
   const { companyId, order } = req.body
   const company = await Company.findOne({ _id: companyId })
   if (order.points > company.amount) {
-    return res.status(400).send({message:"You have not enough money to create order"})
+    return res
+      .status(400)
+      .send({ message: "You don't have enough money to create order" })
   }
   const newOrder = new Order({
     ...order,
@@ -18,7 +20,7 @@ exports.createOrder = async (req, res) => {
   newOrder.save(err => {
     if (err) {
       return res.status(404).send({
-        message: 'Something went wrong, try again in a few minutes',
+        message: 'Something went wrong, try later',
         err,
       })
     }
@@ -49,9 +51,9 @@ exports.getAllActiveOrder = async (req, res) => {
       }
       ordersOutput.push(order)
     }
-    return res.status(201).send(ordersOutput)
+    return res.status(200).send(ordersOutput)
   } catch (err) {
-    return res.status(500).send({ message: 'Something went wron try later' })
+    return res.status(500).send({ message: 'Something went wrong, try later' })
   }
 }
 
@@ -79,11 +81,11 @@ exports.getCompanyOrders = async (req, res) => {
       }
       ordersOutput.push(order)
     }
-    return res.status(201).send(ordersOutput)
+    return res.status(200).send(ordersOutput)
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wron try later', err })
+      .send({ message: 'Something went wrong, try later', err })
   }
 }
 
@@ -93,11 +95,11 @@ exports.delOrder = async (req, res) => {
     await Order.findByIdAndRemove({
       _id,
     })
-    res.status(201).send({
+    res.status(202).send({
       message: 'Order deleted',
     })
   } catch (err) {
-    res.status(404).send(err)
+    res.status(404).send({ message: 'Something went wrong, try later', err })
   }
 }
 
@@ -111,7 +113,7 @@ exports.updateOrder = async (req, res) => {
     )
     if (!order) {
       res.status(400).send({
-        message: 'There is not order like that',
+        message: 'There is no such order',
       })
     }
     const company = await Company.findOne({ _id: order.companyId })
@@ -154,7 +156,7 @@ exports.updateOrder = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wron try later', err })
+      .send({ message: 'Something went wrong, try later', err })
   }
 }
 
@@ -164,7 +166,7 @@ exports.getUserOrders = async (req, res) => {
     const user = await Users.findOne({ _id })
     if (!user) {
       res.status(400).send({
-        message: 'There is no user',
+        message: 'There is no such user',
       })
     }
     const orders = await Order.find({ userId: _id })
@@ -192,10 +194,10 @@ exports.getUserOrders = async (req, res) => {
       }
       ordersOutput.push(order)
     }
-    return res.status(201).send(ordersOutput)
+    return res.status(200).send(ordersOutput)
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wron try later', err })
+      .send({ message: 'Something went wrong, try later', err })
   }
 }

@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({})
-    res.json(
+    res.status(200).send(
       companies.map(
         ({
           _id,
@@ -39,7 +39,7 @@ exports.getAllCompanies = async (req, res) => {
     )
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wron try later',
+      message: 'Something went wrong, try later',
       err,
     })
   }
@@ -66,7 +66,7 @@ exports.getCompanyById = async (req, res) => {
     })
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wron try later',
+      message: 'Something went wrong, try later',
       err,
     })
   }
@@ -79,14 +79,14 @@ exports.createCompany = (req, res, next) => {
   })
     .then(user => {
       if (user) {
-        return res.status(409).json({
+        return res.status(406).send({
           message: 'Mail exists',
         })
       } else {
         bcrypt.hash(req.body.password, 10, (err, hash) => {
           if (err) {
-            return res.status(500).json({
-              error: 'Something went bad',
+            return res.status(500).send({
+              error: 'Something went wrong, try later',
             })
           } else {
             const company = new Company({
@@ -97,8 +97,8 @@ exports.createCompany = (req, res, next) => {
 
             company.save(function(err, company) {
               if (err) {
-                return res.status(400).json({
-                  error: 'Some input field is wrong or is not exist',
+                return res.status(400).send({
+                  error: 'Some input fields are wrong or empty',
                   message: err,
                 })
               }
@@ -113,7 +113,9 @@ exports.createCompany = (req, res, next) => {
       }
     })
     .catch(err => {
-      return res.status(500).send({ message: 'Something went bad try later' })
+      return res
+        .status(500)
+        .send({ message: 'Something went wrong, try later' })
     })
 }
 
@@ -123,11 +125,11 @@ exports.delCompany = async (req, res) => {
     await Company.findByIdAndRemove({
       _id,
     })
-    res.status(201).send({
-      message: 'company is deleted',
+    res.status(202).send({
+      message: 'Company is deleted',
     })
   } catch (err) {
-    res.status(404).send(err)
+    res.status(500).send({ message: 'Something went wrong, try later', err })
   }
 }
 
@@ -162,7 +164,7 @@ exports.updateCompany = async (req, res) => {
     })
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wron try later',
+      message: 'Something went wrong, try later',
       err,
     })
   }
