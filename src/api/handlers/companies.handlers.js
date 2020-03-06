@@ -72,52 +72,53 @@ exports.getCompanyById = async (req, res) => {
   }
 }
 
-exports.createCompany = (req, res) => {
-  Users.findOne({
-    email: req.body.email,
-  })
-    .then(user => {
-      if (user) {
-        return res.status(406).send({
-          message: 'Mail exists',
-        })
-      } else {
-        bcrypt.hash(req.body.password, 10, (err, hash) => {
-          if (err) {
-            return res.status(500).send({
-              error: 'Something went wrong, try later',
-            })
-          } else {
-            const company = new Company({
-              ...req.body,
-              type: 'company',
-              password: hash,
-            })
+exports.createCompany = async (req, res) => {
+  try {
+    const user = findOne({ email: req.body.email.toLowerCase() })
+    const company = findOne({ email: req.body.email.toLowerCase() })
+    if (!user && !company) {
+      bcrypt.hash(req.body.password, 10, (err, hash) => {
+        if (err) {
+          return res.status(500).send({
+            error: 'Something went wrong, try later',
+          })
+        } else {
+          const company = new Company({
+            ...req.body,
+            email: req.body.email.toLowerCase(),
+            type: 'company',
+            password: hash,
+          })
 
-            company.save(function(err, company) {
-              if (err) {
-                console.log(err);
-                
-                return res.status(400).send({
-                  message: 'Some input fields are wrong or empty',
-                  error: err,
-                })
-              }
-              sendEmail.sendInfoSignUp(company)
-              sendEmail.sendWaitEmailForReceiver(company)
-              res.status(201).send({
-                message: 'Company created',
+          company.save(function (err, company) {
+            if (err) {
+              console.log(err)
+
+              return res.status(400).send({
+                message: 'Some input fields are wrong or empty',
+                error: err,
               })
+            }
+            sendEmail.sendInfoSignUp(company)
+            sendEmail.sendWaitEmailForReceiver(company)
+            res.status(201).send({
+              message: 'Company created',
             })
-          }
-        })
-      }
-    })
-    .catch(err => {
-      return res
-        .status(500)
-        .send({ message: 'Something went wrong, try later' })
-    })
+          })
+        }
+      })
+    } else {
+      return res.status(406).send({
+        message: 'Email already exists',
+      })
+    }
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: 'Something went wrong, try later', err })
+  }
+
+  
 }
 
 exports.delCompany = async (req, res) => {

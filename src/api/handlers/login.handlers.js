@@ -3,10 +3,10 @@ const Users = require('../models/users.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-exports.login = async (req, res, next) => {
+exports.login = async (req, res) => {
   try {
-    const company = await Company.findOne({ email: req.body.email })
-    const user = await Users.findOne({ email: req.body.email })
+    const company = await Company.findOne({ email: req.body.email.toLowerCase() })
+    const user = await Users.findOne({ email: req.body.email.toLowerCase() , type: 'user'})
     console.log(company);
     console.log(user);
     
@@ -108,7 +108,7 @@ exports.login = async (req, res, next) => {
   }
 }
 exports.loginAdmin = (req, res) => {
-  Users.findOne({ email: req.body.email, type: 'admin' })
+  Users.findOne({ email: req.body.email.toLowerCase(), type: 'admin' })
     .then(user => {
       if (!user) {
         return res.status(401).send({

@@ -80,23 +80,23 @@ exports.getUserById = async (req, res) => {
   }
 }
 
-exports.createUser = (req, res) => {
-  Company.find({
-    email: req.body.email,
-  }).then(company => {
-    if (company.length >= 1) {
-      return res.status(406).send({
-        message: 'Mail exists',
-      })
-    } else {
+exports.createUser = async (req, res) => {
+  try {
+    const company = await Company.findOne({
+      email: req.body.email.toLowerCase(),
+    })
+    const user = await Users.findOne({ email: req.body.email.toLowerCase() })
+    if (!company && !user) {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
           return status(500).send({
+            message: 'Something went wrong, try later',
             error: err,
           })
         } else {
           const user = new Users({
             ...req.body,
+            email: req.body.email.toLowerCase(),
             type: 'user',
             password: hash,
           })
@@ -115,8 +115,16 @@ exports.createUser = (req, res) => {
           })
         }
       })
+    } else {
+      return res.status(406).send({
+        message: 'Email already exists',
+      })
     }
-  })
+  } catch (err) {
+    return res
+      .status(500)
+      .send({ message: 'Something went wrong, try later', err })
+  }
 }
 
 exports.delUser = async (req, res) => {
