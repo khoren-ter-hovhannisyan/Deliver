@@ -52,7 +52,7 @@ exports.getCompanyById = async (req, res) => {
       _id,
     })
     res.status(200).send({
-      id: _id,
+      id: company_id,
       name: company.name,
       email: company.email,
       phone: company.phone,
@@ -151,7 +151,7 @@ exports.updateCompany = async (req, res) => {
       sendEmail.sendDeclineEmail(company)
     }
     res.status(201).send({
-      id: _id,
+      id: company._id,
       name: company.name,
       email: company.email,
       phone: company.phone,
@@ -161,6 +161,7 @@ exports.updateCompany = async (req, res) => {
       approved: company.approved,
       avatar: company.avatar,
       amount: company.amount,
+      createdTime: Date.parse(company.createdTime),
     })
   } catch (err) {
     return res.status(500).send({

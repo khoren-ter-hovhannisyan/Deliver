@@ -55,22 +55,34 @@ io.on('connection', socket => {
       email: accountData.data.email,
     })
     if (user) {
-      console.log(user)
-      console.log(user, '*******************')
-
       socket.broadcast.emit('update_user_list', {
         id: user._id,
+        name: user.name,
+        lastName: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        type: user.type,
+        approved: user.approved,
+        passportURL: user.passportURL,
+        avatar: user.avatar,
+        amount: user.amout,
+        rating: user.rating,
         createdTime: Date.parse(user.createdTime),
-        ...user,
       })
     } else if (company) {
-      console.log(company)
-      console.log(company, '***************')
-
       socket.broadcast.emit('update_company_list', {
         id: company._id,
+        name: company.name,
+        email: company.email,
+        phone: company.phone,
+        taxNumber: company.taxNumber,
+        address: company.address,
+        approved: company.approved,
+        activity: company.activity,
+        avatar: company.avatar,
+        amount: company.amount,
         createdTime: Date.parse(company.createdTime),
-        ...compny,
       })
     } else {
       return res.status(500).send({

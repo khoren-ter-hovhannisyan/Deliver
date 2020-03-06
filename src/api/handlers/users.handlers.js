@@ -58,7 +58,7 @@ exports.getUserById = async (req, res) => {
       _id,
     })
     res.status(200).send({
-      id: _id,
+      id: user._id,
       name: user.name,
       lastName: user.name,
       email: user.email,
@@ -165,6 +165,7 @@ exports.updateUser = async (req, res) => {
       avatar: user.avatar,
       amount: user.amount,
       rating: user.rating,
+      createdTime: Date.parse(user.createdTime),
     })
   } catch (err) {
     return res.status(500).send({
