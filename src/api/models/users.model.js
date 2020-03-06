@@ -32,7 +32,7 @@ const usersSchema = new Schema({
   },
   approved: {
     type: String,
-    default: 'panding',
+    default: 'pending',
   },
   passportURL: {
     type: String,
