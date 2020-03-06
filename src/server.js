@@ -59,7 +59,7 @@ io.on('connection', socket => {
       console.log(user, '*******************')
 
       socket.broadcast.emit('update_user_list', {
-        id: user_id,
+        id: user._id,
         createdTime: Date.parse(user.createdTime),
         ...user,
       })
@@ -68,7 +68,7 @@ io.on('connection', socket => {
       console.log(company, '***************')
 
       socket.broadcast.emit('update_company_list', {
-        id: company_id,
+        id: company._id,
         createdTime: Date.parse(company.createdTime),
         ...compny,
       })
