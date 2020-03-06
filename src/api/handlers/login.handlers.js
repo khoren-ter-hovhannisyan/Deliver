@@ -15,12 +15,12 @@ exports.login = async (req, res, next) => {
       console.log(company, company.approved);
       
       if (company.approved === 'pending') {
-        return res.status(401).send({
+        return res.status(203).send({
           message:
             'Our admin team is reviewing your sign up request. Please wait for the response!',
         })
       } else if (company.approved === 'declined') {
-        return res.status(401).send({
+        return res.status(203).send({
           message:
             'Your sign-up request has unfortunately been declined. Please contact our administration for more information.',
         })
@@ -57,12 +57,12 @@ exports.login = async (req, res, next) => {
       console.log(user, user.approved);
       
       if (user.approved === 'pending') {
-        return res.status(401).send({
+        return res.status(203).send({
           message:
             'Our admin team is reviewing your sign up request. Please wait for the response!',
         })
       } else if (user.approved === 'declined') {
-        return res.status(401).send({
+        return res.status(203).send({
           message:
             'Your sign-up request has unfortunately been declined. Please contact our administration for more information.',
         })
