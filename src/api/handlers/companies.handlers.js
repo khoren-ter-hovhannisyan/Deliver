@@ -72,8 +72,7 @@ exports.getCompanyById = async (req, res) => {
   }
 }
 
-exports.createCompany = (req, res, next) => {
-  console.log(req.body)
+exports.createCompany = (req, res) => {
   Users.findOne({
     email: req.body.email,
   })
@@ -97,9 +96,11 @@ exports.createCompany = (req, res, next) => {
 
             company.save(function(err, company) {
               if (err) {
+                console.log(err);
+                
                 return res.status(400).send({
-                  error: 'Some input fields are wrong or empty',
-                  message: err,
+                  message: 'Some input fields are wrong or empty',
+                  error: err,
                 })
               }
               sendEmail.sendInfoSignUp(company)
