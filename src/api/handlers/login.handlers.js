@@ -5,8 +5,8 @@ const jwt = require('jsonwebtoken')
 
 exports.login = async (req, res, next) => {
   try {
-    const company = Company.findOne({ email: req.body.email })
-    const user = Users.findOne({ email: req.body.email })
+    const company = await Company.findOne({ email: req.body.email })
+    const user = await Users.findOne({ email: req.body.email })
     if (Company) {
       if (company.approved === 'pending') {
         return res.status(401).send({
