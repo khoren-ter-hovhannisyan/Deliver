@@ -54,18 +54,24 @@ io.on('connection', socket => {
     const company = await Company.findOne({
       email: accountData.data.email,
     })
-    console.log('mtav **************')
-
     if (user) {
       console.log(user)
       console.log(user, '*******************')
 
-      socket.broadcast.emit('update_user_list', { id: user._id })
-
-      console.log(user, '----------------')
+      socket.broadcast.emit('update_user_list', {
+        id: user_id,
+        createdTime: Date.parse(user.createdTime),
+        ...user,
+      })
     } else if (company) {
       console.log(company)
-      socket.broadcast.emit('update_company_list', { id: company._id })
+      console.log(company, '***************')
+
+      socket.broadcast.emit('update_company_list', {
+        id: company_id,
+        createdTime: Date.parse(company.createdTime),
+        ...compny,
+      })
     } else {
       return res.status(500).send({
         message: 'Something went wrong try later',
@@ -73,6 +79,8 @@ io.on('connection', socket => {
     }
   })
   socket.on('delete_user', () => {
+    console.log('************************---------------')
+
     socket.broadcast.emit('deleted_user', {
       data: 'User has been deleted, please refresh',
     })
