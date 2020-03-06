@@ -56,7 +56,12 @@ io.on('connection', socket => {
     })
     if (user) {
       console.log(user)
+      console.log(user,"*******************");
+      
       socket.broadcast.emit('update_user_list', { id: user._id })
+      
+      console.log(user,"----------------");
+      
     } else if (company) {
       console.log(company)
       socket.broadcast.emit('update_company_list', { id: company._id })
@@ -96,3 +101,4 @@ io.on('connection', socket => {
     })
   })
 })
+ 
