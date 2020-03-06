@@ -7,7 +7,13 @@ exports.login = async (req, res, next) => {
   try {
     const company = await Company.findOne({ email: req.body.email })
     const user = await Users.findOne({ email: req.body.email })
-    if (Company) {
+    console.log(company);
+    console.log(user);
+    
+    
+    if (company) {
+      console.log(company, company.approved);
+      
       if (company.approved === 'pending') {
         return res.status(401).send({
           message:
@@ -48,6 +54,8 @@ exports.login = async (req, res, next) => {
         })
       })
     } else if (user) {
+      console.log(user, user.approved);
+      
       if (user.approved === 'pending') {
         return res.status(401).send({
           message:
