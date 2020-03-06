@@ -5,15 +5,15 @@ const jwt = require('jsonwebtoken')
 
 exports.login = async (req, res) => {
   try {
-    const company = await Company.findOne({ email: req.body.email.toLowerCase() })
-    const user = await Users.findOne({ email: req.body.email.toLowerCase() , type: 'user'})
-    console.log(company);
-    console.log(user);
-    
-    
+    const company = await Company.findOne({
+      email: req.body.email.toLowerCase(),
+    })
+    const user = await Users.findOne({
+      email: req.body.email.toLowerCase(),
+      type: 'user',
+    })
+
     if (company) {
-      console.log(company, company.approved);
-      
       if (company.approved === 'pending') {
         return res.status(203).send({
           message:
@@ -54,8 +54,6 @@ exports.login = async (req, res) => {
         })
       })
     } else if (user) {
-      console.log(user, user.approved);
-      
       if (user.approved === 'pending') {
         return res.status(203).send({
           message:
@@ -133,9 +131,7 @@ exports.loginAdmin = (req, res) => {
             }
           )
           return res.status(200).send({
-            data: {
-              type: user.type,
-            },
+            type: user.type,
             token: token,
             message: 'Auth successful',
           })
