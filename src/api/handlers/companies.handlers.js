@@ -52,7 +52,7 @@ exports.getCompanyById = async (req, res) => {
       _id,
     })
     res.status(200).send({
-      id: company_id,
+      id: company._id,
       name: company.name,
       email: company.email,
       phone: company.phone,
