@@ -193,10 +193,7 @@ exports.updateCompany = async (req, res) => {
     //       message: 'Auth failed: email or password is incorrect',
     //     })
     //   })
-    }
-
-
-
+    //}
 
     const company = await Company.findByIdAndUpdate(
       _id,

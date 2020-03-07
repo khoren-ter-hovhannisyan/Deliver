@@ -4,7 +4,7 @@ const {
   getCompanyById,
   createCompany,
   delCompany,
-  //updateCompany,
+  updateCompany,
 } = require('../handlers/companies.handlers')
 const checkAuth = require('../middleware/check-auth')
 
@@ -14,6 +14,6 @@ router.get('/companies', getAllCompanies)
 router.get('/companies/:id', getCompanyById)
 router.post('/sign-up-company', createCompany)
 router.delete('/companies/:id', delCompany)
-//router.put('/companies/:id', updateCompany)
+router.put('/companies/:id', updateCompany)
 
 module.exports = router
