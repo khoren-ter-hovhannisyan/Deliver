@@ -152,11 +152,6 @@ exports.updateCompany = async (req, res) => {
       sendEmail.sendDeclineEmail(companyCheck)
     }
 
-    if (req.body.email) {
-      return res.status(400).send({
-        message: 'cant change email',
-      })
-    }
 
     if (req.body.old_password && req.body.new_password) {
       bcrypt.compare(
