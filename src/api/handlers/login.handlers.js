@@ -94,15 +94,12 @@ exports.login = async (req, res) => {
         })
       })
     } else {
-      return res.status(401).send({
-        message: 'Auth failed',
-      })
+      res.statusMessage = 'Current password or email does not match'
+      return res.status(400).end()
     }
   } catch (err) {
-    return res.status(500).send({
-      message: 'Something went wrong, try later',
-      err,
-    })
+    res.statusMessage = 'Something went wrong'
+    return res.status(500).end()
   }
 }
 exports.loginAdmin = (req, res) => {
@@ -147,4 +144,3 @@ exports.loginAdmin = (req, res) => {
       })
     })
 }
-
