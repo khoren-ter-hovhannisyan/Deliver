@@ -147,6 +147,78 @@ exports.delUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   const _id = req.params.id
   try {
+    const userCheck = await Users.findOne({
+      _id,
+    })
+    if (
+      req.body.approved === 'accepted' &&
+      userCheck.approved !== 'accepted'
+    ) {
+      sendEmail.sendAcceptEmail(userCheck)
+    } else if (
+      req.body.approved === 'declined' &&
+      userCheck.approved !== 'declined'
+    ) {
+      sendEmail.sendDeclineEmail(userCheck)
+    }
+
+    if (req.body.email) {
+      return res.status(400).send({
+        message: 'cant change email',
+      })
+    }
+
+    if (req.body.old_password && req.body.new_password) {
+      bcrypt.compare(
+        req.body.old_password,
+        userCheck.password,
+        (err, result) => {
+          if (err) {
+            return res.status(401).send({
+              message: 'Old password is incorrect',
+            })
+          }
+          if (result) {
+            bcrypt.hash(req.body.new_password, 10, (err, hash) => {
+              if (err) {
+                return res.status(500).send({
+                  error: 'Something went wrong, try later',
+                })
+              } else {
+                Users.findByIdAndUpdate(
+                  _id,
+                  {
+                    ...req.body,
+                    password: hash,
+                  },
+                  {
+                    new: true,
+                  }
+                ).then(user => {
+                  return res.status(201).send({
+                    id: user._id,
+                    name: user.name,
+                    lastName: user.lastName,
+                    email: user.email,
+                    phone: user.phone,
+                    address: user.address,
+                    approved: user.approved,
+                    passportURL: user.passportURL,
+                    avatar: user.avatar,
+                    amount: user.amount,
+                    rating: user.rating,
+                    createdTime: Date.parse(user.createdTime),
+                  })
+                })
+              }
+            })
+          }
+          return res.status(401).send({
+            message: 'Auth failed: email or password is incorrect',
+          })
+        }
+      )
+    }
     const user = await Users.findByIdAndUpdate(
       _id,
       {
@@ -156,12 +228,7 @@ exports.updateUser = async (req, res) => {
         new: true,
       }
     )
-    if (user.approved === 'accepted') {
-      sendEmail.sendAcceptEmail(user)
-    } else if (user.approved === 'declined') {
-      sendEmail.sendDeclineEmail(user)
-    }
-    res.status(201).send({
+    return res.status(201).send({
       id: user._id,
       name: user.name,
       lastName: user.lastName,

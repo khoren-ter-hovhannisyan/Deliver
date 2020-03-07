@@ -135,71 +135,78 @@ exports.delCompany = async (req, res) => {
 
 exports.updateCompany = async (req, res) => {
   const _id = req.params.id
-  console.log(req.body);
-  
+
   try {
     const companyCheck = await Company.findOne({
-      _id
+      _id,
     })
-    if (req.body.approved === 'accepted' && companyCheck.approved !== "accepted") {
-      sendEmail.sendAcceptEmail(user)
-    } else if (req.body.approved === 'declined' && companyCheck.approved !== "declined") {
-      sendEmail.sendDeclineEmail(user)
+    if (
+      req.body.approved === 'accepted' &&
+      companyCheck.approved !== 'accepted'
+    ) {
+      sendEmail.sendAcceptEmail(companyCheck)
+    } else if (
+      req.body.approved === 'declined' &&
+      companyCheck.approved !== 'declined'
+    ) {
+      sendEmail.sendDeclineEmail(companyCheck)
     }
 
     if (req.body.email) {
-
       return res.status(400).send({
         message: 'cant change email',
       })
     }
 
     if (req.body.old_password && req.body.new_password) {
-      bcrypt.compare(req.body.old_password, companyCheck.password, (err, result) => {
-        if (err) {
-          return res.status(401).send({
-            message: 'Old password is incorrect',
-          })
-        }
-        if (result) {
-          bcrypt.hash(req.body.new_password, 10, (err, hash) => {
-            if (err) {
-              return res.status(500).send({
-                error: 'Something went wrong, try later',
-              })
-            } else {
-              Company.findByIdAndUpdate(
-                _id,
-                {
-                  ...req.body,
-                  password:hash,
-                },
-                {
-                  new: true,
-                }
-              ).then(company => {
-                return res.status(201).send({
-                  id: company._id,
-                  name: company.name,
-                  email: company.email,
-                  phone: company.phone,
-                  taxNumber: company.taxNumber,
-                  address: company.address,
-                  activity: company.activity,
-                  approved: company.approved,
-                  avatar: company.avatar,
-                  amount: company.amount,
-                  createdTime: Date.parse(company.createdTime),
+      bcrypt.compare(
+        req.body.old_password,
+        companyCheck.password,
+        (err, result) => {
+          if (err) {
+            return res.status(401).send({
+              message: 'Old password is incorrect',
+            })
+          }
+          if (result) {
+            bcrypt.hash(req.body.new_password, 10, (err, hash) => {
+              if (err) {
+                return res.status(500).send({
+                  error: 'Something went wrong, try later',
                 })
-              })
-              
-            }
+              } else {
+                Company.findByIdAndUpdate(
+                  _id,
+                  {
+                    ...req.body,
+                    password: hash,
+                  },
+                  {
+                    new: true,
+                  }
+                ).then(company => {
+                  return res.status(201).send({
+                    id: company._id,
+                    name: company.name,
+                    email: company.email,
+                    phone: company.phone,
+                    taxNumber: company.taxNumber,
+                    address: company.address,
+                    activity: company.activity,
+                    approved: company.approved,
+                    avatar: company.avatar,
+                    amount: company.amount,
+                    createdTime: Date.parse(company.createdTime),
+                  })
+                })
+              }
+            })
+          }
+          return res.status(401).send({
+            message: 'Auth failed: email or password is incorrect',
           })
         }
-        return res.status(401).send({
-          message: 'Auth failed: email or password is incorrect',
-        })
-      })
+      )
     }
 
     const company = await Company.findByIdAndUpdate(
