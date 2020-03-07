@@ -91,8 +91,6 @@ io.on('connection', socket => {
     }
   })
   socket.on('delete_user', () => {
-    console.log('************************---------------')
-
     socket.broadcast.emit('deleted_user', {
       data: 'User has been deleted, please refresh',
     })
