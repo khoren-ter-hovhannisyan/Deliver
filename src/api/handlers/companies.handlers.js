@@ -74,8 +74,10 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = async (req, res) => {
   try {
-    const user = findOne({ email: req.body.email.toLowerCase() })
-    const company = findOne({ email: req.body.email.toLowerCase() })
+    const user = await findOne({ email: req.body.email.toLowerCase() })
+    const company = await findOne({ email: req.body.email.toLowerCase() })
+    console.log(user, company);
+    
     if (!user && !company) {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
