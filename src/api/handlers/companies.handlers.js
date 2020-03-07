@@ -74,8 +74,8 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = async (req, res) => {
   try {
-    const user = await findOne({ email: req.body.email.toLowerCase() })
-    const company = await findOne({ email: req.body.email.toLowerCase() })
+    const user = await Users.findOne({ email: req.body.email.toLowerCase() })
+    const company = await Company.findOne({ email: req.body.email.toLowerCase() })
     console.log(user, company);
     
     if (!user && !company) {
