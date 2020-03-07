@@ -1,7 +1,8 @@
-const Company = require('../models/company.model')
-const Users = require('../models/users.model')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+
+const Company = require('../models/company.model')
+const Users = require('../models/users.model')
 
 exports.login = async (req, res) => {
   try {

@@ -1,7 +1,4 @@
-const {
-  Schema,
-  model
-} = require('mongoose')
+const { Schema, model } = require('mongoose')
 
 const companySchema = new Schema({
   type: {
@@ -14,7 +11,7 @@ const companySchema = new Schema({
   },
   email: {
     type: String,
-    match:/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+    match: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
     required: true,
     unique: true,
   },
@@ -45,7 +42,8 @@ const companySchema = new Schema({
   },
   avatar: {
     type: String,
-    default: 'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
+    default:
+      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
   },
   amount: {
     type: Number,
@@ -53,8 +51,8 @@ const companySchema = new Schema({
   },
   created_time: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 })
 
 module.exports = model('Company', companySchema)

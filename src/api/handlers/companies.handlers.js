@@ -1,41 +1,29 @@
+const bcrypt = require('bcrypt')
+
 const Company = require('../models/company.model')
 const Users = require('../models/users.model')
+
 const sendEmail = require('../../services/sendEmail')
-const bcrypt = require('bcrypt')
 
 exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({})
     res.status(200).send(
-      companies.map(
-        ({
-          _id,
-          activity,
-          address,
-          taxNumber,
-          phone,
-          email,
-          name,
-          approved,
-          avatar,
-          amount,
-          createdTime,
-        }) => {
-          return {
-            id: _id,
-            name,
-            email,
-            phone,
-            taxNumber,
-            address,
-            activity,
-            approved,
-            avatar,
-            amount,
-            createdTime: Date.parse(createdTime),
-          }
+      companies.map(company => {
+        return {
+          id: company._id,
+          name: company.name,
+          email: company.email,
+          phone: company.phone,
+          taxNumber: company.taxNumber,
+          address: company.address,
+          activity: company.activity,
+          approved: company.approved,
+          avatar: company.avatar,
+          amount: company.amount,
+          createdTime: Date.parse(company.createdTime),
         }
-      )
+      })
     )
   } catch (err) {
     return res.status(500).send({
@@ -75,9 +63,10 @@ exports.getCompanyById = async (req, res) => {
 exports.createCompany = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email.toLowerCase() })
-    const company = await Company.findOne({ email: req.body.email.toLowerCase() })
-    console.log(user, company);
-    
+    const company = await Company.findOne({
+      email: req.body.email.toLowerCase(),
+    })
+
     if (!user && !company) {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
@@ -94,8 +83,6 @@ exports.createCompany = async (req, res) => {
 
           company.save(function(err, company) {
             if (err) {
-              console.log(err)
-
               return res.status(400).send({
                 message: 'Some input fields are wrong or empty',
                 error: err,
@@ -103,7 +90,7 @@ exports.createCompany = async (req, res) => {
             }
             sendEmail.sendInfoSignUp(company)
             sendEmail.sendWaitEmailForReceiver(company)
-            res.status(201).send({
+            return res.status(201).send({
               message: 'Company created',
             })
           })
@@ -127,7 +114,7 @@ exports.delCompany = async (req, res) => {
     await Company.findByIdAndRemove({
       _id,
     })
-    res.status(202).send({
+    return res.status(202).send({
       message: 'Company is deleted',
     })
   } catch (err) {
@@ -153,7 +140,6 @@ exports.updateCompany = async (req, res) => {
     ) {
       sendEmail.sendDeclineEmail(companyCheck)
     }
-
 
     if (req.body.old_password && req.body.new_password) {
       bcrypt.compare(

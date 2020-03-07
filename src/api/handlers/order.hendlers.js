@@ -1,8 +1,10 @@
+const moment = require('moment')
+
 const Company = require('../models/company.model')
 const Users = require('../models/users.model')
 const Order = require('../models/order.model')
+
 const sendEmail = require('../../services/sendEmail')
-const moment = require('moment')
 
 exports.createOrder = async (req, res) => {
   const { companyId, order } = req.body
@@ -106,18 +108,23 @@ exports.delOrder = async (req, res) => {
 exports.updateOrder = async (req, res) => {
   const _id = req.params.id
   try {
+    const orderCheck = await Order.findOne({ _id })
+
+    if (!orderCheck) {
+      return res.status(400).send({
+        message: 'There is no such order',
+      })
+    }
+
     const order = await Order.findByIdAndUpdate(
       _id,
       { ...req.body },
       { new: true }
     )
-    if (!order) {
-      res.status(400).send({
-        message: 'There is no such order',
-      })
-    }
+
     const company = await Company.findOne({ _id: order.companyId })
     const user = await Users.findOne({ _id: order.userId })
+
     if (order.state === 'pending') {
       sendEmail.sendAcceptOrderEmail(company, user)
     } else if (order.state === 'done') {
@@ -126,6 +133,7 @@ exports.updateOrder = async (req, res) => {
         { amount: company.amount - order.points },
         { new: true }
       )
+
       await user.findByIdAndUpdate(
         user._id,
         {
@@ -133,9 +141,11 @@ exports.updateOrder = async (req, res) => {
         },
         { new: true }
       )
+
       sendEmail.sendDoneOrderEmail(company, user)
     }
-    res.status(201).send({
+
+    return res.status(201).send({
       id: order._id,
       state: order.state,
       points: order.points,
@@ -169,8 +179,10 @@ exports.getUserOrders = async (req, res) => {
         message: 'There is no such user',
       })
     }
+
     const orders = await Order.find({ userId: _id })
     const ordersOutput = []
+
     for (let i = 0; i < orders.length; i++) {
       const company = await Company.findOne({ _id: orders[i].companyId })
       const order = {
