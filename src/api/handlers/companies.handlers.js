@@ -138,6 +138,57 @@ exports.delCompany = async (req, res) => {
 exports.updateCompany = async (req, res) => {
   const _id = req.params.id
   try {
+    if (req.body.email) {
+      return res.status(400).send({
+        message:"cant change email"
+      })
+    }
+    if (req.body.old_password && new_password) {
+      const companyCheck = await Company.findOne({_id})
+      bcrypt.compare(req.body.old_password, companyCheck.password, (err, result) => {
+        if (err) {
+          return res.status(401).send({
+            message: 'Old password is incorrect',
+          })
+        }
+        if (result) {
+          bcrypt.hash(req.body.new_password, 10, (err, hash) => {
+            if (err) {
+              return res.status(500).send({
+                error: 'Something went wrong, try later',
+              })
+            } else {
+              const company = await Company.findByIdAndUpdate(
+                _id,
+                {
+                  ...req.body,
+                  password:hash,
+                },
+                {
+                  new: true,
+                }
+              )
+              res.status(201).send({
+      id: company._id,
+      name: company.name,
+      email: company.email,
+      phone: company.phone,
+      taxNumber: company.taxNumber,
+      address: company.address,
+      activity: company.activity,
+      approved: company.approved,
+      avatar: company.avatar,
+      amount: company.amount,
+      createdTime: Date.parse(company.createdTime),
+    })
+            }
+          })
+        }
+        return res.status(401).send({
+          message: 'Auth failed: email or password is incorrect',
+        })
+      })
+    }
     const company = await Company.findByIdAndUpdate(
       _id,
       {
