@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 
 const Company = require('../models/company.model')
 const Users = require('../models/users.model')
+const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
@@ -111,6 +112,10 @@ exports.createCompany = async (req, res) => {
 exports.delCompany = async (req, res) => {
   const _id = req.params.id
   try {
+    const order = await Order.findOne({ companyId: _id })
+    if (order) {
+      await Order.findByIdAndRemove({ companyId: _id })
+    }
     await Company.findByIdAndRemove({
       _id,
     })

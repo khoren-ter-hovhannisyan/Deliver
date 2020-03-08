@@ -46,6 +46,8 @@ exports.getAllActiveOrder = async (req, res) => {
         order_create_time: moment(orders[i].order_create_time).format('LLL'),
         order_start_time: moment(orders[i].order_start_time).format('LLL'),
         order_end_time: moment(orders[i].order_end_time).format('LLL'),
+        receiver_name: orders[i].receiver_name,
+        receiver_phone: orders[i].receiver_phone,
         comment: orders[i].comment,
         company_name: company.name,
         company_phone: company.phone,
@@ -76,6 +78,8 @@ exports.getCompanyOrders = async (req, res) => {
         order_create_time: moment(orders[i].order_create_time).format('LLL'),
         order_start_time: moment(orders[i].order_start_time).format('LLL'),
         order_end_time: moment(orders[i].order_end_time).format('LLL'),
+        receiver_name: orders[i].receiver_name,
+        receiver_phone: orders[i].receiver_phone,
         comment: orders[i].comment,
         user_name: user ? user.name : undefined,
         user_phone: user ? user.phone : undefined,
@@ -109,10 +113,13 @@ exports.updateOrder = async (req, res) => {
   const _id = req.params.id
   try {
     const orderCheck = await Order.findOne({ _id })
-
-    if (!orderCheck) {
+    if (
+      !orderCheck ||
+      (req.body.state === 'pending' && orderCheck.state === 'pending') ||
+      (req.body.state === 'done' && orderCheck.state === 'done')
+    ) {
       return res.status(400).send({
-        message: 'There is no such order',
+        message: 'Something went wrong , you can`t do that',
       })
     }
 
@@ -155,6 +162,8 @@ exports.updateOrder = async (req, res) => {
       order_create_time: moment(order.order_create_time).format('LLL'),
       order_start_time: moment(order.order_start_time).format('LLL'),
       order_end_time: moment(order.order_end_time).format('LLL'),
+      receiver_name: order.receiver_name,
+      receiver_phone: order.receiver_phone,
       comment: order.comment,
       company_name: company.name,
       company_phone: company.phone,
