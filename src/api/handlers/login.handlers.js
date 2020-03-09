@@ -48,6 +48,7 @@ exports.login = async (req, res) => {
           return res.status(200).send({
             id: company._id,
             type: company.type,
+            token,
             message: 'Auth successful',
           })
         }
