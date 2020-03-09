@@ -14,7 +14,7 @@ const router = Router()
 
 router.get('/users', getAllUsers)
 router.get('/users/:id', getUserById)
-router.post('/sign-up-user', createUser)
+router.post('/user', createUser)
 router.delete('/users/:id', delUser)
 router.put('/users/:id', updateUser)
 
