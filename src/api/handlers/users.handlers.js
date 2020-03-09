@@ -30,7 +30,7 @@ exports.getAllUsers = async (req, res) => {
         amount: users[i].amount,
         rating: users[i].rating,
         createdTime: Date.parse(users[i].createdTime),
-        orders_count: orders_count.length()
+        orders_count: orders_count.length,
       }
       usersOutput.push(user)
     }

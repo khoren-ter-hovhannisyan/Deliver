@@ -26,7 +26,7 @@ exports.getAllCompanies = async (req, res) => {
         avatar: companies[i].avatar,
         amount: companies[i].amount,
         createdTime: Date.parse(companies[i].createdTime),
-        orders_count: company_orders_count.length(),
+        orders_count: company_orders_count.length,
       }
       companiesOutput.push(company)
     }
