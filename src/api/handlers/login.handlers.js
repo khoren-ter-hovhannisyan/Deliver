@@ -13,7 +13,7 @@ exports.login = async (req, res) => {
       email: req.body.email.toLowerCase(),
       type: 'user',
     })
-
+    //TODO: sarqel bolor str-ner-i hamar constantner 
     if (company) {
       if (company.approved === 'pending') {
         return res.status(406).send({
@@ -33,9 +33,10 @@ exports.login = async (req, res) => {
           })
         }
         if (result) {
+
+          //TODO: tokenner@ set anel cookineri mej , expires time qcel configneri mej, uxarkel headers-ov
           const token = jwt.sign(
             {
-              email: company.email,
               companyId: company._id,
             },
             process.env.JWT_KEY,
@@ -43,14 +44,14 @@ exports.login = async (req, res) => {
               expiresIn: '12h',
             }
           )
+          res.set("autorisation", token)
           return res.status(200).send({
             id: company._id,
             type: company.type,
-            token: token,
             message: 'Auth successful',
           })
         }
-        res.status(401).send({
+        return res.status(401).send({
           message: 'Auth failed',
         })
       })
@@ -83,6 +84,7 @@ exports.login = async (req, res) => {
               expiresIn: '12h',
             }
           )
+          res.set("autorisation", token)
           return res.status(200).send({
             id: user._id,
             type: user.type,
@@ -128,6 +130,7 @@ exports.loginAdmin = (req, res) => {
               expiresIn: '12h',
             }
           )
+          res.set("autorisation", token)
           return res.status(200).send({
             type: user.type,
             token: token,
@@ -140,7 +143,7 @@ exports.loginAdmin = (req, res) => {
       })
     })
     .catch(_ => {
-      return res.status(400).send({
+      return res.status(401).send({
         message: 'Auth failed: email or password is incorrect',
       })
     })

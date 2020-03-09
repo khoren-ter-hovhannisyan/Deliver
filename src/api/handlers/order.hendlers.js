@@ -9,6 +9,7 @@ const sendEmail = require('../../services/sendEmail')
 exports.createOrder = async (req, res) => {
   const { companyId, order } = req.body
   const company = await Company.findOne({ _id: companyId })
+  //TODO: sarqel NUMber req.body.points-@
   if (order.points > company.amount) {
     return res
       .status(400)
@@ -29,7 +30,7 @@ exports.createOrder = async (req, res) => {
     return res.status(201).send({ message: 'Order created' })
   })
 }
-
+//TODO : pagination by scrole
 exports.getAllActiveOrder = async (req, res) => {
   try {
     const orders = await Order.find({ state: 'active' })
@@ -113,7 +114,7 @@ exports.delOrder = async (req, res) => {
     res.status(404).send({ message: 'Something went wrong, try later', err })
   }
 }
-
+// TODO validate request , definde LCL accsess controle list 
 exports.updateOrder = async (req, res) => {
   const _id = req.params.id
   try {
@@ -183,13 +184,13 @@ exports.updateOrder = async (req, res) => {
       .send({ message: 'Something went wrong, try later', err })
   }
 }
-
+//TODO : validate _id 
 exports.getUserOrders = async (req, res) => {
   const _id = req.params.id
   try {
     const user = await Users.findOne({ _id })
     if (!user) {
-      res.status(400).send({
+      return res.status(400).send({
         message: 'There is no such user',
       })
     }

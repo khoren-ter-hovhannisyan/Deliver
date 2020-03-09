@@ -42,7 +42,7 @@ exports.getAllUsers = async (req, res) => {
     })
   }
 }
-
+//TODO : mongoose selectorrneric ogtvel 
 exports.getUserById = async (req, res) => {
   const _id = req.params.id
   try {
@@ -232,3 +232,6 @@ exports.updateUser = async (req, res) => {
     })
   }
 }
+
+
+
