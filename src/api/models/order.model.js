@@ -39,9 +39,18 @@ const orderSchema = new Schema({
   },
   companyId: {
     type: String,
+    required: true,
   },
   userId: {
     type: String,
+  },
+  receiver_name: {
+    type: String,
+    required: true,
+  },
+  receiver_phone: {
+    type: Number,
+    required: true,
   },
 })
 

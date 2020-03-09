@@ -1,6 +1,5 @@
-const {
-  Router
-} = require('express')
+const { Router } = require('express')
+
 const {
   createUser,
   getAllUsers,
@@ -8,6 +7,7 @@ const {
   delUser,
   updateUser,
 } = require('../handlers/users.handlers')
+
 const checkAuth = require('../middleware/check-auth')
 
 const router = Router()

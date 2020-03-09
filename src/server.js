@@ -3,20 +3,22 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
+const cors = require('cors')
+const socket = require('socket.io')
+
 const companyRouter = require('./api/routes/companies.routes')
 const userRouter = require('./api/routes/users.routes')
 const loginRouter = require('./api/routes/login.routes')
 const orderRouter = require('./api/routes/order.routes')
-const cors = require('cors')
+
 const User = require('./api/models/users.model')
 const Company = require('./api/models/company.model')
 const Order = require('./api/models/order.model')
 
-const socket = require('socket.io')
-
 const config = require('./config')
 
 const app = express()
+
 const server = app.listen(config.server.port, () => {
   console.log(`Magic is happening on port ${config.server.port}`)
 })

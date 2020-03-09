@@ -1,7 +1,8 @@
+const bcrypt = require('bcrypt')
+
 const Company = require('../models/company.model')
 const Users = require('../models/users.model')
 const sendEmail = require('../../services/sendEmail')
-const bcrypt = require('bcrypt')
 
 exports.getAllUsers = async (req, res) => {
   try {
@@ -9,39 +10,23 @@ exports.getAllUsers = async (req, res) => {
       type: 'user',
     })
     res.status(200).send(
-      users.map(
-        ({
-          _id,
-          name,
-          lastName,
-          email,
-          phone,
-          address,
-          type,
-          approved,
-          passportURL,
-          avatar,
-          amount,
-          rating,
-          createdTime,
-        }) => {
-          return {
-            id: _id,
-            name,
-            lastName,
-            email,
-            phone,
-            address,
-            type,
-            approved,
-            passportURL,
-            avatar,
-            amount,
-            rating,
-            createdTime: Date.parse(createdTime),
-          }
+      users.map(user => {
+        return {
+          id: user._id,
+          name: user.name,
+          lastName: user.lastName,
+          email: user.email,
+          phone: user.phone,
+          address: user.address,
+          type: user.type,
+          approved: user.approved,
+          passportURL: user.passportURL,
+          avatar: user.avatar,
+          amount: user.amount,
+          rating: user.rating,
+          createdTime: Date.parse(user.createdTime),
         }
-      )
+      })
     )
   } catch (err) {
     return res.status(500).send({
@@ -150,22 +135,13 @@ exports.updateUser = async (req, res) => {
     const userCheck = await Users.findOne({
       _id,
     })
-    if (
-      req.body.approved === 'accepted' &&
-      userCheck.approved !== 'accepted'
-    ) {
+    if (req.body.approved === 'accepted' && userCheck.approved !== 'accepted') {
       sendEmail.sendAcceptEmail(userCheck)
     } else if (
       req.body.approved === 'declined' &&
       userCheck.approved !== 'declined'
     ) {
       sendEmail.sendDeclineEmail(userCheck)
-    }
-
-    if (req.body.email) {
-      return res.status(400).send({
-        message: 'cant change email',
-      })
     }
 
     if (req.body.old_password && req.body.new_password) {

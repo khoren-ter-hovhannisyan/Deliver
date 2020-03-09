@@ -1,4 +1,5 @@
 const { Router } = require('express')
+
 const {
   getAllCompanies,
   getCompanyById,
@@ -6,6 +7,7 @@ const {
   delCompany,
   updateCompany,
 } = require('../handlers/companies.handlers')
+
 const checkAuth = require('../middleware/check-auth')
 
 const router = Router()
