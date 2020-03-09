@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt')
 
 const Company = require('../models/company.model')
 const Users = require('../models/users.model')
+const Order = require('../models/order.model')
 const sendEmail = require('../../services/sendEmail')
 
 exports.getAllUsers = async (req, res) => {
@@ -9,25 +10,31 @@ exports.getAllUsers = async (req, res) => {
     const users = await Users.find({
       type: 'user',
     })
-    res.status(200).send(
-      users.map(user => {
-        return {
-          id: user._id,
-          name: user.name,
-          lastName: user.lastName,
-          email: user.email,
-          phone: user.phone,
-          address: user.address,
-          type: user.type,
-          approved: user.approved,
-          passportURL: user.passportURL,
-          avatar: user.avatar,
-          amount: user.amount,
-          rating: user.rating,
-          createdTime: Date.parse(user.createdTime),
-        }
+    const usersOutput = []
+    for (let i = 0; i < users.length; i++) {
+      const orders_count = await Order.find({
+        userId: users[i]._id,
+        state: 'pending',
       })
-    )
+      const user = {
+        id: users[i]._id,
+        name: users[i].name,
+        lastName: users[i].lastName,
+        email: users[i].email,
+        phone: users[i].phone,
+        address: users[i].address,
+        type: users[i].type,
+        approved: users[i].approved,
+        passportURL: users[i].passportURL,
+        avatar: users[i].avatar,
+        amount: users[i].amount,
+        rating: users[i].rating,
+        createdTime: Date.parse(users[i].createdTime),
+        orders_count: orders_count.length()
+      }
+      usersOutput.push(user)
+    }
+    return res.status(200).send(usersOutput)
   } catch (err) {
     return res.status(500).send({
       message: 'Something went wrong, try later',
@@ -42,7 +49,7 @@ exports.getUserById = async (req, res) => {
     const user = await Users.findOne({
       _id,
     })
-    res.status(200).send({
+    return res.status(200).send({
       id: user._id,
       name: user.name,
       lastName: user.name,
