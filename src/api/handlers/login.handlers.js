@@ -16,12 +16,12 @@ exports.login = async (req, res) => {
 
     if (company) {
       if (company.approved === 'pending') {
-        return res.status(203).send({
+        return res.status(406).send({
           message:
             'Our admin team is reviewing your sign up request. Please wait for the response!',
         })
       } else if (company.approved === 'declined') {
-        return res.status(203).send({
+        return res.status(406).send({
           message:
             'Your sign-up request has unfortunately been declined. Please contact our administration for more information.',
         })
@@ -56,12 +56,12 @@ exports.login = async (req, res) => {
       })
     } else if (user) {
       if (user.approved === 'pending') {
-        return res.status(203).send({
+        return res.status(406).send({
           message:
             'Our admin team is reviewing your sign up request. Please wait for the response!',
         })
       } else if (user.approved === 'declined') {
-        return res.status(203).send({
+        return res.status(406).send({
           message:
             'Your sign-up request has unfortunately been declined. Please contact our administration for more information.',
         })
@@ -90,17 +90,17 @@ exports.login = async (req, res) => {
             message: 'Auth successful',
           })
         }
-        res.status(401).send({
+        return res.status(401).send({
           message: 'Auth failed',
         })
       })
     } else {
-      res.statusMessage = 'Current password or email does not match'
-      return res.status(400).end()
+      return res
+        .status(400)
+        .send({ message: 'Current password or email does not match' })
     }
   } catch (err) {
-    res.statusMessage = 'Something went wrong'
-    return res.status(500).end()
+    return res.status(500).send({ message: 'Something went wrong' })
   }
 }
 exports.loginAdmin = (req, res) => {
@@ -134,13 +134,13 @@ exports.loginAdmin = (req, res) => {
             message: 'Auth successful',
           })
         }
-        res.status(401).send({
+        return res.status(401).send({
           message: 'Auth failed: email or password is incorrect',
         })
       })
     })
     .catch(_ => {
-      res.status(400).send({
+      return res.status(400).send({
         message: 'Auth failed: email or password is incorrect',
       })
     })
