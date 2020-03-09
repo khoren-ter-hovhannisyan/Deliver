@@ -43,7 +43,11 @@ exports.login = async (req, res) => {
               expiresIn: '12h',
             }
           )
-          res.set('Autorisation', token)
+          res.set({
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Expose-Headers': 'autorisation',
+            "autorisation": token,
+          })
           return res.status(200).send({
             id: company._id,
             type: company.type,
@@ -84,7 +88,11 @@ exports.login = async (req, res) => {
               expiresIn: '12h',
             }
           )
-          res.set('autorisation', token)
+          res.set({
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Expose-Headers': 'autorisation',
+            "autorisation": token,
+          })
           return res.status(200).send({
             id: user._id,
             type: user.type,
@@ -130,9 +138,11 @@ exports.loginAdmin = (req, res) => {
               expiresIn: '12h',
             }
           )
-          res.header('Access-Control-Allow-Origin', '*')
-          res.header('Access-Control-Expose-Headers', 'autorisation')
-          res.set('autorisation', token)
+          res.set({
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Expose-Headers': 'autorisation',
+            "autorisation": token,
+          })
           return res.status(200).send({
             type: user.type,
             token: token,
