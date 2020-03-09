@@ -81,9 +81,14 @@ exports.getCompanyOrders = async (req, res) => {
         receiver_name: orders[i].receiver_name,
         receiver_phone: orders[i].receiver_phone,
         comment: orders[i].comment,
-        user_name: user ? user.name : undefined,
-        user_phone: user ? user.phone : undefined,
-        user_email: user ? user.email : undefined,
+        user_name: undefined,
+        user_phone: undefined,
+        user_email: undefined,
+      }
+      if (orders[i].state === 'done' || orders[i].state === 'pending') {
+        order.user_name = user ? user.name : 'User has been deleted'
+        order.user_phone = user ? user.phone : 'User has been deleted'
+        order.user_email = user ? user.email : 'User has been deleted'
       }
       ordersOutput.push(order)
     }
@@ -115,8 +120,8 @@ exports.updateOrder = async (req, res) => {
     const orderCheck = await Order.findOne({ _id })
     if (
       !orderCheck ||
-      (req.body.state === 'pending' && orderCheck.state === 'pending') ||
-      (req.body.state === 'done' && orderCheck.state === 'done')
+      (req.body.state === undefined && orderCheck.state === 'pending') ||
+      (req.body.state === undefined && orderCheck.state === 'done')
     ) {
       return res.status(400).send({
         message: 'Something went wrong , you can`t do that',

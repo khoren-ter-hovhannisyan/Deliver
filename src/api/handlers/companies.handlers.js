@@ -9,23 +9,28 @@ const sendEmail = require('../../services/sendEmail')
 exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({})
-    res.status(200).send(
-      companies.map(company => {
-        return {
-          id: company._id,
-          name: company.name,
-          email: company.email,
-          phone: company.phone,
-          taxNumber: company.taxNumber,
-          address: company.address,
-          activity: company.activity,
-          approved: company.approved,
-          avatar: company.avatar,
-          amount: company.amount,
-          createdTime: Date.parse(company.createdTime),
-        }
+    const companiesOutput = []
+    for (let i = 0; i < companies.length; i++) {
+      const company_orders_count = await Order.find({
+        companyId: companies[i]._id,
       })
-    )
+      const company = {
+        id: companies[i]._id,
+        name: companies[i].name,
+        email: companies[i].email,
+        phone: companies[i].phone,
+        taxNumber: companies[i].taxNumber,
+        address: companies[i].address,
+        activity: companies[i].activity,
+        approved: companies[i].approved,
+        avatar: companies[i].avatar,
+        amount: companies[i].amount,
+        createdTime: Date.parse(companies[i].createdTime),
+        orders_count: company_orders_count.length,
+      }
+      companiesOutput.push(company)
+    }
+    return res.status(200).send(companiesOutput)
   } catch (err) {
     return res.status(500).send({
       message: 'Something went wrong, try later',
@@ -114,7 +119,7 @@ exports.delCompany = async (req, res) => {
   try {
     const order = await Order.findOne({ companyId: _id })
     if (order) {
-      await Order.findByIdAndRemove({ companyId: _id })
+      await Order.remove({ companyId: _id })
     }
     await Company.findByIdAndRemove({
       _id,
