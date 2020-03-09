@@ -13,7 +13,7 @@ exports.login = async (req, res) => {
       email: req.body.email.toLowerCase(),
       type: 'user',
     })
-    //TODO: sarqel bolor str-ner-i hamar constantner 
+    //TODO: sarqel bolor str-ner-i hamar constantner
     if (company) {
       if (company.approved === 'pending') {
         return res.status(406).send({
@@ -33,7 +33,6 @@ exports.login = async (req, res) => {
           })
         }
         if (result) {
-
           //TODO: tokenner@ set anel cookineri mej , expires time qcel configneri mej, uxarkel headers-ov
           const token = jwt.sign(
             {
@@ -44,7 +43,7 @@ exports.login = async (req, res) => {
               expiresIn: '12h',
             }
           )
-          res.set("Autorisation", token)
+          res.set('Autorisation', token)
           return res.status(200).send({
             id: company._id,
             type: company.type,
@@ -85,7 +84,7 @@ exports.login = async (req, res) => {
               expiresIn: '12h',
             }
           )
-          res.set("autorisation", token)
+          res.set('autorisation', token)
           return res.status(200).send({
             id: user._id,
             type: user.type,
@@ -130,9 +129,11 @@ exports.loginAdmin = (req, res) => {
             {
               expiresIn: '12h',
             }
-          ) 
-          res.header('Access-Control-Allow-Origin', '*');
-          res.set("Autorisation", token)
+          )
+          res.header('Access-Control-Allow-Origin', '*')
+          res.header('Access-Control-Expose-Headers', '*')
+          res.header('Access-Control-Allow-Origin', 'Autorisation')
+          res.set('Autorisation', token)
           return res.status(200).send({
             type: user.type,
             token: token,
