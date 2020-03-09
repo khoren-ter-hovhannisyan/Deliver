@@ -132,7 +132,6 @@ exports.loginAdmin = (req, res) => {
           )
           res.header('Access-Control-Allow-Origin', '*')
           res.header('Access-Control-Expose-Headers', '*')
-          res.header('Access-Control-Allow-Origin', 'Autorisation')
           res.set('Autorisation', token)
           return res.status(200).send({
             type: user.type,
