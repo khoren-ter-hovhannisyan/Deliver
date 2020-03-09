@@ -49,7 +49,7 @@ const companySchema = new Schema({
     type: Number,
     default: 0,
   },
-  created_time: {
+  createdTime: {
     type: Date,
     default: Date.now,
   },
