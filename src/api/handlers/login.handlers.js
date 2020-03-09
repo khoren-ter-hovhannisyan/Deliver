@@ -131,7 +131,7 @@ exports.loginAdmin = (req, res) => {
               expiresIn: '12h',
             }
           ) 
-          res.header('Access-Control-Allow-Origin', 'Autorisation');
+          res.header('Access-Control-Allow-Origin', '*');
           res.set("Autorisation", token)
           return res.status(200).send({
             type: user.type,
