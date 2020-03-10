@@ -2,13 +2,15 @@ const {
   socketListeners,
   socketEmiters,
   message,
-} = require('./src/services/constans')
+} = require('../utils/constans')
 
-const User = require('./api/models/users.model')
-const Company = require('./api/models/company.model')
-const Order = require('./api/models/order.model')
+const User = require('../api/models/users.model')
+const Company = require('../api/models/company.model')
+const Order = require('../api/models/order.model')
 
-exports.socketLiseners = socket => {
+// TODO: socetnerin kpcnel token-i stugum@
+
+exports.socketListeners = socket => {
   socket.on(socketListeners.newAccount, async accountData => {
     const user = await User.findOne({
       email: accountData.data.email,

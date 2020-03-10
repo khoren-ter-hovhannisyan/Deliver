@@ -1,6 +1,4 @@
 const nodemailer = require('nodemailer')
-const path = require('path')
-const hbs = require('nodemailer-express-handlebars')
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -9,15 +7,15 @@ const transporter = nodemailer.createTransport({
     pass: 'superadmin',
   },
   tls: {
-    // do not fail on invalid certs
     rejectUnauthorized: false,
   },
 })
 
-const signature = `<div>
+const signature = `
+<div>
 <h3><b><i>Best Regards,</i></b></h3>
 <h3><b><i>Deliver.me team</i></b></h3>
-<img height="150px"  src="http://res.cloudinary.com/dfeoo5iog/image/upload/v1582890290/ljmmfhjkbd2e1gmoxssl.png">
+<img height="80px" src="https://res.cloudinary.com/dfeoo5iog/image/upload/v1583825717/d7hgh4ox55fh0pj24f3a.jpg">
 </div>`
 
 const link = 'https://delivermearmenia.herokuapp.com/'
