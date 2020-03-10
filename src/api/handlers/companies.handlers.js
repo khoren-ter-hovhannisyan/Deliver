@@ -161,8 +161,8 @@ exports.updateCompany = async (req, res) => {
     }
     const _id = req.params.id
     const companyCheck = await Company.findOne({ _id })
-    const { adminId: _id } = await Users.findOne({ type: types.admin })
-    if (!(req.userData.id === adminId || req.userData.id === companyCheck._id)) {
+    const adminId = await Users.findOne({ type: types.admin })
+    if (!(req.userData.id === adminId._id || req.userData.id === companyCheck._id)) {
       return res.status(500).send({ message: messages.errorMessage })
     }
     if (
