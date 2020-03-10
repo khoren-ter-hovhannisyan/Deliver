@@ -5,11 +5,11 @@ module.exports = {
     company: 'company',
   },
   status: {
-    pendingStatus: 'pending',
-    doneStatus: 'done',
-    activeStatus: 'active',
-    acceptedStatus: 'accepted',
-    declinedStatus: 'declined',
+    pending: 'pending',
+    done: 'done',
+    active: 'active',
+    accepted: 'accepted',
+    declined: 'declined',
   },
   socketListeners: {
     newAccount: 'new_account',
@@ -26,8 +26,10 @@ module.exports = {
     updateOrderList: 'update_order_list',
     deletedOrder: 'deleted_order',
   },
-  message: {
+  messages: {
     errorMessage: 'Something went wrong, try later',
+    errorAuthfailed: 'Auth failed: email or password is incorrect',
+    succsessAuthMessage: 'Auth successful',
   },
   img: {
     companyAvatar:

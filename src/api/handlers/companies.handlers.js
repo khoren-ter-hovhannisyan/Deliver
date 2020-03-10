@@ -45,8 +45,6 @@ exports.getAllCompanies = async (req, res) => {
 
 exports.getCompanyById = async (req, res) => {
   const _id = req.params.id
-  console.log(req.userData, '******')
-
   try {
     const company = await Company.findOne({
       _id,

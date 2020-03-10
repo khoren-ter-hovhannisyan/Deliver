@@ -1,7 +1,7 @@
 const {
   socketListeners,
   socketEmiters,
-  message,
+  messages,
 } = require('../utils/constans')
 
 const User = require('../api/models/users.model')
@@ -50,7 +50,7 @@ exports.socketListeners = socket => {
       })
     } else {
       return res.status(500).send({
-        message: message.errorMessage,
+        message: messages.errorMessage,
       })
     }
   })
@@ -73,7 +73,7 @@ exports.socketListeners = socket => {
       })
       .catch(err => {
         return res.status(500).send({
-          message: message.errorMessage,
+          message: messages.errorMessage,
           err,
         })
       })
