@@ -125,13 +125,13 @@ exports.createCompany = async (req, res) => {
 
 exports.delCompany = async (req, res) => {
   try {
-    const id = req.params.id
-    const { adminId: _id } = await Users.findOne({ type: types.admin })
-    const { companyId: _id } = await Company.findOne({ _id:id })
-    if (!(req.userData.id === adminId || req.userData.id === companyId)) {
+    const _id = req.params.id
+    const adminId = await Users.findOne({ type: types.admin })
+    const companyId = await Company.findOne({ _id })
+    if (!(req.userData.id === adminId._id || req.userData.id === companyId._id)) {
       return res.status(500).send({ message: messages.errorMessage })
     }
-    const order = await Order.findOne({ companyId: id })
+    const order = await Order.findOne({ companyId: _id })
     const pendingOrder = await Order.findOne({
       companyId: _id,
       state: status.pending,
@@ -143,9 +143,9 @@ exports.delCompany = async (req, res) => {
       })
     }
     if (order) {
-      await Order.remove({ companyId: id })
+      await Order.remove({ companyId: _id })
     }
-    await Company.findByIdAndRemove({ _id:id })
+    await Company.findByIdAndRemove({ _id })
     return res.status(202).send({
       message: 'Company is deleted',
     })
