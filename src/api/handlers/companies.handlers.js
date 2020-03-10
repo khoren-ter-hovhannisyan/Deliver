@@ -12,8 +12,8 @@ const { types, status, messages } = require('../../utils/constans')
 
 exports.getAllCompanies = async (req, res) => {
   try {
-    const { _id } = await Users.findOne({ type: types.admin })
-    if (req.userData.id !== _id) {
+    const admin = await Users.findOne({ type: types.admin })
+    if (req.userData.id !== admin._id) {
       return res.status(401).send({
         message: messages.errorMessage,
       })
@@ -78,7 +78,7 @@ exports.getCompanyById = async (req, res) => {
     })
   }
 }
-
+/////// EEEEror 
 exports.createCompany = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email.toLowerCase() })
