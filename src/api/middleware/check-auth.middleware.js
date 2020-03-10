@@ -5,7 +5,9 @@ const { message } = require('../../utils/constans')
 
 module.exports = (req, res, next) => {
   try {
-    const token = req.headers.autorization
+    const token = req.headers.Autorization
+    console.log(token);
+    
     const decoded = jwt.verify(token, config.routes.key)
     req.userData = decoded
     next()
