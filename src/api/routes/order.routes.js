@@ -8,7 +8,7 @@ const {
   updateOrder,
   getUserOrders,
 } = require('../handlers/order.hendlers')
-const checkAuth = require('../middleware/check-auth.middleware')
+const checkAuth = require('../middleware/checkAuth.middleware')
 
 router = Router()
 

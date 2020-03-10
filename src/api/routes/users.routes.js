@@ -7,7 +7,7 @@ const {
   delUser,
   updateUser,
 } = require('../handlers/users.handlers')
-const checkAuth = require('../middleware/check-auth.middleware')
+const checkAuth = require('../middleware/checkAuth.middleware')
 
 const router = Router()
 

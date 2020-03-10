@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const Company = require('../models/company.model')
 const Users = require('../models/users.model')
 
+const { generateToken } = require('../middleware/generateToken.middleware')
+
 exports.login = async (req, res) => {
   try {
     const company = await Company.findOne({
@@ -34,24 +36,26 @@ exports.login = async (req, res) => {
         }
         if (result) {
           //TODO: tokenner@ set anel cookineri mej , expires time qcel configneri mej, uxarkel headers-ov
-          const token = jwt.sign(
-            {
-              companyId: company._id,
-            },
-            process.env.JWT_KEY,
-            {
-              expiresIn: '12h',
-            }
-          )
-          res.set({
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': 'authorization',
-            authorization: token,
-          })
+
+          generateToken(res, company._id)
+          // const token = jwt.sign(
+          //   {
+          //     companyId: company._id,
+          //   },
+          //   process.env.JWT_KEY,
+          //   {
+          //     expiresIn: '12h',
+          //   }
+          // )
+          // res.set({
+          //   'Access-Control-Allow-Origin': '*',
+          //   'Access-Control-Expose-Headers': 'authorization',
+          //   authorization: token,
+          // })
           return res.status(200).send({
             id: company._id,
             type: company.type,
-            token,
+            //token,
             message: 'Auth successful',
           })
         }

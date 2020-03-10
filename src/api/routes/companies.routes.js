@@ -7,7 +7,7 @@ const {
   delCompany,
   updateCompany,
 } = require('../handlers/companies.handlers')
-const checkAuth = require('../middleware/check-auth.middleware')
+const checkAuth = require('../middleware/checkAuth.middleware')
 
 const router = Router()
 

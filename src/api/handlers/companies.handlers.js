@@ -9,7 +9,6 @@ const sendEmail = require('../../services/sendEmail')
 // TODO: sarqel pagination-ov
 
 exports.getAllCompanies = async (req, res) => {
-  console.log(req.userData, '******1')
   try {
     const companies = await Company.find({})
     const companiesOutput = []
@@ -46,8 +45,6 @@ exports.getAllCompanies = async (req, res) => {
 
 exports.getCompanyById = async (req, res) => {
   const _id = req.params.id
-  console.log(req.userData, '******')
-
   try {
     const company = await Company.findOne({
       _id,
