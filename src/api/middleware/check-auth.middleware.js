@@ -5,7 +5,9 @@ const { message } = require('../../utils/constans')
 
 module.exports = (req, res, next) => {
   try {
-    const token = req.headers.Autorization
+    const token = req.headers.authorization
+    console.log(req.headers.authorization);
+      
     console.log(req.headers);
     
     console.log(token,"***********");
