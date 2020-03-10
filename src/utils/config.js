@@ -7,6 +7,8 @@ module.exports = {
   },
   routes: {
     key: process.env.JWT_KEY,
-  }
-
+  },
+  expiresIn: {
+    time: process.env.DB_ENV,
+  },
 }

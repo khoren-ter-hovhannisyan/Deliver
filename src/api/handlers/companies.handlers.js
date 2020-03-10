@@ -45,6 +45,8 @@ exports.getAllCompanies = async (req, res) => {
 
 exports.getCompanyById = async (req, res) => {
   const _id = req.params.id
+  console.log(req.userData, '******')
+
   try {
     const company = await Company.findOne({
       _id,
@@ -91,7 +93,7 @@ exports.createCompany = async (req, res) => {
             password: hash,
           })
 
-          company.save(function(err, company) {
+          company.save((err, company) => {
             if (err) {
               return res.status(400).send({
                 message: 'Some input fields are wrong or empty',
@@ -112,9 +114,7 @@ exports.createCompany = async (req, res) => {
       })
     }
   } catch (err) {
-    return res
-      .status(500)
-      .send({ message: 'Something went wrong, try later', err })
+    return res.status(500).send({ message: 'Something went wrong, try later' })
   }
 }
 
@@ -132,7 +132,7 @@ exports.delCompany = async (req, res) => {
       message: 'Company is deleted',
     })
   } catch (err) {
-    res.status(500).send({ message: 'Something went wrong, try later', err })
+    res.status(500).send({ message: 'Something went wrong, try later' })
   }
 }
 
@@ -231,7 +231,6 @@ exports.updateCompany = async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       message: 'Something went wrong, try later',
-      err,
     })
   }
 }
