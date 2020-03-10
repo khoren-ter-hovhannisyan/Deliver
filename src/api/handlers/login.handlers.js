@@ -13,11 +13,11 @@ exports.login = async (req, res) => {
     })
     const user = await Users.findOne({
       email: req.body.email.toLowerCase(),
-      type: types,
+      type: types.user,
     })
     //TODO: sarqel bolor str-ner-i hamar constantner
     if (company) {
-      if (company.approved === status.pendingStatus) {
+      if (company.approved === status.pending) {
         return res.status(406).send({
           message:
             'Our admin team is reviewing your sign up request. Please wait for the response!',
