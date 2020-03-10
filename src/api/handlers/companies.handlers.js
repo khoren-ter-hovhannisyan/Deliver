@@ -6,6 +6,8 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
+// TODO: sarqel pagination-ov
+
 exports.getAllCompanies = async (req, res) => {
   try {
     const companies = await Company.find({})
@@ -39,13 +41,15 @@ exports.getAllCompanies = async (req, res) => {
   }
 }
 
+//TODO: data restiction
+
 exports.getCompanyById = async (req, res) => {
   const _id = req.params.id
   try {
     const company = await Company.findOne({
       _id,
     })
-    res.status(200).send({
+    return res.status(200).send({
       id: company._id,
       name: company.name,
       email: company.email,

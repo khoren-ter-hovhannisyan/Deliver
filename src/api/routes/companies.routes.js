@@ -12,9 +12,11 @@ const checkAuth = require('../middleware/check-auth')
 
 const router = Router()
 
+//TODO : /company   post
+
 router.get('/companies', getAllCompanies)
 router.get('/companies/:id', getCompanyById)
-router.post('/sign-up-company', createCompany)
+router.post('/company', createCompany)
 router.delete('/companies/:id', delCompany)
 router.put('/companies/:id', updateCompany)
 

@@ -19,10 +19,6 @@ const config = require('./config')
 
 const app = express()
 
-const server = app.listen(config.server.port, () => {
-  console.log(`Magic is happening on port ${config.server.port}`)
-})
-
 app.use(express.json())
 app.use(morgan('combined'))
 app.use(cors())
@@ -32,7 +28,16 @@ app.use(companyRouter)
 app.use(loginRouter)
 app.use(orderRouter)
 
+const server = app.listen(config.server.port, () => {
+  console.log(`Magic is happening on port ${config.server.port}`)
+})
+
+// TODO: tanel arandzin fayli mej socett-i het kapvac amen inj , sarqel constantner bolor str-ner@,
+// TODO: socetnerin kpcnel token-i stugum@
+
 const io = socket(server)
+
+// TODO: db.j file sarqel tanel mongoose.connect@ et faili mej
 
 mongoose.connect(
   config.db.url,
@@ -48,7 +53,6 @@ mongoose.connect(
 )
 
 io.on('connection', socket => {
-  console.log('Socket magic is happening', socket.id)
   socket.on('new_account', async accountData => {
     const user = await User.findOne({
       email: accountData.data.email,

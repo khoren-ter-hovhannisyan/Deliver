@@ -8,4 +8,5 @@ module.exports = {
   routes: {
     key: process.env.JWT_KEY,
   }
+
 }
