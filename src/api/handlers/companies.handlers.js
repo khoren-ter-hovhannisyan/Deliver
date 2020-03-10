@@ -127,7 +127,7 @@ exports.delCompany = async (req, res) => {
   try {
     const id = req.params.id
     const { adminId: _id } = await Users.findOne({ type: types.admin })
-    const { companyId: _id } = await Company.findOne({ _id })
+    const { companyId: _id } = await Company.findOne({ _id:id })
     if (!(req.userData.id === adminId || req.userData.id === companyId)) {
       return res.status(500).send({ message: messages.errorMessage })
     }
