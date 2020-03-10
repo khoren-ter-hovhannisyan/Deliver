@@ -11,8 +11,8 @@ exports.generateToken = (res, id) => {
     })
     return res.set({
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Expose-Headers': 'autorization',
-      autorization: token,
+      'Access-Control-Expose-Headers': 'authorization',
+      authorization: token,
     })
   } catch {
     return res.status(401).send({
