@@ -13,6 +13,8 @@ const { types, status, messages } = require('../../utils/constans')
 exports.getAllCompanies = async (req, res) => {
   try {
     const admin = await Users.findOne({ type: types.admin })
+    console.log(admin, req.userData.id);
+    
     if (req.userData.id !== admin._id) {
       return res.status(401).send({
         message: messages.errorMessage,
