@@ -32,12 +32,12 @@ const server = app.listen(config.server.port, () => {
   console.log(`Magic is happening on port ${config.server.port}`)
 })
 
-// TODO: tanel arandzin fayli mej socett-i het kapvac amen inj , sarqel constantner bolor str-ner@, 
+// TODO: tanel arandzin fayli mej socett-i het kapvac amen inj , sarqel constantner bolor str-ner@,
 // TODO: socetnerin kpcnel token-i stugum@
 
 const io = socket(server)
 
-// TODO: db.j file sarqel tanel mongoose.connect@ et faili mej 
+// TODO: db.j file sarqel tanel mongoose.connect@ et faili mej
 
 mongoose.connect(
   config.db.url,
