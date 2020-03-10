@@ -38,24 +38,9 @@ exports.login = async (req, res) => {
           //TODO: tokenner@ set anel cookineri mej , expires time qcel configneri mej, uxarkel headers-ov
 
           generateToken(res, company._id)
-          // const token = jwt.sign(
-          //   {
-          //     companyId: company._id,
-          //   },
-          //   process.env.JWT_KEY,
-          //   {
-          //     expiresIn: '12h',
-          //   }
-          // )
-          // res.set({
-          //   'Access-Control-Allow-Origin': '*',
-          //   'Access-Control-Expose-Headers': 'authorization',
-          //   authorization: token,
-          // })
           return res.status(200).send({
             id: company._id,
             type: company.type,
-            //token,
             message: 'Auth successful',
           })
         }
@@ -82,25 +67,10 @@ exports.login = async (req, res) => {
           })
         }
         if (result) {
-          const token = jwt.sign(
-            {
-              email: user.email,
-              userId: user._id,
-            },
-            process.env.JWT_KEY,
-            {
-              expiresIn: '12h',
-            }
-          )
-          res.set({
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': 'authorization',
-            authorization: token,
-          })
+          generateToken(res, user._id)
           return res.status(200).send({
             id: user._id,
             type: user.type,
-            token: token,
             message: 'Auth successful',
           })
         }
@@ -132,24 +102,9 @@ exports.loginAdmin = (req, res) => {
           })
         }
         if (result) {
-          const token = jwt.sign(
-            {
-              email: user.email,
-              userId: user._id,
-            },
-            process.env.JWT_KEY,
-            {
-              expiresIn: '12h',
-            }
-          )
-          res.set({
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': 'authorization',
-            authorization: token,
-          })
+          generateToken(res, user._id)
           return res.status(200).send({
             type: user.type,
-            token: token,
             message: 'Auth successful',
           })
         }
