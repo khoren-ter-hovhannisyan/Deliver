@@ -2,7 +2,6 @@ require('dotenv').config()
 
 const express = require('express')
 const morgan = require('morgan')
-const mongoose = require('mongoose')
 const cors = require('cors')
 const socket = require('socket.io')
 
@@ -31,11 +30,8 @@ const server = app.listen(config.server.port, () => {
   console.log(`Magic is happening on port ${config.server.port}`)
 })
 
-// TODO: tanel arandzin fayli mej socett-i het kapvac amen inj , sarqel constantner bolor str-ner@,
-// TODO: socetnerin kpcnel token-i stugum@
-
 const io = socket(server)
+
 db(server)
-// TODO: db.j file sarqel tanel mongoose.connect@ et faili mej
 
 io.on('connection', socket => socketListeners(socket))

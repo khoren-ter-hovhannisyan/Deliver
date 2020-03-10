@@ -11,16 +11,11 @@ const transporter = nodemailer.createTransport({
   },
 })
 
-const signature = `<style>
-img{
-  height: 80px;
-  border-radius: 30px;
-}
-</style>
+const signature = `
 <div>
 <h3><b><i>Best Regards,</i></b></h3>
 <h3><b><i>Deliver.me team</i></b></h3>
-<img  src="https://res.cloudinary.com/dfeoo5iog/image/upload/v1583822755/acjxkmwu5hv2s1ouzh48.jpg">
+<img height="80px" src="https://res.cloudinary.com/dfeoo5iog/image/upload/v1583825717/d7hgh4ox55fh0pj24f3a.jpg">
 </div>`
 
 const link = 'https://delivermearmenia.herokuapp.com/'
