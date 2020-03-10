@@ -1,5 +1,5 @@
 module.exports = {
-  type: {
+  types: {
     admin: 'admin',
     user: 'user',
     company: 'company',
@@ -7,6 +7,7 @@ module.exports = {
   status: {
     pendingStatus: 'pending',
     doneStatus: 'done',
+    activeStatus: 'active',
     acceptedStatus: 'accepted',
     declinedStatus: 'declined',
   },
@@ -27,5 +28,11 @@ module.exports = {
   },
   message: {
     errorMessage: 'Something went wrong, try later',
+  },
+  img: {
+    companyAvatar:
+      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
+    userAvatar:
+      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png',
   },
 }

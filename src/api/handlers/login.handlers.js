@@ -45,8 +45,8 @@ exports.login = async (req, res) => {
           )
           res.set({
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': 'autorization',
-            "autorization": token,
+            'Access-Control-Expose-Headers': 'authorization',
+            authorization: token,
           })
           return res.status(200).send({
             id: company._id,
@@ -90,8 +90,8 @@ exports.login = async (req, res) => {
           )
           res.set({
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': 'autorization',
-            "autorization": token,
+            'Access-Control-Expose-Headers': 'authorization',
+            authorization: token,
           })
           return res.status(200).send({
             id: user._id,
@@ -140,8 +140,8 @@ exports.loginAdmin = (req, res) => {
           )
           res.set({
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Expose-Headers': 'autorization',
-            "autorization": token,
+            'Access-Control-Expose-Headers': 'authorization',
+            authorization: token,
           })
           return res.status(200).send({
             type: user.type,

@@ -7,17 +7,14 @@ const {
   delCompany,
   updateCompany,
 } = require('../handlers/companies.handlers')
-
-const checkAuth = require('../middleware/check-auth')
+const checkAuth = require('../middleware/check-auth.middleware')
 
 const router = Router()
 
-//TODO : /company   post
-
-router.get('/companies', getAllCompanies)
-router.get('/companies/:id', getCompanyById)
-router.post('/company', createCompany)
-router.delete('/companies/:id', delCompany)
-router.put('/companies/:id', updateCompany)
+router.get('/companies', checkAuth, getAllCompanies)
+router.get('/companies/:id', checkAuth, getCompanyById)
+router.post('/company', checkAuth, createCompany)
+router.delete('/companies/:id', checkAuth, delCompany)
+router.put('/companies/:id', checkAuth, updateCompany)
 
 module.exports = router
