@@ -105,6 +105,7 @@ exports.loginAdmin = (req, res) => {
           generateToken(res, user._id)
           return res.status(200).send({
             type: user.type,
+            token,
             message: 'Auth successful',
           })
         }
