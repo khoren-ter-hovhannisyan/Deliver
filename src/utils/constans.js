@@ -1,4 +1,9 @@
 module.exports = {
+  type: {
+    admin: 'admin',
+    user: 'user',
+    company: 'company',
+  },
   status: {
     pendingStatus: 'pending',
     doneStatus: 'done',

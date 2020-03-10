@@ -2,11 +2,11 @@ const {
   socketListeners,
   socketEmiters,
   message,
-} = require('./services/constans')
+} = require('../utils/constans')
 
-const User = require('./api/models/users.model')
-const Company = require('./api/models/company.model')
-const Order = require('./api/models/order.model')
+const User = require('../api/models/users.model')
+const Company = require('../api/models/company.model')
+const Order = require('../api/models/order.model')
 
 // TODO: socetnerin kpcnel token-i stugum@
 

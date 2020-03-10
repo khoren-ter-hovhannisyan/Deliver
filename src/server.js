@@ -10,10 +10,10 @@ const userRouter = require('./api/routes/users.routes')
 const loginRouter = require('./api/routes/login.routes')
 const orderRouter = require('./api/routes/order.routes')
 
-const { socketListeners } = require('./socket')
-const db = require('./api/db/db')
+const { socketListeners } = require('./services/socket')
+const db = require('./db/db')
 
-const config = require('./config')
+const config = require('./utils/config')
 
 const app = express()
 
