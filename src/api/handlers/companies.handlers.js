@@ -6,10 +6,18 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
+const { types, status, messages } = require('../../utils/constans')
+
 // TODO: sarqel pagination-ov
 
 exports.getAllCompanies = async (req, res) => {
   try {
+    const { _id } = await Users.findOne({ type: types.admin })
+    if (req.userData.id !== _id) {
+      return res.status(401).send({
+        message: messages.errorMessage,
+      })
+    }
     const companies = await Company.find({})
     const companiesOutput = []
     for (let i = 0; i < companies.length; i++) {
@@ -35,8 +43,7 @@ exports.getAllCompanies = async (req, res) => {
     return res.status(200).send(companiesOutput)
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
-      err,
+      message: messages.errorMessage,
     })
   }
 }
@@ -44,11 +51,14 @@ exports.getAllCompanies = async (req, res) => {
 //TODO: data restiction
 
 exports.getCompanyById = async (req, res) => {
-  const _id = req.params.id
   try {
-    const company = await Company.findOne({
-      _id,
-    })
+    const _id = req.params.id
+    if (req.userData.id !== _id) {
+      return res.status(401).send({
+        message: messages.errorMessage,
+      })
+    }
+    const company = await Company.findOne({ _id })
     return res.status(200).send({
       id: company._id,
       name: company.name,
@@ -64,8 +74,7 @@ exports.getCompanyById = async (req, res) => {
     })
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
-      err,
+      message: messages.errorMessage,
     })
   }
 }
@@ -81,13 +90,12 @@ exports.createCompany = async (req, res) => {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
           return res.status(500).send({
-            error: 'Something went wrong, try later',
+            message: messages.errorMessage,
           })
         } else {
           const company = new Company({
             ...req.body,
             email: req.body.email.toLowerCase(),
-            type: 'company',
             password: hash,
           })
 
@@ -95,7 +103,6 @@ exports.createCompany = async (req, res) => {
             if (err) {
               return res.status(400).send({
                 message: 'Some input fields are wrong or empty',
-                error: err,
               })
             }
             sendEmail.sendInfoSignUp(company)
@@ -112,43 +119,60 @@ exports.createCompany = async (req, res) => {
       })
     }
   } catch (err) {
-    return res.status(500).send({ message: 'Something went wrong, try later' })
+    return res.status(500).send({ message: messages.errorMessage })
   }
 }
 
 exports.delCompany = async (req, res) => {
-  const _id = req.params.id
   try {
+    const _id = req.params.id
+    const { adminId: _id } = await Users.findOne({ type: types.admin })
+    const { companyId: _id } = await Company.findOne({ _id })
+    if (!(req.userData.id === adminId || req.userData.id === companyId)) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
     const order = await Order.findOne({ companyId: _id })
+    const pendingOrder = await Order.findOne({
+      companyId: _id,
+      state: status.pending,
+    })
+    if (pendingOrder) {
+      return res.status(401).send({
+        message:
+          'The company cannot be deleted. The company has pending order(s)!',
+      })
+    }
     if (order) {
       await Order.remove({ companyId: _id })
     }
-    await Company.findByIdAndRemove({
-      _id,
-    })
+    await Company.findByIdAndRemove({ _id })
     return res.status(202).send({
       message: 'Company is deleted',
     })
-  } catch (err) {
-    res.status(500).send({ message: 'Something went wrong, try later' })
+  } catch {
+    return res.status(500).send({ message: messages.errorMessage })
   }
 }
 
 exports.updateCompany = async (req, res) => {
-  const _id = req.params.id
-
   try {
-    const companyCheck = await Company.findOne({
-      _id,
-    })
+    if (req.body.createdTime) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
+    const _id = req.params.id
+    const companyCheck = await Company.findOne({ _id })
+    const { adminId: _id } = await Users.findOne({ type: types.admin })
+    if (!(req.userData.id === adminId || req.userData.id === companyCheck._id)) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
     if (
-      req.body.approved === 'accepted' &&
-      companyCheck.approved !== 'accepted'
+      req.body.approved === status.accepted &&
+      companyCheck.approved !== status.accepted
     ) {
       sendEmail.sendAcceptEmail(companyCheck)
     } else if (
-      req.body.approved === 'declined' &&
-      companyCheck.approved !== 'declined'
+      req.body.approved === status.declined &&
+      companyCheck.approved !== status.declined 
     ) {
       sendEmail.sendDeclineEmail(companyCheck)
     }
@@ -167,10 +191,10 @@ exports.updateCompany = async (req, res) => {
             bcrypt.hash(req.body.new_password, 10, (err, hash) => {
               if (err) {
                 return res.status(500).send({
-                  error: 'Something went wrong, try later',
+                  message: messages.errorMessage,
                 })
-              } else {
-                Company.findByIdAndUpdate(
+              } 
+                const company = await Company.findByIdAndUpdate(
                   _id,
                   {
                     ...req.body,
@@ -179,27 +203,23 @@ exports.updateCompany = async (req, res) => {
                   {
                     new: true,
                   }
-                ).then(company => {
-                  return res.status(201).send({
-                    id: company._id,
-                    name: company.name,
-                    email: company.email,
-                    phone: company.phone,
-                    taxNumber: company.taxNumber,
-                    address: company.address,
-                    activity: company.activity,
-                    approved: company.approved,
-                    avatar: company.avatar,
-                    amount: company.amount,
-                    createdTime: Date.parse(company.createdTime),
-                  })
+                )
+                return res.status(201).send({
+                  id: company._id,
+                  name: company.name,
+                  email: company.email,
+                  phone: company.phone,
+                  taxNumber: company.taxNumber,
+                  address: company.address,
+                  activity: company.activity,
+                  approved: company.approved,
+                  avatar: company.avatar,
+                  amount: company.amount,
+                  createdTime: Date.parse(company.createdTime),
                 })
-              }
-            })
-          }
-          return res.status(401).send({
-            message: 'Auth failed: email or password is incorrect',
-          })
+              })
+            }
+          return res.status(401).send({ message: messages.errorMessage })
         }
       )
     }
@@ -226,9 +246,9 @@ exports.updateCompany = async (req, res) => {
       amount: company.amount,
       createdTime: Date.parse(company.createdTime),
     })
-  } catch (err) {
+  } catch {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
+      message: messages.errorMessage,
     })
   }
 }

@@ -30,6 +30,10 @@ module.exports = {
     errorMessage: 'Something went wrong, try later',
     errorAuthfailed: 'Auth failed: email or password is incorrect',
     succsessAuthMessage: 'Auth successful',
+    errorPendingMessage:
+      'Our admin team is reviewing your sign up request. Please wait for the response!',
+    errorDeclinedMessage:
+      'Your sign-up request has unfortunately been declined. Please contact our administration for more information.',
   },
   img: {
     companyAvatar:
