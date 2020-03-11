@@ -133,10 +133,16 @@ exports.delCompany = async (req, res) => {
     const _id = req.params.id
     const adminId = await Users.findOne({ type: types.admin })
     const companyId = await Company.findOne({ _id })
+    console.log(`${companyId._id}`, JSON.stringify(companyId._id));
+    
+    console.log(typeof (`${companyId._id}`));
+    console.log(typeof(JSON.stringify(companyId._id)));
+    
+    
     if (
       !(
         req.userData.id === JSON.stringify(adminId._id) ||
-        req.userData.id === JSON.stringify(companyId._id)
+        req.userData.id === `${companyId._id}`
       )
     ) {
       return res.status(500).send({ message: messages.errorMessage })
