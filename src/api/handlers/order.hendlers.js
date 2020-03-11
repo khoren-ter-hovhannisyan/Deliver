@@ -88,8 +88,8 @@ exports.getCompanyOrders = async (req, res) => {
     for (let i = 0; i < orders.length; i++) {
       const user = await Users.findOne({ _id: orders[i].userId })
       const order = {
-        id: orders[i]._id,
-        ...orders[i],
+        id: orders[i].doc._id,
+        ...orders[i].doc,
         user_name: undefined,
         user_phone: undefined,
         user_email: undefined,
