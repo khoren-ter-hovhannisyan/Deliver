@@ -1,9 +1,11 @@
 const { Schema, model } = require('mongoose')
 
+const { types, status, img } = require('../../utils/constans')
+
 const usersSchema = new Schema({
   type: {
     type: String,
-    default: 'user',
+    default: types.user,
   },
   name: {
     type: String,
@@ -33,7 +35,7 @@ const usersSchema = new Schema({
   },
   approved: {
     type: String,
-    default: 'pending',
+    default: status.pending,
   },
   passportURL: {
     type: String,
@@ -41,8 +43,7 @@ const usersSchema = new Schema({
   },
   avatar: {
     type: String,
-    default:
-      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png',
+    default: img.userAvatar,
   },
   amount: {
     type: Number,
@@ -55,8 +56,8 @@ const usersSchema = new Schema({
     max: 5,
   },
   createdTime: {
-    type: Date,
-    default: Date.now,
+    type: Number,
+    default: Number(Date.now()),
   },
 })
 

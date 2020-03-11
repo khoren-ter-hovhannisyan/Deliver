@@ -1,9 +1,11 @@
 const { Schema, model } = require('mongoose')
 
+const { types, status, img } = require('../../utils/constans')
+
 const companySchema = new Schema({
   type: {
     type: String,
-    default: 'company',
+    default: types.company,
   },
   name: {
     type: String,
@@ -38,20 +40,19 @@ const companySchema = new Schema({
   },
   approved: {
     type: String,
-    default: 'pending',
+    default: status.pending,
   },
   avatar: {
     type: String,
-    default:
-      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
+    default: img.companyAvatar,
   },
   amount: {
     type: Number,
     default: 0,
   },
   createdTime: {
-    type: Date,
-    default: Date.now,
+    type: Number,
+    default: Number(Date.now()),
   },
 })
 

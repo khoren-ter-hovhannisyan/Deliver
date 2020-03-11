@@ -13,19 +13,16 @@ exports.login = async (req, res) => {
     })
     const user = await Users.findOne({
       email: req.body.email.toLowerCase(),
-      type: types,
+      type: types.user,
     })
-    //TODO: sarqel bolor str-ner-i hamar constantner
     if (company) {
-      if (company.approved === status.pendingStatus) {
+      if (company.approved === status.pending) {
         return res.status(406).send({
-          message:
-            'Our admin team is reviewing your sign up request. Please wait for the response!',
+          message: messages.errorPendingMessage,
         })
       } else if (company.approved === status.declined) {
         return res.status(406).send({
-          message:
-            'Your sign-up request has unfortunately been declined. Please contact our administration for more information.',
+          message: messages.errorDeclinedMessage,
         })
       }
       bcrypt.compare(req.body.password, company.password, (err, result) => {
@@ -49,13 +46,11 @@ exports.login = async (req, res) => {
     } else if (user) {
       if (user.approved === status.pending) {
         return res.status(406).send({
-          message:
-            'Our admin team is reviewing your sign up request. Please wait for the response!',
+          message: messages.errorPendingMessage,
         })
       } else if (user.approved === status.declined) {
         return res.status(406).send({
-          message:
-            'Your sign-up request has unfortunately been declined. Please contact our administration for more information.',
+          message: messages.errorDeclinedMessage,
         })
       }
       bcrypt.compare(req.body.password, user.password, (err, result) => {
@@ -77,9 +72,7 @@ exports.login = async (req, res) => {
         })
       })
     } else {
-      return res
-        .status(401)
-        .send({ message: messages.errorAuthfailed })
+      return res.status(401).send({ message: messages.errorAuthfailed })
     }
   } catch (err) {
     return res.status(500).send({ message: messages.errorMessage })

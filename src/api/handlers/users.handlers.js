@@ -7,9 +7,18 @@ const sendEmail = require('../../services/sendEmail')
 
 exports.getAllUsers = async (req, res) => {
   try {
+    const last = Number(req.query.last)
+    const count = Number(req.query.count) + 1
     const users = await Users.find({
       type: 'user',
     })
+      .sort({ createdTime: -1 })
+      .where('createdTime')
+      .lt(last)
+      .limit(count)
+    if (users.length === 0) {
+      return res.status(206).send({message:"No more content"})
+    }
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {
       const orders_count = await Order.find({
@@ -29,7 +38,7 @@ exports.getAllUsers = async (req, res) => {
         avatar: users[i].avatar,
         amount: users[i].amount,
         rating: users[i].rating,
-        createdTime: Date.parse(users[i].createdTime),
+        createdTime: users[i].createdTime,
         orders_count: orders_count.length,
       }
       usersOutput.push(user)
@@ -38,11 +47,10 @@ exports.getAllUsers = async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       message: 'Something went wrong, try later',
-      err,
     })
   }
 }
-//TODO : mongoose selectorrneric ogtvel 
+//TODO : mongoose selectorrneric ogtvel
 exports.getUserById = async (req, res) => {
   const _id = req.params.id
   try {
@@ -62,7 +70,7 @@ exports.getUserById = async (req, res) => {
       avatar: user.avatar,
       amount: user.amout,
       rating: user.rating,
-      createdTime: Date.parse(user.createdTime),
+      createdTime: user.createdTime,
     })
   } catch (err) {
     return res.status(500).send({
@@ -120,8 +128,9 @@ exports.createUser = async (req, res) => {
 }
 
 exports.delUser = async (req, res) => {
-  const _id = req.params.id
+  
   try {
+    const _id = req.params.id
     await Users.findByIdAndRemove({
       _id,
     })
@@ -190,7 +199,7 @@ exports.updateUser = async (req, res) => {
                     avatar: user.avatar,
                     amount: user.amount,
                     rating: user.rating,
-                    createdTime: Date.parse(user.createdTime),
+                    createdTime: user.createdTime,
                   })
                 })
               }
@@ -223,7 +232,7 @@ exports.updateUser = async (req, res) => {
       avatar: user.avatar,
       amount: user.amount,
       rating: user.rating,
-      createdTime: Date.parse(user.createdTime),
+      createdTime: user.createdTime,
     })
   } catch (err) {
     return res.status(500).send({
@@ -232,6 +241,3 @@ exports.updateUser = async (req, res) => {
     })
   }
 }
-
-
-

@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose')
 
+const { status } = require('../../utils/constans')
+
 const orderSchema = new Schema({
   points: {
     type: Number,
@@ -35,7 +37,7 @@ const orderSchema = new Schema({
   },
   state: {
     type: String,
-    default: 'active',
+    default: status.active,
   },
   companyId: {
     type: String,

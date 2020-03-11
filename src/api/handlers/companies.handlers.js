@@ -6,15 +6,25 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
+const { types, status, messages } = require('../../utils/constans')
+
 // TODO: sarqel pagination-ov
 
 exports.getAllCompanies = async (req, res) => {
   try {
+    const admin = await Users.findOne({ type: types.admin })
+
+    if (req.userData.id !== `${admin._id}`) {
+      return res.status(401).send({
+        message: messages.errorMessage,
+      })
+    }
     const companies = await Company.find({})
     const companiesOutput = []
     for (let i = 0; i < companies.length; i++) {
       const company_orders_count = await Order.find({
         companyId: companies[i]._id,
+        type: types.pending,
       })
       const company = {
         id: companies[i]._id,
@@ -27,7 +37,7 @@ exports.getAllCompanies = async (req, res) => {
         approved: companies[i].approved,
         avatar: companies[i].avatar,
         amount: companies[i].amount,
-        createdTime: Date.parse(companies[i].createdTime),
+        createdTime: companies[i].createdTime,
         orders_count: company_orders_count.length,
       }
       companiesOutput.push(company)
@@ -35,8 +45,7 @@ exports.getAllCompanies = async (req, res) => {
     return res.status(200).send(companiesOutput)
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
-      err,
+      message: messages.errorMessage,
     })
   }
 }
@@ -44,11 +53,14 @@ exports.getAllCompanies = async (req, res) => {
 //TODO: data restiction
 
 exports.getCompanyById = async (req, res) => {
-  const _id = req.params.id
   try {
-    const company = await Company.findOne({
-      _id,
-    })
+    const _id = req.params.id
+    if (req.userData.id !== _id) {
+      return res.status(401).send({
+        message: messages.errorMessage,
+      })
+    }
+    const company = await Company.findOne({ _id })
     return res.status(200).send({
       id: company._id,
       name: company.name,
@@ -60,16 +72,14 @@ exports.getCompanyById = async (req, res) => {
       activity: company.activity,
       avatar: company.avatar,
       amount: company.amount,
-      createdTime: Date.parse(company.createdTime),
+      createdTime: company.createdTime,
     })
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
-      err,
+      message: messages.errorMessage,
     })
   }
 }
-
 exports.createCompany = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email.toLowerCase() })
@@ -81,13 +91,12 @@ exports.createCompany = async (req, res) => {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
           return res.status(500).send({
-            error: 'Something went wrong, try later',
+            message: messages.errorMessage,
           })
         } else {
           const company = new Company({
             ...req.body,
             email: req.body.email.toLowerCase(),
-            type: 'company',
             password: hash,
           })
 
@@ -95,7 +104,6 @@ exports.createCompany = async (req, res) => {
             if (err) {
               return res.status(400).send({
                 message: 'Some input fields are wrong or empty',
-                error: err,
               })
             }
             sendEmail.sendInfoSignUp(company)
@@ -112,123 +120,138 @@ exports.createCompany = async (req, res) => {
       })
     }
   } catch (err) {
-    return res.status(500).send({ message: 'Something went wrong, try later' })
+    return res.status(500).send({ message: messages.errorMessage })
   }
 }
 
 exports.delCompany = async (req, res) => {
-  const _id = req.params.id
   try {
+    const _id = req.params.id
+    const adminId = await Users.findOne({ type: types.admin })
+    const companyId = await Company.findOne({ _id })
+
+    if (
+      !(
+        req.userData.id === `${adminId._id}` ||
+        req.userData.id === `${companyId._id}`
+      )
+    ) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
     const order = await Order.findOne({ companyId: _id })
+    const pendingOrder = await Order.findOne({
+      companyId: _id,
+      state: status.pending,
+    })
+    if (pendingOrder) {
+      return res.status(401).send({
+        message:
+          'The company cannot be deleted. The company has pending order(s)!',
+      })
+    }
     if (order) {
       await Order.remove({ companyId: _id })
     }
-    await Company.findByIdAndRemove({
-      _id,
-    })
+    await Company.findByIdAndRemove({ _id })
     return res.status(202).send({
       message: 'Company is deleted',
     })
-  } catch (err) {
-    res.status(500).send({ message: 'Something went wrong, try later' })
+  } catch {
+    return res.status(500).send({ message: messages.errorMessage })
   }
 }
 
 exports.updateCompany = async (req, res) => {
-  const _id = req.params.id
-
   try {
-    const companyCheck = await Company.findOne({
-      _id,
-    })
+    if (req.body.createdTime) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
+    const _id = req.params.id
+    const companyCheck = await Company.findOne({ _id })
+    const adminId = await Users.findOne({ type: types.admin })
     if (
-      req.body.approved === 'accepted' &&
-      companyCheck.approved !== 'accepted'
+      !(
+        req.userData.id === `${adminId._id}` ||
+        req.userData.id === `${companyCheck._id}`
+      )
+    ) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
+    if (
+      req.body.approved === status.accepted &&
+      companyCheck.approved !== status.accepted
     ) {
       sendEmail.sendAcceptEmail(companyCheck)
     } else if (
-      req.body.approved === 'declined' &&
-      companyCheck.approved !== 'declined'
+      req.body.approved === status.declined &&
+      companyCheck.approved !== status.declined
     ) {
       sendEmail.sendDeclineEmail(companyCheck)
     }
+    console.log(req.body.old_password && req.body.new_password)
+    console.log(req.body.old_password, req.body.new_password)
 
     if (req.body.old_password && req.body.new_password) {
       bcrypt.compare(
         req.body.old_password,
         companyCheck.password,
         (err, result) => {
-          if (err) {
+          console.log(err, result)
+          if (err || !result) {
             return res.status(401).send({
               message: 'Old password is incorrect',
             })
           }
-          if (result) {
-            bcrypt.hash(req.body.new_password, 10, (err, hash) => {
-              if (err) {
-                return res.status(500).send({
-                  error: 'Something went wrong, try later',
-                })
-              } else {
-                Company.findByIdAndUpdate(
-                  _id,
-                  {
-                    ...req.body,
-                    password: hash,
-                  },
-                  {
-                    new: true,
-                  }
-                ).then(company => {
-                  return res.status(201).send({
-                    id: company._id,
-                    name: company.name,
-                    email: company.email,
-                    phone: company.phone,
-                    taxNumber: company.taxNumber,
-                    address: company.address,
-                    activity: company.activity,
-                    approved: company.approved,
-                    avatar: company.avatar,
-                    amount: company.amount,
-                    createdTime: Date.parse(company.createdTime),
-                  })
-                })
+
+          bcrypt.hash(req.body.new_password, 10, (err, hash) => {
+            if (err) {
+              return res.status(500).send({
+                message: messages.errorMessage,
+              })
+            }
+            Company.findByIdAndUpdate(
+              _id,
+              {
+                password: hash,
+              },
+              {
+                new: true,
               }
+            ).then(_ => {
+              return res.status(201).send({
+                message: 'Password has changed',
+              })
             })
-          }
-          return res.status(401).send({
-            message: 'Auth failed: email or password is incorrect',
           })
         }
       )
+    } else {
+      const company = await Company.findByIdAndUpdate(
+        _id,
+        {
+          ...req.body,
+        },
+        {
+          new: true,
+        }
+      )
+      return res.status(201).send({
+        id: company._id,
+        name: company.name,
+        email: company.email,
+        phone: company.phone,
+        taxNumber: company.taxNumber,
+        address: company.address,
+        activity: company.activity,
+        approved: company.approved,
+        avatar: company.avatar,
+        amount: company.amount,
+        createdTime: company.createdTime,
+      })
     }
-
-    const company = await Company.findByIdAndUpdate(
-      _id,
-      {
-        ...req.body,
-      },
-      {
-        new: true,
-      }
-    )
-    return res.status(201).send({
-      id: company._id,
-      name: company.name,
-      email: company.email,
-      phone: company.phone,
-      taxNumber: company.taxNumber,
-      address: company.address,
-      activity: company.activity,
-      approved: company.approved,
-      avatar: company.avatar,
-      amount: company.amount,
-      createdTime: Date.parse(company.createdTime),
-    })
-  } catch (err) {
+  } catch {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
+      message: messages.errorMessage,
     })
   }
 }
