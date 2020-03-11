@@ -6,7 +6,7 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
-const { types, status, messages } = require('../../utils/constans')
+const { types, status, messages, selectTypes } = require('../../utils/constans')
 
 exports.createOrder = async (req, res) => {
   try {
@@ -41,7 +41,7 @@ exports.createOrder = async (req, res) => {
 exports.getAllActiveOrder = async (req, res) => {
   try {
     const orders = await Order.find({ state: status.active }).select(
-      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId'
+      selectTypes.orderForActiveOrders
     )
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
@@ -74,7 +74,7 @@ exports.getCompanyOrders = async (req, res) => {
         : req.query.type
 
     const orders = await Order.find({ companyId: _id, state: type }).select(
-      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment userId'
+      selectTypes.orderForCompanies
     )
 
     const ordersOutput = []
@@ -141,9 +141,7 @@ exports.updateOrder = async (req, res) => {
       _id,
       { ...req.body },
       { new: true }
-    ).select(
-      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId userId'
-    )
+    ).select(selectTypes.orderForUpdate)
 
     const company = await Company.findOne({ _id: order.companyId })
     const user = await Users.findOne({ _id: order.userId })
@@ -185,7 +183,7 @@ exports.getUserOrders = async (req, res) => {
   try {
     const _id = req.params.id
     const user = await Users.findOne({ _id })
-    
+
     if (req.userData.id !== `${user._id}`) {
       return res.status(500).send({ message: messages.errorMessage })
     }
@@ -195,8 +193,9 @@ exports.getUserOrders = async (req, res) => {
       })
     }
 
-    const orders = await Order.find({ userId: _id })
-    .select('state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId')
+    const orders = await Order.find({ userId: _id }).select(
+      selectTypes.orderForUser
+    )
     const ordersOutput = []
 
     for (let i = 0; i < orders.length; i++) {

@@ -41,4 +41,14 @@ module.exports = {
     userAvatar:
       'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png',
   },
+  selectTypes: {
+    orderForUpdate:
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId userId',
+    orderForCompanies:
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment userId',
+    orderForActiveOrders:
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId',
+    orderForUser:
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId',
+  },
 }
