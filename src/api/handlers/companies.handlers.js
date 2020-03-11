@@ -204,7 +204,7 @@ exports.updateCompany = async (req, res) => {
                   message: messages.errorMessage,
                 })
               }
-                await Company.findByIdAndUpdate(
+                Company.findByIdAndUpdate(
                 _id,
                 {
                   password: hash,
