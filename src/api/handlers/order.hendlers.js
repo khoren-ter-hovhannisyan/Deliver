@@ -78,29 +78,18 @@ exports.getCompanyOrders = async (req, res) => {
     }
     const type =
       req.query.type === 'all'
-        ? { $in: ['active', 'pending', 'done'] }
+        ? { $in: [status.active, status.pending, status.done] }
         : req.query.type
-    console.log(type, '****')
 
     const orders = await Order.find({ companyId: _id, state: type })
-    console.log(orders, '-------')
+      .select('state points order_description take_address deliver_address order_start_time receiver_name receiver_phone comment')
 
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
       const user = await Users.findOne({ _id: orders[i].userId })
       const order = {
         id: orders[i]._id,
-        state: orders[i].state,
-        points: orders[i].points,
-        order_description: orders[i].order_description,
-        take_address: orders[i].take_address,
-        deliver_address: orders[i].deliver_address,
-        order_create_time: moment(orders[i].order_create_time).format('LLL'),
-        order_start_time: moment(orders[i].order_start_time).format('LLL'),
-        order_end_time: moment(orders[i].order_end_time).format('LLL'),
-        receiver_name: orders[i].receiver_name,
-        receiver_phone: orders[i].receiver_phone,
-        comment: orders[i].comment,
+        ...orders[i],
         user_name: undefined,
         user_phone: undefined,
         user_email: undefined,
@@ -125,8 +114,8 @@ exports.delOrder = async (req, res) => {
   try {
     const _id = req.params.id
     const { companyId } = await Order.findOne({ _id })
-    const company = Company.findOne({ _id: req.userData.id })
-    if (!((`${companyId}` === `${company._id}`) === _id)) {
+    const company = Company.findOne({ _id: companyId })
+    if (`${companyId}` !== `${company._id}`) {
       return res.status(500).send({ message: messages.errorMessage })
     }
     await Order.findByIdAndRemove({
@@ -139,7 +128,7 @@ exports.delOrder = async (req, res) => {
     return res.status(404).send({ message: messages.errorMessage })
   }
 }
-// TODO validate request , definde LCL accsess controle list
+
 exports.updateOrder = async (req, res) => {
   try {
     const _id = req.params.id
@@ -204,10 +193,8 @@ exports.updateOrder = async (req, res) => {
       user_phone: user ? user.phone : undefined,
       user_email: user ? user.email : undefined,
     })
-  } catch (err) {
-    return res
-      .status(500)
-      .send({ message: 'Something went wrong, try later', err })
+  } catch {
+    return res.status(500).send({ message: messages.errorMessage })
   }
 }
 //TODO : validate _id
@@ -249,8 +236,6 @@ exports.getUserOrders = async (req, res) => {
     }
     return res.status(200).send(ordersOutput)
   } catch (err) {
-    return res
-      .status(500)
-      .send({ message: 'Something went wrong, try later', err })
+    return res.status(500).send({ message: messages.errorMessage })
   }
 }

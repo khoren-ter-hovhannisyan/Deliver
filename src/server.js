@@ -33,5 +33,3 @@ const server = app.listen(config.server.port, () => {
 const io = socket(server)
 
 db(server)
-
-io.on('connection', socket => socketListeners(socket))
