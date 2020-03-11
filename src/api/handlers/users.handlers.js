@@ -16,7 +16,7 @@ exports.getAllUsers = async (req, res) => {
       .where('createdTime')
       .lt(last)
       .limit(count)
-    if (user.length === 0) {
+    if (users.length === 0) {
       return res.status(206).send({message:"No more content"})
     }
     const usersOutput = []
