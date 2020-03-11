@@ -129,9 +129,7 @@ exports.delCompany = async (req, res) => {
     const _id = req.params.id
     const adminId = await Users.findOne({ type: types.admin })
     const companyId = await Company.findOne({ _id })
-    
-    
-    
+
     if (
       !(
         req.userData.id === JSON.stringify(adminId._id) ||
@@ -171,12 +169,11 @@ exports.updateCompany = async (req, res) => {
     const _id = req.params.id
     const companyCheck = await Company.findOne({ _id })
     const adminId = await Users.findOne({ type: types.admin })
-    console.log(`${companyCheck._id}`, JSON.stringify(companyCheck._id));
-    
-    console.log(typeof (`${companyCheck._id}`));
-    console.log(typeof(JSON.stringify(companyCheck._id)));
     if (
-      !(req.userData.id === `${companyCheck._id}` || req.userData.id === JSON.stringify( companyCheck._id))
+      !(
+        req.userData.id === `${adminId._id}` ||
+        req.userData.id === `${companyCheck._id}`
+      )
     ) {
       return res.status(500).send({ message: messages.errorMessage })
     }
@@ -191,41 +188,51 @@ exports.updateCompany = async (req, res) => {
     ) {
       sendEmail.sendDeclineEmail(companyCheck)
     }
-    console.log(req.body.data.old_password && req.body.data.new_password);
-    console.log(req.body.data.old_password , req.body.data.new_password);
-    
-    
-    if (req.body.data.old_password && req.body.data.new_password) {
+    console.log(req.body.old_password && req.body.new_password)
+    console.log(req.body.old_password, req.body.new_password)
+
+    if (req.body.old_password && req.body.new_password) {
       bcrypt.compare(
-        req.body.data.old_password,
+        req.body.old_password,
         companyCheck.password,
         (err, result) => {
-          console.log(err, result);
+          console.log(err, result)
           if (err) {
             return res.status(401).send({
               message: 'Old password is incorrect',
             })
           }
-          
-          
-          if (result) {
-            bcrypt.hash(req.body.data.new_password, 10, (err, hash) => {
-              if (err) {
-                return res.status(500).send({
-                  message: messages.errorMessage,
-                })
+
+          bcrypt.hash(req.body.new_password, 10, async (err, hash) => {
+            if (err) {
+              return res.status(500).send({
+                message: messages.errorMessage,
+              })
+            }
+            const company = await Company.findByIdAndUpdate(
+              _id,
+              {
+                ...req.body,
+                password: hash,
+              },
+              {
+                new: true,
               }
-              Company.findByIdAndUpdate(
-                _id,
-                {
-                  password: hash,
-                },
-                {
-                  new: true,
-                }
-              )
+            )
+            return res.status(201).send({
+              id: company._id,
+              name: company.name,
+              email: company.email,
+              phone: company.phone,
+              taxNumber: company.taxNumber,
+              address: company.address,
+              activity: company.activity,
+              approved: company.approved,
+              avatar: company.avatar,
+              amount: company.amount,
+              createdTime: company.createdTime,
             })
-          }
+          })
         }
       )
     }
