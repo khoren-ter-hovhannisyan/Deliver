@@ -32,7 +32,7 @@ exports.socketListeners = socket => {
         avatar: user.avatar,
         amount: user.amout,
         rating: user.rating,
-        createdTime: Date.parse(user.createdTime),
+        createdTime: user.createdTime,
       })
     } else if (company) {
       socket.broadcast.emit(socketEmiters.updateCompanyList, {
@@ -46,7 +46,7 @@ exports.socketListeners = socket => {
         activity: company.activity,
         avatar: company.avatar,
         amount: company.amount,
-        createdTime: Date.parse(company.createdTime),
+        createdTime: company.createdTime,
       })
     } else {
       return res.status(500).send({

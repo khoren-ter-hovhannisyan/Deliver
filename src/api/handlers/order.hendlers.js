@@ -65,7 +65,7 @@ exports.getAllActiveOrder = async (req, res) => {
     }
     return res.status(200).send(ordersOutput)
   } catch (err) {
-    return res.status(500).send({ message: 'Something went wrong, try later' })
+    return res.status(500).send({ message: messages.errorMessage })
   }
 }
 
@@ -74,14 +74,15 @@ exports.getCompanyOrders = async (req, res) => {
     const _id = req.params.id
     const company = await Company.findOne({ _id })
     if (`${company._id}` !== req.userData.id) {
-      return res
-      .status(500)
-      .send({ message: 'Something went wrong, try later' })
+      return res.status(500).send({ message: messages.errorMessage })
     }
-    const type = req.query.type === 'all' ? undefined : req.query.type
+    const type =
+      req.query.type === 'all'
+        ? { $all: ['active', 'pending', 'done'] }
+        : req.query.type
     console.log(type, '****')
 
-    const orders = await Order.find({ companyId: _id, type })
+    const orders = await Order.find({ companyId: _id, state: type })
     console.log(orders, '-------')
 
     const ordersOutput = []
@@ -104,7 +105,10 @@ exports.getCompanyOrders = async (req, res) => {
         user_phone: undefined,
         user_email: undefined,
       }
-      if (orders[i].state === 'done' || orders[i].state === 'pending') {
+      if (
+        orders[i].state === status.done ||
+        orders[i].state === status.pending
+      ) {
         order.user_name = user ? user.name : 'User has been deleted'
         order.user_phone = user ? user.phone : 'User has been deleted'
         order.user_email = user ? user.email : 'User has been deleted'
@@ -113,9 +117,7 @@ exports.getCompanyOrders = async (req, res) => {
     }
     return res.status(200).send(ordersOutput)
   } catch (err) {
-    return res
-      .status(500)
-      .send({ message: 'Something went wrong, try later' })
+    return res.status(500).send({ message: messages.errorMessage })
   }
 }
 
@@ -123,7 +125,10 @@ exports.delOrder = async (req, res) => {
   try {
     const _id = req.params.id
     const { companyId } = await Order.findOne({ _id })
-    const company = Company.findOne({_id:req.userData.id})
+    const company = Company.findOne({ _id: req.userData.id })
+    if (!((`${companyId}` === `${company._id}`) === _id)) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
     await Order.findByIdAndRemove({
       _id,
     })
@@ -131,21 +136,22 @@ exports.delOrder = async (req, res) => {
       message: 'Order deleted',
     })
   } catch (err) {
-    res.status(404).send({ message: 'Something went wrong, try later', err })
+    return res.status(404).send({ message: messages.errorMessage })
   }
 }
 // TODO validate request , definde LCL accsess controle list
 exports.updateOrder = async (req, res) => {
-  const _id = req.params.id
   try {
+    const _id = req.params.id
     const orderCheck = await Order.findOne({ _id })
     if (
       !orderCheck ||
-      (req.body.state === undefined && orderCheck.state === 'pending') ||
-      (req.body.state === undefined && orderCheck.state === 'done')
+      (req.body.state === undefined && orderCheck.state === status.pending) ||
+      (req.body.state === undefined && orderCheck.state === status.done) ||
+      req.body.order_create_time
     ) {
       return res.status(400).send({
-        message: 'Something went wrong , you can`t do that',
+        message: messages.errorMessage,
       })
     }
 
@@ -158,9 +164,9 @@ exports.updateOrder = async (req, res) => {
     const company = await Company.findOne({ _id: order.companyId })
     const user = await Users.findOne({ _id: order.userId })
 
-    if (order.state === 'pending') {
+    if (order.state === status.pending) {
       sendEmail.sendAcceptOrderEmail(company, user)
-    } else if (order.state === 'done') {
+    } else if (order.state === status.done) {
       await Company.findByIdAndUpdate(
         company._id,
         { amount: company.amount - order.points },
