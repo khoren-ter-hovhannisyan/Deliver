@@ -7,11 +7,10 @@ const {
 const User = require('../api/models/users.model')
 const Company = require('../api/models/company.model')
 const Order = require('../api/models/order.model')
-
 // TODO: socetnerin kpcnel token-i stugum@
-
 exports.socketListeners = socket => {
   socket.on(socketListeners.newAccount, async accountData => {
+    console.log('hello', accountData)
     const user = await User.findOne({
       email: accountData.data.email,
     })
@@ -66,8 +65,8 @@ exports.socketListeners = socket => {
   })
   socket.on(socketListeners.newOrder, orderData => {
     Order.findOne({
-      companyId: orderData.data.companyId,
-    })
+        companyId: orderData.data.companyId,
+      })
       .then(data => {
         socket.broadcast.emit(socketEmiters.updateOrderList, data)
       })
@@ -81,6 +80,11 @@ exports.socketListeners = socket => {
   socket.on(socketListeners.deleteOrder, () => {
     socket.broadcast.emit(socketEmiters.deletedOrder, {
       data: 'Order has been deleted, please refresh',
+    })
+  })
+  socket.on('user_take_order', (user) => {
+    socket.broadcast.emit('user_took_order', {
+      data: `${user} took your order`
     })
   })
 }
