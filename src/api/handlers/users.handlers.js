@@ -8,10 +8,14 @@ const sendEmail = require('../../services/sendEmail')
 exports.getAllUsers = async (req, res) => {
   try {
     const last = Number(req.query.last)
-    const count = Number(req.query.count)
+    const count = Number(req.query.count) + 1
     const users = await Users.find({
       type: 'user',
-    }).sort({createdTime: -1}).where("createdTime").lt(last).limit(count)
+    })
+      .sort({ createdTime: -1 })
+      .where('createdTime')
+      .lt(last)
+      .limit(count)
 
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {

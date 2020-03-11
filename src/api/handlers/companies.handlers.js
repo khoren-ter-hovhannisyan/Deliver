@@ -24,6 +24,7 @@ exports.getAllCompanies = async (req, res) => {
     for (let i = 0; i < companies.length; i++) {
       const company_orders_count = await Order.find({
         companyId: companies[i]._id,
+        type: types.pending,
       })
       const company = {
         id: companies[i]._id,
@@ -79,7 +80,6 @@ exports.getCompanyById = async (req, res) => {
     })
   }
 }
-/////// EEEEror
 exports.createCompany = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email.toLowerCase() })
@@ -132,7 +132,7 @@ exports.delCompany = async (req, res) => {
 
     if (
       !(
-        req.userData.id === JSON.stringify(adminId._id) ||
+        req.userData.id === `${adminId._id}` ||
         req.userData.id === `${companyId._id}`
       )
     ) {
@@ -212,32 +212,20 @@ exports.updateCompany = async (req, res) => {
             Company.findByIdAndUpdate(
               _id,
               {
-                ...req.body,
                 password: hash,
               },
               {
                 new: true,
               }
-            ).then(company => {
+            ).then(_ => {
               return res.status(201).send({
-                id: company._id,
-                name: company.name,
-                email: company.email,
-                phone: company.phone,
-                taxNumber: company.taxNumber,
-                address: company.address,
-                activity: company.activity,
-                approved: company.approved,
-                avatar: company.avatar,
-                amount: company.amount,
-                createdTime: company.createdTime,
+                message: 'Password has changed',
               })
             })
           })
         }
       )
     } else {
-
       const company = await Company.findByIdAndUpdate(
         _id,
         {

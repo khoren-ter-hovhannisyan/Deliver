@@ -6,9 +6,14 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
+const { types, status, messages } = require('../../utils/constans')
+
 exports.createOrder = async (req, res) => {
   const { companyId, order } = req.body
   const company = await Company.findOne({ _id: companyId })
+  if (!(`${company._id}` === companyId === req.userData)) {
+    return res.status(500).send({ message: messages.errorMessage })
+  }
   //TODO: sarqel NUMber req.body.points-@
   if (order.points > company.amount) {
     return res
@@ -24,7 +29,6 @@ exports.createOrder = async (req, res) => {
     if (err) {
       return res.status(404).send({
         message: 'Something went wrong, try later',
-        err,
       })
     }
     return res.status(201).send({ message: 'Order created' })
@@ -63,9 +67,14 @@ exports.getAllActiveOrder = async (req, res) => {
 }
 
 exports.getCompanyOrders = async (req, res) => {
-  const _id = req.params.id
   try {
-    const orders = await Order.find({ companyId: _id })
+    const _id = req.params.id
+    const type = req.query.type
+    console.log(type,"****");
+    
+    const orders = await Order.find({ companyId: _id, type })
+    console.log(orders,"-------");
+    
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
       const user = await Users.findOne({ _id: orders[i].userId })
