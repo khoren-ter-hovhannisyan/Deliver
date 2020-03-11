@@ -13,16 +13,12 @@ const { types, status, messages } = require('../../utils/constans')
 exports.getAllCompanies = async (req, res) => {
   try {
     const admin = await Users.findOne({ type: types.admin })
-    console.log(typeof admin._id, typeof req.userData.id)
-    console.log(req.userData.id, admin._id)
 
-    console.log(req.userData.id !== admin._id)
-
-    // if (req.userData.id !== admin._id) {
-    //   return res.status(401).send({
-    //     message: messages.errorMessage,
-    //   })
-    // }
+    if (req.userData.id !== `${admin._id}`) {
+      return res.status(401).send({
+        message: messages.errorMessage,
+      })
+    }
     const companies = await Company.find({})
     const companiesOutput = []
     for (let i = 0; i < companies.length; i++) {

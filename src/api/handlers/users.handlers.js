@@ -7,8 +7,8 @@ const sendEmail = require('../../services/sendEmail')
 
 exports.getAllUsers = async (req, res) => {
   try {
-    console.log(req.query.lastUser,"*****");
-    
+    console.log(req.query.last,"*****");
+    console.log(req.query.count,"*****");
     const users = await Users.find({
       type: 'user',
     })
