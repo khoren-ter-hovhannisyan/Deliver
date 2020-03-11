@@ -82,11 +82,11 @@ exports.getCompanyOrders = async (req, res) => {
         : req.query.type
 
     const orders = await Order.find({ companyId: _id, state: type })
-      .select('state points order_description take_address deliver_address order_start_time receiver_name receiver_phone comment')
+      .select('state points order_description take_address deliver_address order_start_time receiver_name receiver_phone comment userId')
 
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
-      const user = await Users.findOne({ _id: orders[i].userId })
+      const user = await Users.findOne({ _id: orders[i]._doc.userId })
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
