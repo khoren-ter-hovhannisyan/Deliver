@@ -133,10 +133,7 @@ exports.delCompany = async (req, res) => {
     const _id = req.params.id
     const adminId = await Users.findOne({ type: types.admin })
     const companyId = await Company.findOne({ _id })
-    console.log(`${companyId._id}`, JSON.stringify(companyId._id));
     
-    console.log(typeof (`${companyId._id}`));
-    console.log(typeof(JSON.stringify(companyId._id)));
     
     
     if (
@@ -178,8 +175,12 @@ exports.updateCompany = async (req, res) => {
     const _id = req.params.id
     const companyCheck = await Company.findOne({ _id })
     const adminId = await Users.findOne({ type: types.admin })
+    console.log(`${companyCheck._id}`, JSON.stringify(companyCheck._id));
+    
+    console.log(typeof (`${companyCheck._id}`));
+    console.log(typeof(JSON.stringify(companyCheck._id)));
     if (
-      !(req.userData.id === adminId._id || req.userData.id === companyCheck._id)
+      !(req.userData.id === `${companyCheck._id}` || req.userData.id === JSON.stringify( companyCheck._id))
     ) {
       return res.status(500).send({ message: messages.errorMessage })
     }
