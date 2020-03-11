@@ -51,8 +51,8 @@ const companySchema = new Schema({
     default: 0,
   },
   createdTime: {
-    type: Date,
-    default: Date.now,
+    type: Number,
+    default: Number(Date.parse(Date.now)),
   },
 })
 

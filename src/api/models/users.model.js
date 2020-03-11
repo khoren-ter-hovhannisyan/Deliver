@@ -56,8 +56,8 @@ const usersSchema = new Schema({
     max: 5,
   },
   createdTime: {
-    type: Date,
-    default: Date.now,
+    type: Number,
+    default: Number(Date.parse(Date.now)),
   },
 })
 
