@@ -76,7 +76,10 @@ exports.getCompanyOrders = async (req, res) => {
     if (`${company._id}` !== req.userData.id) {
       return res.status(500).send({ message: messages.errorMessage })
     }
-    const type = req.query.type === 'all' ? undefined : req.query.type
+    const type =
+      req.query.type === 'all'
+        ? { $all: ['active', 'pending', 'done'] }
+        : req.query.type
     console.log(type, '****')
 
     const orders = await Order.find({ companyId: _id, state: type })
