@@ -13,13 +13,17 @@ const { types, status, messages } = require('../../utils/constans')
 exports.getAllCompanies = async (req, res) => {
   try {
     const admin = await Users.findOne({ type: types.admin })
-    console.log(admin, req.userData.id);
+    console.log(typeof(admin._id), typeof(req.userData.id));
+    console.log(req.userData.id, admin._id);
     
-    if (req.userData.id !== admin._id) {
-      return res.status(401).send({
-        message: messages.errorMessage,
-      })
-    }
+    console.log(req.userData.id !== admin._id);
+    
+    
+    // if (req.userData.id !== admin._id) {
+    //   return res.status(401).send({
+    //     message: messages.errorMessage,
+    //   })
+    // }
     const companies = await Company.find({})
     const companiesOutput = []
     for (let i = 0; i < companies.length; i++) {
@@ -194,38 +198,24 @@ exports.updateCompany = async (req, res) => {
             })
           }
           if (result) {
-            bcrypt.hash(req.body.new_password, 10, async (err, hash) => {
+            bcrypt.hash(req.body.new_password, 10, (err, hash) => {
               if (err) {
                 return res.status(500).send({
                   message: messages.errorMessage,
                 })
               }
-              const company = await Company.findByIdAndUpdate(
+                await Company.findByIdAndUpdate(
                 _id,
                 {
-                  ...req.body,
                   password: hash,
                 },
                 {
                   new: true,
                 }
               )
-              return res.status(201).send({
-                id: company._id,
-                name: company.name,
-                email: company.email,
-                phone: company.phone,
-                taxNumber: company.taxNumber,
-                address: company.address,
-                activity: company.activity,
-                approved: company.approved,
-                avatar: company.avatar,
-                amount: company.amount,
-                createdTime: Date.parse(company.createdTime),
-              })
+              
             })
           }
-          return res.status(401).send({ message: messages.errorMessage })
         }
       )
     }
