@@ -36,7 +36,7 @@ exports.getAllCompanies = async (req, res) => {
         approved: companies[i].approved,
         avatar: companies[i].avatar,
         amount: companies[i].amount,
-        createdTime: Date.parse(companies[i].createdTime),
+        createdTime: companies[i].createdTime,
         orders_count: company_orders_count.length,
       }
       companiesOutput.push(company)
@@ -71,7 +71,7 @@ exports.getCompanyById = async (req, res) => {
       activity: company.activity,
       avatar: company.avatar,
       amount: company.amount,
-      createdTime: Date.parse(company.createdTime),
+      createdTime: company.createdTime,
     })
   } catch (err) {
     return res.status(500).send({
@@ -244,7 +244,7 @@ exports.updateCompany = async (req, res) => {
       approved: company.approved,
       avatar: company.avatar,
       amount: company.amount,
-      createdTime: Date.parse(company.createdTime),
+      createdTime: company.createdTime,
     })
   } catch {
     return res.status(500).send({

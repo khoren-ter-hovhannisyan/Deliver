@@ -34,7 +34,7 @@ exports.getAllUsers = async (req, res) => {
         avatar: users[i].avatar,
         amount: users[i].amount,
         rating: users[i].rating,
-        createdTime: Date.parse(users[i].createdTime),
+        createdTime: users[i].createdTime,
         orders_count: orders_count.length,
       }
       usersOutput.push(user)
@@ -67,7 +67,7 @@ exports.getUserById = async (req, res) => {
       avatar: user.avatar,
       amount: user.amout,
       rating: user.rating,
-      createdTime: Date.parse(user.createdTime),
+      createdTime: user.createdTime,
     })
   } catch (err) {
     return res.status(500).send({
@@ -195,7 +195,7 @@ exports.updateUser = async (req, res) => {
                     avatar: user.avatar,
                     amount: user.amount,
                     rating: user.rating,
-                    createdTime: Date.parse(user.createdTime),
+                    createdTime: user.createdTime,
                   })
                 })
               }
@@ -228,7 +228,7 @@ exports.updateUser = async (req, res) => {
       avatar: user.avatar,
       amount: user.amount,
       rating: user.rating,
-      createdTime: Date.parse(user.createdTime),
+      createdTime: user.createdTime,
     })
   } catch (err) {
     return res.status(500).send({
