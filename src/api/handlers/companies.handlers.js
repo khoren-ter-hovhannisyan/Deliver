@@ -197,11 +197,11 @@ exports.updateCompany = async (req, res) => {
         companyCheck.password,
         (err, result) => {
           console.log(err, result)
-          // if (err || !result) {
-          //   return res.status(401).send({
-          //     message: 'Old password is incorrect',
-          //   })
-          // }
+          if (err || !result) {
+            return res.status(401).send({
+              message: 'Old password is incorrect',
+            })
+          }
 
           bcrypt.hash(req.body.new_password, 10, (err, hash) => {
             if (err) {
