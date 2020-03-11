@@ -197,13 +197,13 @@ exports.updateCompany = async (req, res) => {
         companyCheck.password,
         (err, result) => {
           console.log(err, result)
-          if (err || !result) {
-            return res.status(401).send({
-              message: 'Old password is incorrect',
-            })
-          }
+          // if (err || !result) {
+          //   return res.status(401).send({
+          //     message: 'Old password is incorrect',
+          //   })
+          // }
 
-          bcrypt.hash(req.body.new_password, 10,  (err, hash) => {
+          bcrypt.hash(req.body.new_password, 10, (err, hash) => {
             if (err) {
               return res.status(500).send({
                 message: messages.errorMessage,
@@ -218,34 +218,49 @@ exports.updateCompany = async (req, res) => {
               {
                 new: true,
               }
-            )
+            ).then(company => {
+              return res.status(201).send({
+                id: company._id,
+                name: company.name,
+                email: company.email,
+                phone: company.phone,
+                taxNumber: company.taxNumber,
+                address: company.address,
+                activity: company.activity,
+                approved: company.approved,
+                avatar: company.avatar,
+                amount: company.amount,
+                createdTime: company.createdTime,
+              })
+            })
           })
         }
       )
-    }
+    } else {
 
-    const company = await Company.findByIdAndUpdate(
-      _id,
-      {
-        ...req.body,
-      },
-      {
-        new: true,
-      }
-    )
-    return res.status(201).send({
-      id: company._id,
-      name: company.name,
-      email: company.email,
-      phone: company.phone,
-      taxNumber: company.taxNumber,
-      address: company.address,
-      activity: company.activity,
-      approved: company.approved,
-      avatar: company.avatar,
-      amount: company.amount,
-      createdTime: company.createdTime,
-    })
+      const company = await Company.findByIdAndUpdate(
+        _id,
+        {
+          ...req.body,
+        },
+        {
+          new: true,
+        }
+      )
+      return res.status(201).send({
+        id: company._id,
+        name: company.name,
+        email: company.email,
+        phone: company.phone,
+        taxNumber: company.taxNumber,
+        address: company.address,
+        activity: company.activity,
+        approved: company.approved,
+        avatar: company.avatar,
+        amount: company.amount,
+        createdTime: company.createdTime,
+      })
+    }
   } catch {
     return res.status(500).send({
       message: messages.errorMessage,
