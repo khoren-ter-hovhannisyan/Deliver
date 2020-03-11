@@ -73,7 +73,11 @@ exports.getCompanyOrders = async (req, res) => {
   try {
     const _id = req.params.id
     const company = await Company.findOne({ _id })
-    if(`${company._id}` !== req.userData.id)
+    if (`${company._id}` !== req.userData.id) {
+      return res
+      .status(500)
+      .send({ message: 'Something went wrong, try later' })
+    }
     const type = req.query.type === 'all' ? undefined : req.query.type
     console.log(type, '****')
 
@@ -111,7 +115,7 @@ exports.getCompanyOrders = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wrong, try later', err })
+      .send({ message: 'Something went wrong, try later' })
   }
 }
 
