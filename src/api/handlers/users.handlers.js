@@ -11,7 +11,9 @@ exports.getAllUsers = async (req, res) => {
     console.log(req.query.count,"*****");
     const users = await Users.find({
       type: 'user',
-    })
+    }).lt(req.query.last).limit.(req.query.count)
+    console.log(users);
+    
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {
       const orders_count = await Order.find({
