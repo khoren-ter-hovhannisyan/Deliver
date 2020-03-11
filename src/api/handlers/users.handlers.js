@@ -10,14 +10,18 @@ exports.getAllUsers = async (req, res) => {
     const last = Number(req.query.last)
     const count = Number(req.query.count) + 1
     const users = await Users.find({
-      type: 'user',
-    })
-      .sort({ createdTime: -1 })
+        type: 'user',
+      })
+      .sort({
+        createdTime: -1
+      })
       .where('createdTime')
       .lt(last)
       .limit(count)
     if (users.length === 0) {
-      return res.status(206).send({message:"No more content"})
+      return res.status(206).send({
+        message: "No more content"
+      })
     }
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {
@@ -60,7 +64,7 @@ exports.getUserById = async (req, res) => {
     return res.status(200).send({
       id: user._id,
       name: user.name,
-      lastName: user.name,
+      lastName: user.lastName,
       email: user.email,
       phone: user.phone,
       address: user.address,
@@ -85,7 +89,9 @@ exports.createUser = async (req, res) => {
     const company = await Company.findOne({
       email: req.body.email.toLowerCase(),
     })
-    const user = await Users.findOne({ email: req.body.email.toLowerCase() })
+    const user = await Users.findOne({
+      email: req.body.email.toLowerCase()
+    })
     if (!company && !user) {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
@@ -101,11 +107,14 @@ exports.createUser = async (req, res) => {
             password: hash,
           })
 
-          user.save(function(err, user) {
+          user.save(function (err, user) {
             if (err) {
               return res
                 .status(500)
-                .send({ message: 'Something went wrong, try later', err })
+                .send({
+                  message: 'Something went wrong, try later',
+                  err
+                })
             }
             sendEmail.sendInfoSignUp(user)
             sendEmail.sendWaitEmailForReceiver(user)
@@ -123,12 +132,15 @@ exports.createUser = async (req, res) => {
   } catch (err) {
     return res
       .status(500)
-      .send({ message: 'Something went wrong, try later', err })
+      .send({
+        message: 'Something went wrong, try later',
+        err
+      })
   }
 }
 
 exports.delUser = async (req, res) => {
-  
+
   try {
     const _id = req.params.id
     await Users.findByIdAndRemove({
@@ -178,12 +190,10 @@ exports.updateUser = async (req, res) => {
                 })
               } else {
                 Users.findByIdAndUpdate(
-                  _id,
-                  {
+                  _id, {
                     ...req.body,
                     password: hash,
-                  },
-                  {
+                  }, {
                     new: true,
                   }
                 ).then(user => {
@@ -212,11 +222,9 @@ exports.updateUser = async (req, res) => {
       )
     }
     const user = await Users.findByIdAndUpdate(
-      _id,
-      {
+      _id, {
         ...req.body,
-      },
-      {
+      }, {
         new: true,
       }
     )
