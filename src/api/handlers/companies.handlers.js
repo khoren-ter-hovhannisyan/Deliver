@@ -191,11 +191,11 @@ exports.updateCompany = async (req, res) => {
     ) {
       sendEmail.sendDeclineEmail(companyCheck)
     }
-    console.log(req.body.old_password && req.body.new_password);
-    console.log(req.body.old_password , req.body.new_password);
+    console.log(req.body.data.old_password && req.body.data.new_password);
+    console.log(req.body.data.old_password , req.body.data.new_password);
     
     
-    if (req.body.old_password && req.body.new_password) {
+    if (req.body.data.old_password && req.body.data.new_password) {
       bcrypt.compare(
         req.body.old_password,
         companyCheck.password,
