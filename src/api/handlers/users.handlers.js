@@ -7,16 +7,16 @@ const sendEmail = require('../../services/sendEmail')
 
 exports.getAllUsers = async (req, res) => {
   try {
-    console.log(req.query.last,"*****", Number(req.query.last));
-    console.log(req.query.count, "*****", Number(req.query.count));
+    console.log(req.query.last, '*****', Number(req.query.last))
+    console.log(req.query.count, '*****', Number(req.query.count))
     const last = Number(req.query.last)
     const count = Number(req.query.count)
     const users = await Users.find({
       type: 'user',
-      createdTime: {$lt:1583908038955}
-    }).limit(10)
-    console.log(users);
-    
+      createdTime: { $lt: last },
+    }).limit(count)
+    console.log(users)
+
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {
       const orders_count = await Order.find({
@@ -45,11 +45,10 @@ exports.getAllUsers = async (req, res) => {
   } catch (err) {
     return res.status(500).send({
       message: 'Something went wrong, try later',
-      err,
     })
   }
 }
-//TODO : mongoose selectorrneric ogtvel 
+//TODO : mongoose selectorrneric ogtvel
 exports.getUserById = async (req, res) => {
   const _id = req.params.id
   try {
@@ -239,6 +238,3 @@ exports.updateUser = async (req, res) => {
     })
   }
 }
-
-
-
