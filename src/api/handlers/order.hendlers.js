@@ -9,35 +9,38 @@ const sendEmail = require('../../services/sendEmail')
 const { types, status, messages } = require('../../utils/constans')
 
 exports.createOrder = async (req, res) => {
-  const { companyId, order } = req.body
-  const company = await Company.findOne({ _id: companyId })
-  if (!(`${company._id}` === companyId === req.userData)) {
-    return res.status(500).send({ message: messages.errorMessage })
-  }
-  //TODO: sarqel NUMber req.body.points-@
-  if (order.points > company.amount) {
-    return res
-      .status(400)
-      .send({ message: "You don't have enough money to create order" })
-  }
-  const newOrder = new Order({
-    ...order,
-    companyId,
-  })
-
-  newOrder.save(err => {
-    if (err) {
-      return res.status(404).send({
-        message: 'Something went wrong, try later',
-      })
+  try {
+    const { companyId, order } = req.body
+    const company = await Company.findOne({ _id: companyId })
+    if (!((`${company._id}` === companyId) === req.userData.id)) {
+      return res.status(500).send({ message: messages.errorMessage })
     }
-    return res.status(201).send({ message: 'Order created' })
-  })
+    if (Number(order.points) > Number(company.amount)) {
+      return res.status(400).send({ message: messages.errorMessage })
+    }
+    const newOrder = new Order({
+      ...order,
+      companyId,
+    })
+
+    newOrder.save(err => {
+      if (err) {
+        return res.status(500).send({
+          message: messages.errorMessage,
+        })
+      }
+      return res.status(201).send({ message: 'Order created' })
+    })
+  } catch {
+    return res.status(500).send({
+      message: messages.errorMessage,
+    })
+  }
 }
 //TODO : pagination by scrole
 exports.getAllActiveOrder = async (req, res) => {
   try {
-    const orders = await Order.find({ state: 'active' })
+    const orders = await Order.find({ state: status.active })
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
       const company = await Company.findOne({ _id: orders[0].companyId })
@@ -69,12 +72,14 @@ exports.getAllActiveOrder = async (req, res) => {
 exports.getCompanyOrders = async (req, res) => {
   try {
     const _id = req.params.id
-    const type = req.query.type
-    console.log(type,"****");
-    
+    const company = await Company.findOne({ _id })
+    if(`${company._id}` !== req.userData.id)
+    const type = req.query.type === 'all' ? undefined : req.query.type
+    console.log(type, '****')
+
     const orders = await Order.find({ companyId: _id, type })
-    console.log(orders,"-------");
-    
+    console.log(orders, '-------')
+
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
       const user = await Users.findOne({ _id: orders[i].userId })
@@ -111,19 +116,21 @@ exports.getCompanyOrders = async (req, res) => {
 }
 
 exports.delOrder = async (req, res) => {
-  const _id = req.params.id
   try {
+    const _id = req.params.id
+    const { companyId } = await Order.findOne({ _id })
+    const company = Company.findOne({_id:req.userData.id})
     await Order.findByIdAndRemove({
       _id,
     })
-    res.status(202).send({
+    return res.status(202).send({
       message: 'Order deleted',
     })
   } catch (err) {
     res.status(404).send({ message: 'Something went wrong, try later', err })
   }
 }
-// TODO validate request , definde LCL accsess controle list 
+// TODO validate request , definde LCL accsess controle list
 exports.updateOrder = async (req, res) => {
   const _id = req.params.id
   try {
@@ -193,7 +200,7 @@ exports.updateOrder = async (req, res) => {
       .send({ message: 'Something went wrong, try later', err })
   }
 }
-//TODO : validate _id 
+//TODO : validate _id
 exports.getUserOrders = async (req, res) => {
   const _id = req.params.id
   try {
