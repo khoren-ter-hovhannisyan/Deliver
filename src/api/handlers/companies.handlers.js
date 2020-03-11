@@ -197,7 +197,7 @@ exports.updateCompany = async (req, res) => {
     
     if (req.body.data.old_password && req.body.data.new_password) {
       bcrypt.compare(
-        req.body.old_password,
+        req.body.data.old_password,
         companyCheck.password,
         (err, result) => {
           console.log(err, result);
@@ -209,7 +209,7 @@ exports.updateCompany = async (req, res) => {
           
           
           if (result) {
-            bcrypt.hash(req.body.new_password, 10, (err, hash) => {
+            bcrypt.hash(req.body.data.new_password, 10, (err, hash) => {
               if (err) {
                 return res.status(500).send({
                   message: messages.errorMessage,
