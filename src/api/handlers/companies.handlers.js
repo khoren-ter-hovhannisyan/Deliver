@@ -13,12 +13,11 @@ const { types, status, messages } = require('../../utils/constans')
 exports.getAllCompanies = async (req, res) => {
   try {
     const admin = await Users.findOne({ type: types.admin })
-    console.log(typeof(admin._id), typeof(req.userData.id));
-    console.log(req.userData.id, admin._id);
-    
-    console.log(req.userData.id !== admin._id);
-    
-    
+    console.log(typeof admin._id, typeof req.userData.id)
+    console.log(req.userData.id, admin._id)
+
+    console.log(req.userData.id !== admin._id)
+
     // if (req.userData.id !== admin._id) {
     //   return res.status(401).send({
     //     message: messages.errorMessage,
@@ -84,7 +83,7 @@ exports.getCompanyById = async (req, res) => {
     })
   }
 }
-/////// EEEEror 
+/////// EEEEror
 exports.createCompany = async (req, res) => {
   try {
     const user = await Users.findOne({ email: req.body.email.toLowerCase() })
@@ -135,7 +134,10 @@ exports.delCompany = async (req, res) => {
     const adminId = await Users.findOne({ type: types.admin })
     const companyId = await Company.findOne({ _id })
     if (
-      !(req.userData.id === adminId._id || req.userData.id === companyId._id)
+      !(
+        req.userData.id === JSON.stringify(adminId._id) ||
+        req.userData.id === JSON.stringify(companyId._id)
+      )
     ) {
       return res.status(500).send({ message: messages.errorMessage })
     }
@@ -204,7 +206,7 @@ exports.updateCompany = async (req, res) => {
                   message: messages.errorMessage,
                 })
               }
-                Company.findByIdAndUpdate(
+              Company.findByIdAndUpdate(
                 _id,
                 {
                   password: hash,
@@ -213,7 +215,6 @@ exports.updateCompany = async (req, res) => {
                   new: true,
                 }
               )
-              
             })
           }
         }
