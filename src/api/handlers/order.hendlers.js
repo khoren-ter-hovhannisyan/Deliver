@@ -40,23 +40,15 @@ exports.createOrder = async (req, res) => {
 //TODO : pagination by scrole
 exports.getAllActiveOrder = async (req, res) => {
   try {
-    const orders = await Order.find({ state: status.active })
+    const orders = await Order.find({ state: status.active }).select(
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId'
+    )
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
-      const company = await Company.findOne({ _id: orders[0].companyId })
+      const company = await Company.findOne({ _id: orders[0]._doc.companyId })
       const order = {
-        id: orders[i]._id,
-        state: orders[i].state,
-        points: orders[i].points,
-        order_description: orders[i].order_description,
-        take_address: orders[i].take_address,
-        deliver_address: orders[i].deliver_address,
-        order_create_time: moment(orders[i].order_create_time).format('LLL'),
-        order_start_time: moment(orders[i].order_start_time).format('LLL'),
-        order_end_time: moment(orders[i].order_end_time).format('LLL'),
-        receiver_name: orders[i].receiver_name,
-        receiver_phone: orders[i].receiver_phone,
-        comment: orders[i].comment,
+        id: orders[i]._doc._id,
+        ...orders[i]._doc,
         company_name: company.name,
         company_phone: company.phone,
         company_email: company.email,
@@ -81,8 +73,9 @@ exports.getCompanyOrders = async (req, res) => {
         ? { $in: [status.active, status.pending, status.done] }
         : req.query.type
 
-    const orders = await Order.find({ companyId: _id, state: type })
-      .select('state points order_description take_address deliver_address order_start_time receiver_name receiver_phone comment userId')
+    const orders = await Order.find({ companyId: _id, state: type }).select(
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment userId'
+    )
 
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
@@ -148,25 +141,25 @@ exports.updateOrder = async (req, res) => {
       _id,
       { ...req.body },
       { new: true }
+    ).select(
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId userId'
     )
 
     const company = await Company.findOne({ _id: order.companyId })
     const user = await Users.findOne({ _id: order.userId })
 
-    if (order.state === status.pending) {
+    if (order._doc.state === status.pending) {
       sendEmail.sendAcceptOrderEmail(company, user)
-    } else if (order.state === status.done) {
+    } else if (order._doc.state === status.done) {
       await Company.findByIdAndUpdate(
         company._id,
-        { amount: company.amount - order.points },
+        { amount: company.amount - order._doc.points },
         { new: true }
       )
 
       await user.findByIdAndUpdate(
         user._id,
-        {
-          amount: user.amount + order.amount,
-        },
+        { amount: user.amount + order._doc.amount },
         { new: true }
       )
 
@@ -174,18 +167,8 @@ exports.updateOrder = async (req, res) => {
     }
 
     return res.status(201).send({
-      id: order._id,
-      state: order.state,
-      points: order.points,
-      order_description: order.order_description,
-      take_address: order.take_address,
-      deliver_address: order.deliver_address,
-      order_create_time: moment(order.order_create_time).format('LLL'),
-      order_start_time: moment(order.order_start_time).format('LLL'),
-      order_end_time: moment(order.order_end_time).format('LLL'),
-      receiver_name: order.receiver_name,
-      receiver_phone: order.receiver_phone,
-      comment: order.comment,
+      id: order._doc._id,
+      ...order._doc,
       company_name: company.name,
       company_phone: company.phone,
       company_email: company.email,
@@ -197,11 +180,15 @@ exports.updateOrder = async (req, res) => {
     return res.status(500).send({ message: messages.errorMessage })
   }
 }
-//TODO : validate _id
+
 exports.getUserOrders = async (req, res) => {
-  const _id = req.params.id
   try {
+    const _id = req.params.id
     const user = await Users.findOne({ _id })
+    
+    if (req.userData.id !== `${user._id}`) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
     if (!user) {
       return res.status(400).send({
         message: 'There is no such user',
@@ -209,28 +196,17 @@ exports.getUserOrders = async (req, res) => {
     }
 
     const orders = await Order.find({ userId: _id })
+    .select('state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId')
     const ordersOutput = []
 
     for (let i = 0; i < orders.length; i++) {
       const company = await Company.findOne({ _id: orders[i].companyId })
       const order = {
-        id: orders[i]._id,
-        state: orders[i].state,
-        points: orders[i].points,
-        order_description: orders[i].order_description,
-        take_address: orders[i].take_address,
-        deliver_address: orders[i].deliver_address,
-        order_create_time: orders[i].order_create_time,
-        order_start_time: orders[i].order_start_time,
-        order_end_time: orders[i].order_end_time,
-        comment: orders[i].comment,
-        icon: orders[i].icon,
+        id: orders[i]._doc._id,
+        ...orders[i]._doc,
         company_name: company.name,
         company_phone: company.phone,
         company_email: company.email,
-        user_name: user.name,
-        user_phone: user.phone,
-        user_email: user.email,
       }
       ordersOutput.push(order)
     }
