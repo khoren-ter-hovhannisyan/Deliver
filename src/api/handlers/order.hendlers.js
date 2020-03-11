@@ -78,7 +78,7 @@ exports.getCompanyOrders = async (req, res) => {
     }
     const type =
       req.query.type === 'all'
-        ? { $elemMatch: ['active', 'pending', 'done'] }
+        ? { $in: ['active', 'pending', 'done'] }
         : req.query.type
     console.log(type, '****')
 
