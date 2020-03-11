@@ -13,8 +13,7 @@ exports.getAllUsers = async (req, res) => {
     const count = Number(req.query.count)
     const users = await Users.find({
       type: 'user',
-      createdTime :{$lt: last}
-    }).limit(count)
+    }).where('createdTime').gt(100).lt(last).limit(count)
     console.log(users);
     
     const usersOutput = []
