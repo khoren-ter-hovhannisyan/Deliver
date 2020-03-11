@@ -15,7 +15,6 @@ exports.getAllUsers = async (req, res) => {
       type: 'user',
       createdTime: { $lt: last },
     }).limit(count)
-    console.log(users)
 
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {
