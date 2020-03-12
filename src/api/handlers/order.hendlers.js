@@ -170,7 +170,7 @@ exports.updateOrder = async (req, res) => {
 
         const { rating } = await Users.findOne({ _id: order.userId })
         rating.push(req.body.rating)
-        console.log(user)
+        console.log(rating, "******************" )
 
         await Users.findByIdAndUpdate(
           { _id: order.userId },
