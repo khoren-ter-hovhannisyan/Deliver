@@ -50,6 +50,8 @@ exports.getAllActiveOrder = async (req, res) => {
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
+        order_start_time: moment(orders[i]._doc.order_start_time).format('L'),
+        order_end_time: moment(orders[i]._doc.order_end_time).format('L'),
         company_name: company.name,
         company_phone: company.phone,
         company_email: company.email,
@@ -84,6 +86,8 @@ exports.getCompanyOrders = async (req, res) => {
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
+        order_start_time: moment(orders[i]._doc.order_start_time).format('L'),
+        order_end_time: moment(orders[i]._doc.order_end_time).format('L'),
         user_name: undefined,
         user_phone: undefined,
         user_email: undefined,
@@ -165,16 +169,7 @@ exports.updateOrder = async (req, res) => {
       sendEmail.sendDoneOrderEmail(company, user)
     }
 
-    return res.status(201).send({
-      id: order._doc._id,
-      ...order._doc,
-      company_name: company.name,
-      company_phone: company.phone,
-      company_email: company.email,
-      user_name: user ? user.name : undefined,
-      user_phone: user ? user.phone : undefined,
-      user_email: user ? user.email : undefined,
-    })
+    return res.status(201).send({ message: 'Order updated' })
   } catch {
     return res.status(500).send({ message: messages.errorMessage })
   }
@@ -204,6 +199,8 @@ exports.getUserOrders = async (req, res) => {
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
+        order_start_time: moment(orders[i]._doc.order_start_time).format('L'),
+        order_end_time: moment(orders[i]._doc.order_end_time).format('L'),
         company_name: company.name,
         company_phone: company.phone,
         company_email: company.email,

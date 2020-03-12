@@ -19,9 +19,9 @@ const orderSchema = new Schema({
     type: String,
     required: true,
   },
-  order_create_time: {
+  createTime: {
     type: Date,
-    default: Date.now,
+    default:  Number(Date.now()),
   },
   order_start_time: {
     type: Date,

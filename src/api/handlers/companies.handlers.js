@@ -21,19 +21,19 @@ exports.getAllCompanies = async (req, res) => {
     }
 
     const companies = await Company.find({}).select(selectTypes.companyGetAll)
-    
+
     const companiesOutput = []
 
     for (let i = 0; i < companies.length; i++) {
-      const company_orders_count = await Order.find({
+      const orders_count = await Order.where({
         companyId: companies[i]._doc._id,
         type: types.pending,
-      })
+      }).count()
 
       const company = {
         id: companies[i]._doc._id,
         ...companies[i]._doc,
-        orders_count: company_orders_count.length,
+        orders_count,
       }
       companiesOutput.push(company)
     }
@@ -158,7 +158,7 @@ exports.updateCompany = async (req, res) => {
     const companyCheck = await Company.findOne({ _id })
     const adminId = await Users.findOne({ type: types.admin })
 
-    if (Number(req.body.createdTime)!== Number(companyCheck.createdTime)) {
+    if (Number(req.body.createdTime) !== Number(companyCheck.createdTime)) {
       return res.status(500).send({ message: messages.errorMessage })
     }
 
