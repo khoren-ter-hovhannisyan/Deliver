@@ -15,9 +15,11 @@ exports.createOrder = async (req, res) => {
     if (`${companyId}` !== `${req.userData.id}`) {
       return res.status(500).send({ message: messages.errorMessage })
     }
-  
+
     if (Number(order.points) > Number(company.amount)) {
-      return res.status(400).send({ message: "You can`t cratea order , you have no enough mony" })
+      return res
+        .status(400)
+        .send({ message: 'You can`t cratea order , you have no enough mony' })
     }
     const newOrder = new Order({
       ...order,
@@ -131,13 +133,33 @@ exports.updateOrder = async (req, res) => {
   try {
     const _id = req.params.id
     const orderCheck = await Order.findOne({ _id })
+    const company = await Company.findOne({ _id: req.userData.id })
     if (
       !orderCheck ||
       (req.body.state === undefined && orderCheck.state === status.pending) ||
       (req.body.state === undefined && orderCheck.state === status.done) ||
       req.body.order_create_time
     ) {
-      if (orderCheck.state === status.done){}
+      if (
+        orderCheck &&
+        company &&
+        orderCheck.state === status.done &&
+        req.body.rating
+      ) {
+        const order = await Order.findByIdAndUpdate(
+          _id,
+          { rating: req.body.rating },
+          { new: true }
+        )
+        const { rating } = await Users.findOne({ _id: order.userId })
+        rating.push(req.body.rating)
+        await Users.findByIdAndUpdate(
+          { _id: order.userId },
+          { rating },
+          { new: true }
+        )
+        return res.status(200).send({message:"Order has been ratied"})
+      }
       return res.status(400).send({
         message: messages.errorMessage,
       })

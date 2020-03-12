@@ -54,7 +54,7 @@ module.exports = {
     orderForUpdate:
       'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId userId',
     orderForCompanies:
-      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment userId',
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment userId ratind',
     orderForActiveOrders:
       'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId',
     orderForUser:
