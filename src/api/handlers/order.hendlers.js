@@ -90,7 +90,7 @@ exports.getCompanyOrders = async (req, res) => {
         message: messages.errorMessage,
       })
     }
-    let last = req.query.last === 'first' ? '0' : new ObjectId(req.query.last)
+    let last = new ObjectId(req.query.last)
     const count = Number(req.query.count) + 1
     const type =
       req.query.type === 'all'
