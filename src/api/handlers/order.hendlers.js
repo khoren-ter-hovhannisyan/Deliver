@@ -11,11 +11,10 @@ const { types, status, messages, selectTypes } = require('../../utils/constans')
 exports.createOrder = async (req, res) => {
   try {
     const { companyId, order } = req.body
-    const company = await Company.findOne({ _id: companyId })
-    console.log(!((`${company._id}` === `${companyId}`) === `${req.userData.id}`))
-    console.log(`${company._id}`, companyId, req.userData.id)
+    console.log(`${companyId}` !== `${req.userData.id}`)
+    console.log( companyId, req.userData.id)
 
-    if (!((`${company._id}` === `${companyId}`) === `${req.userData.id}`)) {
+    if (`${companyId}` !== `${req.userData.id}`) {
       return res.status(500).send({ message: messages.errorMessage })
     }
     if (Number(order.points) > Number(company.amount)) {

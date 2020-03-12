@@ -108,13 +108,7 @@ exports.delUser = async (req, res) => {
   try {
     const _id = req.params.id
     const admin = await Users.findOne({ type: types.admin })
-    const user = await users.findOne({ _id })
-    if (
-      !(
-        req.userData.id === `${admin._id}` ||
-        (req.userData.id === `${user._id}`) === _id
-      )
-    ) {
+    if (!(req.userData.id === `${admin._id}` || req.userData.id === _id)) {
       return res.status(500).send({
         message: messages.errorMessage,
       })
