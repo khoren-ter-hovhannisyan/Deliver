@@ -39,6 +39,11 @@ module.exports = {
     errorOldPasswordMessage: ' Old Password is incorrect',
     errorUserCannotDel: 'The User cannot be deleted. The User has pending order(s)!',
     errorCompanyCannotDel: 'The company cannot be deleted. The company has pending order(s)!',
+    errorNotEnoughMoney: `You can't create order, you don't enough money`,
+    successOrderDeleted: 'Order deleted',
+    successOrderRated: 'Order has been rated',
+    successOrderUpdated: 'Order updated',
+    errorNoSuchUser: 'There is no such user'
   },
   img: {
     companyAvatar: 'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',

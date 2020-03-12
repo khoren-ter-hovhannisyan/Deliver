@@ -6,11 +6,19 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
-const { types, status, messages, selectTypes } = require('../../utils/constans')
+const {
+  types,
+  status,
+  messages,
+  selectTypes
+} = require('../../utils/constans')
 
 exports.createOrder = async (req, res) => {
   try {
-    const { companyId, order } = req.body
+    const {
+      companyId,
+      order
+    } = req.body
     const company = await Company.findOne({
       _id: companyId,
     })
@@ -22,7 +30,7 @@ exports.createOrder = async (req, res) => {
 
     if (Number(order.points) > Number(company.amount)) {
       return res.status(400).send({
-        message: `You can't create order, you don\`t enough money`,
+        message: messages.errorNotEnoughMoney,
       })
     }
     const newOrder = new Order({
@@ -88,9 +96,10 @@ exports.getCompanyOrders = async (req, res) => {
       })
     }
     const type =
-      req.query.type === 'all'
-        ? { $in: [status.active, status.pending, status.done] }
-        : req.query.type
+      req.query.type === 'all' ? {
+        $in: [status.active, status.pending, status.done]
+      } :
+      req.query.type
 
     const orders = await Order.find({
       companyId: _id,
@@ -132,7 +141,9 @@ exports.getCompanyOrders = async (req, res) => {
 exports.delOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    const { companyId } = await Order.findOne({
+    const {
+      companyId
+    } = await Order.findOne({
       _id,
     })
     const company = Company.findOne({
@@ -147,7 +158,7 @@ exports.delOrder = async (req, res) => {
       _id,
     })
     return res.status(202).send({
-      message: 'Order deleted',
+      message: messages.successOrderDeleted,
     })
   } catch {
     return res.status(500).send({
@@ -178,23 +189,29 @@ exports.updateOrder = async (req, res) => {
         req.body.rating
       ) {
         const order = await Order.findByIdAndUpdate(
-          _id,
-          { rating: req.body.rating },
-          { new: true }
+          _id, {
+            rating: req.body.rating
+          }, {
+            new: true
+          }
         )
 
-        const { rating } = await Users.findOne({
+        const {
+          rating
+        } = await Users.findOne({
           _id: order.userId,
         })
         rating.push(req.body.rating)
 
-        await Users.findByIdAndUpdate(
-          { _id: order.userId },
-          { rating },
-          { new: true }
-        )
+        await Users.findByIdAndUpdate({
+          _id: order.userId
+        }, {
+          rating
+        }, {
+          new: true
+        })
         return res.status(201).send({
-          message: 'Order has been ratied',
+          message: messages.successOrderRated,
         })
       } else {
         return res.status(400).send({
@@ -203,9 +220,11 @@ exports.updateOrder = async (req, res) => {
       }
     } else {
       const order = await Order.findByIdAndUpdate(
-        _id,
-        { ...req.body },
-        { new: true }
+        _id, {
+          ...req.body
+        }, {
+          new: true
+        }
       ).select(selectTypes.orderForUpdate)
 
       const user = await Users.findOne({
@@ -216,22 +235,26 @@ exports.updateOrder = async (req, res) => {
         sendEmail.sendAcceptOrderEmail(company, user)
       } else if (order._doc.state === status.done) {
         await Company.findByIdAndUpdate(
-          company._id,
-          { amount: company.amount - order._doc.points },
-          { new: true }
+          company._id, {
+            amount: company.amount - order._doc.points
+          }, {
+            new: true
+          }
         )
 
         await user.findByIdAndUpdate(
-          user._id,
-          { amount: user.amount + order._doc.amount },
-          { new: true }
+          user._id, {
+            amount: user.amount + order._doc.amount
+          }, {
+            new: true
+          }
         )
 
         sendEmail.sendDoneOrderEmail(company, user)
       }
 
       return res.status(201).send({
-        message: 'Order updated',
+        message: messages.successOrderUpdated,
       })
     }
   } catch {
@@ -255,7 +278,7 @@ exports.getUserOrders = async (req, res) => {
     }
     if (!user) {
       return res.status(400).send({
-        message: 'There is no such user',
+        message: messages.errorNoSuchUser,
       })
     }
 
