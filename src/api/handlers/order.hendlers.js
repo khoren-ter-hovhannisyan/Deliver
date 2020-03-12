@@ -15,9 +15,9 @@ exports.createOrder = async (req, res) => {
     if (`${companyId}` !== `${req.userData.id}`) {
       return res.status(500).send({ message: messages.errorMessage })
     }
-
+  
     if (Number(order.points) > Number(company.amount)) {
-      return res.status(400).send({ message: messages.errorMessage })
+      return res.status(400).send({ message: "You can`t cratea order , you have no enough mony" })
     }
     const newOrder = new Order({
       ...order,

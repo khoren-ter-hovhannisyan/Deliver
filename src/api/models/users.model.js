@@ -50,10 +50,8 @@ const usersSchema = new Schema({
     default: 0,
   },
   rating: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 5,
+    type: Array,
+    default: [],
   },
   createdTime: {
     type: Number,

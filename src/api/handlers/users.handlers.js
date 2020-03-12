@@ -7,8 +7,21 @@ const sendEmail = require('../../services/sendEmail')
 
 const { types, status, messages, selectTypes } = require('../../utils/constans')
 
+const countRating = ratingArr => {
+  if (ratingArr.length === 0) {
+    return 0
+  }
+  return ratingArr.reduce((a, b) => a + b, 0) / ratingArr.length
+}
 exports.getAllUsers = async (req, res) => {
   try {
+    const admin = await Users.findOne({ type: types.admin })
+
+    if (req.userData.id !== `${admin._id}`) {
+      return res.status(401).send({
+        message: messages.errorMessage,
+      })
+    }
     const last = Number(req.query.last)
     const count = Number(req.query.count) + 1
     const users = await Users.find({
@@ -19,6 +32,7 @@ exports.getAllUsers = async (req, res) => {
       .lt(last)
       .limit(count)
       .select(selectTypes.userGetAll)
+
     if (users.length === 0) {
       return res.status(206).send({
         message: messages.errorNoContent,
@@ -29,6 +43,7 @@ exports.getAllUsers = async (req, res) => {
       const user = {
         id: users[i]._doc._id,
         ...users[i]._doc,
+        rating: countRating(users[i]._doc.rating),
       }
       usersOutput.push(user)
     }
@@ -47,6 +62,7 @@ exports.getUserById = async (req, res) => {
     return res.status(200).send({
       id: user._doc._id,
       ...user._doc,
+      rating: countRating(user._doc.rating),
     })
   } catch {
     return res.status(500).send({
@@ -206,6 +222,7 @@ exports.updateUser = async (req, res) => {
       return res.status(201).send({
         id: user._doc._id,
         ...user._doc,
+        rating: countRating(user._doc.rating),
       })
     }
   } catch {

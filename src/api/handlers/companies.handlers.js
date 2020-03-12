@@ -19,8 +19,14 @@ exports.getAllCompanies = async (req, res) => {
         message: messages.errorMessage,
       })
     }
+    const last = Number(req.query.last)
+    const count = Number(req.query.count) + 1
 
-    const companies = await Company.find({}).select(selectTypes.companyGetAll)
+    const companies = await Company.find({})
+      .sort({ createdTime: -1 })
+    .where('createdTime')
+    .lt(last)
+    .limit(count).select(selectTypes.companyGetAll)
 
     const companiesOutput = []
 
@@ -29,7 +35,8 @@ exports.getAllCompanies = async (req, res) => {
         companyId: companies[i]._doc._id,
         type: types.pending,
       }).count()
-
+      console.log(orders_count,"******");
+      
       const company = {
         id: companies[i]._doc._id,
         ...companies[i]._doc,
