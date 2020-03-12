@@ -39,7 +39,7 @@ exports.getAllUsers = async (req, res) => {
     })
   }
 }
-//TODO : mongoose selectorrneric ogtvel
+
 exports.getUserById = async (req, res) => {
   const _id = req.params.id
   try {
@@ -47,10 +47,10 @@ exports.getUserById = async (req, res) => {
       _id,
     }).select(selectTypes.userGetbyId)
     return res.status(200).send({
-      id: user._id,
+      id: user._doc._id,
       ...user._doc,
     })
-  } catch (err) {
+  } catch {
     return res.status(500).send({
       message: messages.errorMessage,
     })
@@ -107,10 +107,22 @@ exports.createUser = async (req, res) => {
 exports.delUser = async (req, res) => {
   try {
     const _id = req.params.id
+    const admin = await Users.findOne({ type: types.admin })
+    const user = await users.findOne({ _id })
+    if (
+      !(
+        req.userData.id === `${admin._id}` ||
+        (req.userData.id === `${user._id}`) === _id
+      )
+    ) {
+      return res.status(500).send({
+        message: messages.errorMessage,
+      })
+    }
     await Users.findByIdAndRemove({
       _id,
     })
-    res.status(202).send({
+    return res.status(202).send({
       message: messages.successDeletedMessage,
     })
   } catch {
@@ -157,7 +169,6 @@ exports.updateUser = async (req, res) => {
               Users.findByIdAndUpdate(
                 _id,
                 {
-                  ...req.body,
                   password: hash,
                 },
                 {
@@ -165,48 +176,38 @@ exports.updateUser = async (req, res) => {
                 }
               ).then(user => {
                 return res.status(201).send({
-                  id: user._id,
-                  name: user.name,
-                  lastName: user.lastName,
-                  email: user.email,
-                  phone: user.phone,
-                  address: user.address,
-                  approved: user.approved,
-                  passportURL: user.passportURL,
-                  avatar: user.avatar,
-                  amount: user.amount,
-                  rating: user.rating,
-                  createdTime: user.createdTime,
+                  message: 'Password chenged',
                 })
               })
             }
           })
         }
       )
+    } else {
+      const user = await Users.findByIdAndUpdate(
+        _id,
+        {
+          ...req.body,
+        },
+        {
+          new: true,
+        }
+      )
+      return res.status(201).send({
+        id: user._id,
+        name: user.name,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        approved: user.approved,
+        passportURL: user.passportURL,
+        avatar: user.avatar,
+        amount: user.amount,
+        rating: user.rating,
+        createdTime: user.createdTime,
+      })
     }
-    const user = await Users.findByIdAndUpdate(
-      _id,
-      {
-        ...req.body,
-      },
-      {
-        new: true,
-      }
-    )
-    return res.status(201).send({
-      id: user._id,
-      name: user.name,
-      lastName: user.lastName,
-      email: user.email,
-      phone: user.phone,
-      address: user.address,
-      approved: user.approved,
-      passportURL: user.passportURL,
-      avatar: user.avatar,
-      amount: user.amount,
-      rating: user.rating,
-      createdTime: user.createdTime,
-    })
   } catch {
     return res.status(500).send({
       message: message.errorMessage,
