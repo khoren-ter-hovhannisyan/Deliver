@@ -109,11 +109,10 @@ exports.sendAcceptOrderEmail = (receiver, user) =>
       subject: 'Registration accepted !!!',
       html: `Dear ${receiver.name} ,
       Your order has been accepted by ${user.name} !!!
-      Here is the  courier info \`
+      Here is the  courier info 
       ${user.name} ${user.lastName}
       email: ${user.email}
       phone: ${user.email}
-
       ${signature}`,
     },
     (error, info) => {
