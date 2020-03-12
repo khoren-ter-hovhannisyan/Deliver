@@ -6,13 +6,20 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
-const { types, status, messages, selectTypes } = require('../../utils/constans')
+const {
+  types,
+  status,
+  messages,
+  selectTypes
+} = require('../../utils/constans')
 
 // TODO: sarqel pagination-ov
 
 exports.getAllCompanies = async (req, res) => {
   try {
-    const admin = await Users.findOne({ type: types.admin })
+    const admin = await Users.findOne({
+      type: types.admin
+    })
 
     if (req.userData.id !== `${admin._id}`) {
       return res.status(401).send({
@@ -23,7 +30,9 @@ exports.getAllCompanies = async (req, res) => {
     const count = Number(req.query.count) + 1
 
     const companies = await Company.find({})
-      .sort({ createdTime: -1 })
+      .sort({
+        createdTime: -1
+      })
       .where('createdTime')
       .lt(last)
       .limit(count)
@@ -34,7 +43,7 @@ exports.getAllCompanies = async (req, res) => {
         message: messages.errorNoContent,
       })
     }
-    
+
     const companiesOutput = []
 
     for (let i = 0; i < companies.length; i++) {
@@ -70,7 +79,9 @@ exports.getCompanyById = async (req, res) => {
       })
     }
 
-    const company = await Company.findOne({ _id }).select(
+    const company = await Company.findOne({
+      _id
+    }).select(
       selectTypes.companyGetById
     )
 
@@ -87,7 +98,9 @@ exports.getCompanyById = async (req, res) => {
 
 exports.createCompany = async (req, res) => {
   try {
-    const user = await Users.findOne({ email: req.body.email.toLowerCase() })
+    const user = await Users.findOne({
+      email: req.body.email.toLowerCase()
+    })
     const company = await Company.findOne({
       email: req.body.email.toLowerCase(),
     })
@@ -108,31 +121,37 @@ exports.createCompany = async (req, res) => {
         company.save((err, company) => {
           if (err) {
             return res.status(400).send({
-              message: 'Some input fields are wrong or empty',
+              message: messages.errorEmptyFields,
             })
           }
           sendEmail.sendInfoSignUp(company)
           sendEmail.sendWaitEmailForReceiver(company)
           return res.status(201).send({
-            message: 'Company created',
+            message: messages.successCompanyCreated,
           })
         })
       })
     } else {
       return res.status(406).send({
-        message: 'Email already exists',
+        message: messages.errorAlreadyExists,
       })
     }
   } catch {
-    return res.status(500).send({ message: messages.errorMessage })
+    return res.status(500).send({
+      message: messages.errorMessage
+    })
   }
 }
 
 exports.delCompany = async (req, res) => {
   try {
     const _id = req.params.id
-    const adminId = await Users.findOne({ type: types.admin })
-    const companyId = await Company.findOne({ _id })
+    const adminId = await Users.findOne({
+      type: types.admin
+    })
+    const companyId = await Company.findOne({
+      _id
+    })
 
     if (
       !(
@@ -140,9 +159,13 @@ exports.delCompany = async (req, res) => {
         req.userData.id === `${companyId._id}`
       )
     ) {
-      return res.status(500).send({ message: messages.errorMessage })
+      return res.status(500).send({
+        message: messages.errorMessage
+      })
     }
-    const order = await Order.findOne({ companyId: _id })
+    const order = await Order.findOne({
+      companyId: _id
+    })
     const pendingOrder = await Order.findOne({
       companyId: _id,
       state: status.pending,
@@ -154,26 +177,38 @@ exports.delCompany = async (req, res) => {
     }
 
     if (order) {
-      await Order.remove({ companyId: _id })
+      await Order.remove({
+        companyId: _id
+      })
     }
 
-    await Company.findByIdAndRemove({ _id })
+    await Company.findByIdAndRemove({
+      _id
+    })
     return res.status(202).send({
-      message: 'Company has been deleted',
+      message: messages.successCompanyDeleted,
     })
   } catch {
-    return res.status(500).send({ message: messages.errorMessage })
+    return res.status(500).send({
+      message: messages.errorMessage
+    })
   }
 }
 
 exports.updateCompany = async (req, res) => {
   try {
     const _id = req.params.id
-    const companyCheck = await Company.findOne({ _id })
-    const adminId = await Users.findOne({ type: types.admin })
+    const companyCheck = await Company.findOne({
+      _id
+    })
+    const adminId = await Users.findOne({
+      type: types.admin
+    })
 
     if (Number(req.body.createdTime) !== Number(companyCheck.createdTime)) {
-      return res.status(500).send({ message: messages.errorMessage })
+      return res.status(500).send({
+        message: messages.errorMessage
+      })
     }
 
     if (
@@ -182,7 +217,9 @@ exports.updateCompany = async (req, res) => {
         req.userData.id === `${companyCheck._id}`
       )
     ) {
-      return res.status(500).send({ message: messages.errorMessage })
+      return res.status(500).send({
+        message: messages.errorMessage
+      })
     }
     if (
       req.body.approved === status.accepted &&
@@ -204,7 +241,7 @@ exports.updateCompany = async (req, res) => {
           console.log(err, result)
           if (err || !result) {
             return res.status(401).send({
-              message: 'Old password is incorrect',
+              message: messages.errorOldPasswordMessage,
             })
           }
 
@@ -215,12 +252,14 @@ exports.updateCompany = async (req, res) => {
               })
             }
             Company.findByIdAndUpdate(
-              _id,
-              { password: hash },
-              { new: true }
+              _id, {
+                password: hash
+              }, {
+                new: true
+              }
             ).then(_ => {
               return res.status(201).send({
-                message: 'Password has changed',
+                message: messages.successPasswordChanged,
               })
             })
           })
@@ -228,11 +267,9 @@ exports.updateCompany = async (req, res) => {
       )
     } else {
       const company = await Company.findByIdAndUpdate(
-        _id,
-        {
+        _id, {
           ...req.body,
-        },
-        {
+        }, {
           new: true,
         }
       ).select(selectTypes.companyGetAll)

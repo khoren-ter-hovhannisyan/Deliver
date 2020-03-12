@@ -5,7 +5,12 @@ const Users = require('../models/users.model')
 const Order = require('../models/order.model')
 const sendEmail = require('../../services/sendEmail')
 
-const { types, status, messages, selectTypes } = require('../../utils/constans')
+const {
+  types,
+  status,
+  messages,
+  selectTypes
+} = require('../../utils/constans')
 
 const countRating = ratingArr => {
   if (ratingArr.length === 0) {
@@ -15,7 +20,9 @@ const countRating = ratingArr => {
 }
 exports.getAllUsers = async (req, res) => {
   try {
-    const admin = await Users.findOne({ type: types.admin })
+    const admin = await Users.findOne({
+      type: types.admin
+    })
 
     if (req.userData.id !== `${admin._id}`) {
       return res.status(401).send({
@@ -25,9 +32,11 @@ exports.getAllUsers = async (req, res) => {
     const last = Number(req.query.last)
     const count = Number(req.query.count) + 1
     const users = await Users.find({
-      type: types.user,
-    })
-      .sort({ createdTime: -1 })
+        type: types.user,
+      })
+      .sort({
+        createdTime: -1
+      })
       .where('createdTime')
       .lt(last)
       .limit(count)
@@ -58,7 +67,9 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   const _id = req.params.id
   try {
-    const user = await Users.findOne({ _id }).select(selectTypes.userGetbyId)
+    const user = await Users.findOne({
+      _id
+    }).select(selectTypes.userGetbyId)
     return res.status(200).send({
       id: user._doc._id,
       ...user._doc,
@@ -120,7 +131,9 @@ exports.createUser = async (req, res) => {
 exports.delUser = async (req, res) => {
   try {
     const _id = req.params.id
-    const admin = await Users.findOne({ type: types.admin })
+    const admin = await Users.findOne({
+      type: types.admin
+    })
     if (!(req.userData.id === `${admin._id}` || req.userData.id === _id)) {
       return res.status(500).send({
         message: messages.errorMessage,
@@ -138,7 +151,9 @@ exports.delUser = async (req, res) => {
       })
     }
 
-    await Users.findByIdAndRemove({ _id })
+    await Users.findByIdAndRemove({
+      _id
+    })
     return res.status(202).send({
       message: messages.successDeletedMessage,
     })
@@ -152,8 +167,12 @@ exports.delUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const _id = req.params.id
-    const userCheck = await Users.findOne({ _id })
-    const admin = await Users.findOne({ type: types.admin })
+    const userCheck = await Users.findOne({
+      _id
+    })
+    const admin = await Users.findOne({
+      type: types.admin
+    })
 
     if (Number(req.body.createdTime) !== Number(userCheck.createdTime)) {
       return res.status(500).send({
@@ -201,12 +220,14 @@ exports.updateUser = async (req, res) => {
               })
             } else {
               Users.findByIdAndUpdate(
-                _id,
-                { password: hash },
-                { new: true }
+                _id, {
+                  password: hash
+                }, {
+                  new: true
+                }
               ).then(_ => {
                 return res.status(201).send({
-                  message: 'Password chenged',
+                  message: messages.successPasswordChanged,
                 })
               })
             }
@@ -215,9 +236,11 @@ exports.updateUser = async (req, res) => {
       )
     } else {
       const user = await Users.findByIdAndUpdate(
-        _id,
-        { ...req.body },
-        { new: true }
+        _id, {
+          ...req.body
+        }, {
+          new: true
+        }
       ).select(selectTypes.userGetAll)
       return res.status(201).send({
         id: user._doc._id,

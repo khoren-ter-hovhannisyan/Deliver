@@ -82,8 +82,8 @@ exports.socketListeners = socket => {
       data: 'Order has been deleted, please refresh',
     })
   })
-  socket.on('user_take_order', (user) => {
-    socket.broadcast.emit('user_took_order', {
+  socket.on(socketListeners.userTakeOrder, (user) => {
+    socket.broadcast.emit(socketEmiters.userTookOrder, {
       data: `${user} took your order`
     })
   })

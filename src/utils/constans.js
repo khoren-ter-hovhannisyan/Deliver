@@ -17,6 +17,7 @@ module.exports = {
     deleteCompany: 'delete_company',
     newOrder: 'new_order',
     deleteOrder: 'delete_order',
+    userTakeOrder: 'user_take_order'
   },
   socketEmiters: {
     updateUserList: 'update_user_list',
@@ -25,25 +26,31 @@ module.exports = {
     deletedCompany: 'deleted_company',
     updateOrderList: 'update_order_list',
     deletedOrder: 'deleted_order',
+    userTookOrder: 'user_took_order'
   },
   messages: {
     errorMessage: 'Something went wrong, try later',
     errorAuthfailed: 'Auth failed: email or password is incorrect',
-    succsessAuthMessage: 'Auth successful',
-    successCreatedMessage: 'Deliverer created',
     errorPendingMessage: 'Our admin team is reviewing your sign up request. Please wait for the response!',
     errorDeclinedMessage: 'Your sign-up request has unfortunately been declined. Please contact our administration for more information.',
     errorNoContent: 'No more conten',
     errorAlreadyExists: 'Email already exists',
-    successDeletedMessage: 'Deliverer deleted',
     errorOldPasswordMessage: ' Old Password is incorrect',
     errorUserCannotDel: 'The User cannot be deleted. The User has pending order(s)!',
     errorCompanyCannotDel: 'The company cannot be deleted. The company has pending order(s)!',
     errorNotEnoughMoney: `You can't create order, you don't enough money`,
+    errorNoSuchUser: 'There is no such user',
+    errorEmptyFields: 'Some input fields are wrong or empty',
+
+    successDeletedMessage: 'Deliverer deleted',
     successOrderDeleted: 'Order deleted',
     successOrderRated: 'Order has been rated',
     successOrderUpdated: 'Order updated',
-    errorNoSuchUser: 'There is no such user'
+    successPasswordChanged: 'Password has changed',
+    succsessAuthMessage: 'Auth successful',
+    successCreatedMessage: 'Deliverer created',
+    successCompanyDeleted: 'Company has been deleted',
+    successCompanyCreated: 'Company successfully created'
   },
   img: {
     companyAvatar: 'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217691/uy4ik67icwc2a9rmabnn.png',
