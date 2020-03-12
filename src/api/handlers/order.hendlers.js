@@ -6,22 +6,13 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
-const {
-  types,
-  status,
-  messages,
-  selectTypes
-} = require('../../utils/constans')
+const { types, status, messages, selectTypes } = require('../../utils/constans')
 
 exports.createOrder = async (req, res) => {
   try {
-    const {
-      companyId,
-      order
-    } = req.body
-    const company = await Company.findOne({
-      _id: companyId,
-    })
+    const { companyId, order } = req.body
+    const company = await Company.findOne({ _id: companyId })
+
     if (`${companyId}` !== `${req.userData.id}`) {
       return res.status(500).send({
         message: messages.errorMessage,
@@ -96,10 +87,9 @@ exports.getCompanyOrders = async (req, res) => {
       })
     }
     const type =
-      req.query.type === 'all' ? {
-        $in: [status.active, status.pending, status.done]
-      } :
-      req.query.type
+      req.query.type === 'all'
+        ? { $in: [status.active, status.pending, status.done] }
+        : req.query.type
 
     const orders = await Order.find({
       companyId: _id,
@@ -141,9 +131,7 @@ exports.getCompanyOrders = async (req, res) => {
 exports.delOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    const {
-      companyId
-    } = await Order.findOne({
+    const { companyId } = await Order.findOne({
       _id,
     })
     const company = Company.findOne({
@@ -170,12 +158,12 @@ exports.delOrder = async (req, res) => {
 exports.updateOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    const orderCheck = await Order.findOne({
-      _id,
-    })
-    const company = await Company.findOne({
-      _id: req.userData.id,
-    })
+    console.log(_id);
+    console.log(req.body);
+    
+    
+    const orderCheck = await Order.findOne({ _id })
+    const company = await Company.findOne({ _id: req.userData.id })
     if (
       !orderCheck ||
       (req.body.state === undefined && orderCheck.state === status.pending) ||
@@ -189,27 +177,19 @@ exports.updateOrder = async (req, res) => {
         req.body.rating
       ) {
         const order = await Order.findByIdAndUpdate(
-          _id, {
-            rating: req.body.rating
-          }, {
-            new: true
-          }
+          _id,
+          {rating: req.body.rating},
+          {new: true}
         )
 
-        const {
-          rating
-        } = await Users.findOne({
-          _id: order.userId,
-        })
+        const { rating } = await Users.findOne({_id: order.userId})
         rating.push(req.body.rating)
 
-        await Users.findByIdAndUpdate({
-          _id: order.userId
-        }, {
-          rating
-        }, {
-          new: true
-        })
+        await Users.findByIdAndUpdate(
+          {_id: order.userId},
+          {rating},
+          {new: true}
+        )
         return res.status(201).send({
           message: messages.successOrderRated,
         })
@@ -220,34 +200,29 @@ exports.updateOrder = async (req, res) => {
       }
     } else {
       const order = await Order.findByIdAndUpdate(
-        _id, {
-          ...req.body
-        }, {
-          new: true
-        }
+        _id,
+        {...req.body},
+        {new: true}
       ).select(selectTypes.orderForUpdate)
 
       const user = await Users.findOne({
         _id: order.userId,
       })
-
+      console.log(order,"**********");
+      
       if (order._doc.state === status.pending) {
         sendEmail.sendAcceptOrderEmail(company, user)
       } else if (order._doc.state === status.done) {
         await Company.findByIdAndUpdate(
-          company._id, {
-            amount: company.amount - order._doc.points
-          }, {
-            new: true
-          }
+          company._id,
+          {amount: company.amount - order._doc.points},
+          {new: true}
         )
 
         await user.findByIdAndUpdate(
-          user._id, {
-            amount: user.amount + order._doc.amount
-          }, {
-            new: true
-          }
+          user._id,
+          {amount: user.amount + order._doc.amount,},
+          {new: true}
         )
 
         sendEmail.sendDoneOrderEmail(company, user)
