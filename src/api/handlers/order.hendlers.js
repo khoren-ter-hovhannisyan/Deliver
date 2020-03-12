@@ -85,17 +85,18 @@ exports.getCompanyOrders = async (req, res) => {
     const company = await Company.findOne({
       _id,
     })
-    console.log(company);
-    
-    console.log(company._id, req.userData.id);
-    
+    console.log(company)
+
+    console.log(company._id, req.userData.id)
+
     if (`${company._id}` !== req.userData.id) {
       return res.status(500).send({
         message: messages.errorMessage,
       })
     }
-    const last = new ObjectId(req.query.last)
-    const count = Number(req.query.count) + 1
+    const last =
+      req.query.last === 'a' ? new ObjectId() : new ObjectId(req.query.last)
+    const count = Number(req.query.count)
     const type =
       req.query.type === 'all'
         ? { $in: [status.active, status.pending, status.done] }
