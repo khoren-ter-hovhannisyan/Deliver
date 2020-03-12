@@ -52,13 +52,13 @@ module.exports = {
   },
   selectTypes: {
     orderForUpdate:
-      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId userId',
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId userId ratind',
     orderForCompanies:
       'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment userId ratind',
     orderForActiveOrders:
-      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId',
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId ratind',
     orderForUser:
-      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId',
+      'state points order_description take_address deliver_address order_start_time order_end_time receiver_name receiver_phone comment companyId ratind',
     userGetAll:
       'name lastName email phone address type approved passportURL avatar amount rating createdTime',
     userGetbyId:
