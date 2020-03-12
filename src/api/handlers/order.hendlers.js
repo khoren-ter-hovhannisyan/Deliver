@@ -146,6 +146,14 @@ exports.updateOrder = async (req, res) => {
           orderCheck.state === status.done &&
           req.body.rating
       )
+      console.log(orderCheck , "*********");
+      console.log(company, "222222222");
+      console.log(orderCheck.state === status.done);
+      console.log(req.body.rating);
+      
+
+      
+      
 
       if (
         orderCheck &&
