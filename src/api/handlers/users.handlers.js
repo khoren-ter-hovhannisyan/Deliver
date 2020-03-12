@@ -5,29 +5,29 @@ const Users = require('../models/users.model')
 const Order = require('../models/order.model')
 const sendEmail = require('../../services/sendEmail')
 
+const { types, status, messages, selectTypes } = require('../../utils/constans')
+
 exports.getAllUsers = async (req, res) => {
   try {
     const last = Number(req.query.last)
     const count = Number(req.query.count) + 1
     const users = await Users.find({
-        type: 'user',
-      })
-      .sort({
-        createdTime: -1
-      })
+      type: types.user,
+    })
+      .sort({ createdTime: -1 })
       .where('createdTime')
       .lt(last)
       .limit(count)
     if (users.length === 0) {
       return res.status(206).send({
-        message: "No more content"
+        message: 'No more content',
       })
     }
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {
       const orders_count = await Order.find({
         userId: users[i]._id,
-        state: 'pending',
+        state: status.pending,
       })
       const user = {
         id: users[i]._id,
@@ -50,7 +50,7 @@ exports.getAllUsers = async (req, res) => {
     return res.status(200).send(usersOutput)
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
+      message: messages.errorMessage,
     })
   }
 }
@@ -78,8 +78,7 @@ exports.getUserById = async (req, res) => {
     })
   } catch (err) {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
-      err,
+      message: messages.errorMessage,
     })
   }
 }
@@ -90,31 +89,26 @@ exports.createUser = async (req, res) => {
       email: req.body.email.toLowerCase(),
     })
     const user = await Users.findOne({
-      email: req.body.email.toLowerCase()
+      email: req.body.email.toLowerCase(),
     })
     if (!company && !user) {
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
           return status(500).send({
-            message: 'Something went wrong, try later',
-            error: err,
+            message: messages.errorMessage,
           })
         } else {
           const user = new Users({
             ...req.body,
             email: req.body.email.toLowerCase(),
-            type: 'user',
             password: hash,
           })
 
-          user.save(function (err, user) {
+          user.save((err, user) => {
             if (err) {
-              return res
-                .status(500)
-                .send({
-                  message: 'Something went wrong, try later',
-                  err
-                })
+              return res.status(500).send({
+                message: messages.errorMessage,
+              })
             }
             sendEmail.sendInfoSignUp(user)
             sendEmail.sendWaitEmailForReceiver(user)
@@ -129,18 +123,14 @@ exports.createUser = async (req, res) => {
         message: 'Email already exists',
       })
     }
-  } catch (err) {
-    return res
-      .status(500)
-      .send({
-        message: 'Something went wrong, try later',
-        err
-      })
+  } catch {
+    return res.status(500).send({
+      message: messages.errorMessage,
+    })
   }
 }
 
 exports.delUser = async (req, res) => {
-
   try {
     const _id = req.params.id
     await Users.findByIdAndRemove({
@@ -149,10 +139,9 @@ exports.delUser = async (req, res) => {
     res.status(202).send({
       message: 'Deliverer deleted',
     })
-  } catch (err) {
+  } catch {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
-      err,
+      message: messages.errorMessage,
     })
   }
 }
@@ -163,11 +152,14 @@ exports.updateUser = async (req, res) => {
     const userCheck = await Users.findOne({
       _id,
     })
-    if (req.body.approved === 'accepted' && userCheck.approved !== 'accepted') {
+    if (
+      req.body.approved === status.accepted &&
+      userCheck.approved !== status.accepted
+    ) {
       sendEmail.sendAcceptEmail(userCheck)
     } else if (
-      req.body.approved === 'declined' &&
-      userCheck.approved !== 'declined'
+      req.body.approved === status.declined &&
+      userCheck.approved !== status.declined
     ) {
       sendEmail.sendDeclineEmail(userCheck)
     }
@@ -177,54 +169,53 @@ exports.updateUser = async (req, res) => {
         req.body.old_password,
         userCheck.password,
         (err, result) => {
-          if (err) {
+          if (err || !result) {
             return res.status(401).send({
               message: 'Old password is incorrect',
             })
           }
-          if (result) {
-            bcrypt.hash(req.body.new_password, 10, (err, hash) => {
-              if (err) {
-                return res.status(500).send({
-                  error: 'Something went wrong, try later',
+          bcrypt.hash(req.body.new_password, 10, (err, hash) => {
+            if (err) {
+              return res.status(500).send({
+                message: messages.errorMessage,
+              })
+            } else {
+              Users.findByIdAndUpdate(
+                _id,
+                {
+                  ...req.body,
+                  password: hash,
+                },
+                {
+                  new: true,
+                }
+              ).then(user => {
+                return res.status(201).send({
+                  id: user._id,
+                  name: user.name,
+                  lastName: user.lastName,
+                  email: user.email,
+                  phone: user.phone,
+                  address: user.address,
+                  approved: user.approved,
+                  passportURL: user.passportURL,
+                  avatar: user.avatar,
+                  amount: user.amount,
+                  rating: user.rating,
+                  createdTime: user.createdTime,
                 })
-              } else {
-                Users.findByIdAndUpdate(
-                  _id, {
-                    ...req.body,
-                    password: hash,
-                  }, {
-                    new: true,
-                  }
-                ).then(user => {
-                  return res.status(201).send({
-                    id: user._id,
-                    name: user.name,
-                    lastName: user.lastName,
-                    email: user.email,
-                    phone: user.phone,
-                    address: user.address,
-                    approved: user.approved,
-                    passportURL: user.passportURL,
-                    avatar: user.avatar,
-                    amount: user.amount,
-                    rating: user.rating,
-                    createdTime: user.createdTime,
-                  })
-                })
-              }
-            })
-          }
-          return res.status(401).send({
-            message: 'Auth failed: email or password is incorrect',
+              })
+            }
           })
         }
       )
     }
     const user = await Users.findByIdAndUpdate(
-      _id, {
+      _id,
+      {
         ...req.body,
-      }, {
+      },
+      {
         new: true,
       }
     )
@@ -242,10 +233,9 @@ exports.updateUser = async (req, res) => {
       rating: user.rating,
       createdTime: user.createdTime,
     })
-  } catch (err) {
+  } catch {
     return res.status(500).send({
-      message: 'Something went wrong, try later',
-      err,
+      message: message.errorMessage,
     })
   }
 }
