@@ -97,6 +97,8 @@ exports.getCompanyOrders = async (req, res) => {
         ? { $in: [status.active, status.pending, status.done] }
         : req.query.type
 
+    console.log(last, count, type)
+
     const orders = await Order.find({
       companyId: _id,
       state: type,
@@ -107,6 +109,11 @@ exports.getCompanyOrders = async (req, res) => {
       .limit(count)
       .select(selectTypes.orderForCompanies)
 
+    if (orders.length === 0) {
+      return res.status(206).send({
+        message: messages.errorNoContent,
+      })
+    }
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
       const user = await Users.findOne({
