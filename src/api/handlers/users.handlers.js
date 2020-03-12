@@ -113,9 +113,7 @@ exports.delUser = async (req, res) => {
         message: messages.errorMessage,
       })
     }
-    await Users.findByIdAndRemove({
-      _id,
-    })
+    await Users.findByIdAndRemove({ _id })
     return res.status(202).send({
       message: messages.successDeletedMessage,
     })
