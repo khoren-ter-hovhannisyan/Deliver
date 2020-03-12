@@ -85,6 +85,10 @@ exports.getCompanyOrders = async (req, res) => {
     const company = await Company.findOne({
       _id,
     })
+    console.log(company);
+    
+    console.log(company._id, req.userData.id);
+    
     if (`${company._id}` !== req.userData.id) {
       return res.status(500).send({
         message: messages.errorMessage,
