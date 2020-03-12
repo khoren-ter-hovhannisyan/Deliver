@@ -76,7 +76,7 @@ exports.loginAdmin = async (req, res) => {
       type: types.admin,
     })
     if (admin) {
-      bcrypt.compare(req.body.password, user.password, (err, result) => {
+      bcrypt.compare(req.body.password, admin.password, (err, result) => {
         if (err || !result) {
           return res.status(401).send({
             message: messages.errorAuthfailed,
