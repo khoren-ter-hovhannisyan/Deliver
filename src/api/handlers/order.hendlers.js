@@ -171,7 +171,6 @@ exports.updateOrder = async (req, res) => {
       { new: true }
     ).select(selectTypes.orderForUpdate)
 
-    const company = await Company.findOne({ _id: order.companyId })
     const user = await Users.findOne({ _id: order.userId })
 
     if (order._doc.state === status.pending) {
