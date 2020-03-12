@@ -1,4 +1,5 @@
 const moment = require('moment')
+const ObjectId = require('mongodb').ObjectID
 
 const Company = require('../models/company.model')
 const Users = require('../models/users.model')
@@ -51,11 +52,14 @@ exports.getAllActiveOrder = async (req, res) => {
     const orders = await Order.find({
       state: status.active,
     }).select(selectTypes.orderForActiveOrders)
+
     const ordersOutput = []
+
     for (let i = 0; i < orders.length; i++) {
       const company = await Company.findOne({
         _id: orders[0]._doc.companyId,
       })
+
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
@@ -86,7 +90,7 @@ exports.getCompanyOrders = async (req, res) => {
         message: messages.errorMessage,
       })
     }
-    const last = req.query.last
+    let last = req.query.last === 'first' ? '0' : new ObjectId(req.query.last)
     const count = Number(req.query.count) + 1
     const type =
       req.query.type === 'all'
@@ -96,7 +100,10 @@ exports.getCompanyOrders = async (req, res) => {
     const orders = await Order.find({
       companyId: _id,
       state: type,
-    }).select(selectTypes.orderForCompanies)
+    }).sort({ createdTime: -1 })
+    .where('_id')
+    .lt(last)
+    .limit(count).select(selectTypes.orderForCompanies)
 
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
@@ -160,10 +167,9 @@ exports.delOrder = async (req, res) => {
 exports.updateOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    console.log(_id);
-    console.log(req.body);
-    
-    
+    console.log(_id)
+    console.log(req.body)
+
     const orderCheck = await Order.findOne({ _id })
     const company = await Company.findOne({ _id: req.userData.id })
     if (
@@ -180,17 +186,17 @@ exports.updateOrder = async (req, res) => {
       ) {
         const order = await Order.findByIdAndUpdate(
           _id,
-          {rating: req.body.rating},
-          {new: true}
+          { rating: req.body.rating },
+          { new: true }
         )
 
-        const { rating } = await Users.findOne({_id: order.userId})
+        const { rating } = await Users.findOne({ _id: order.userId })
         rating.push(req.body.rating)
 
         await Users.findByIdAndUpdate(
-          {_id: order.userId},
-          {rating},
-          {new: true}
+          { _id: order.userId },
+          { rating },
+          { new: true }
         )
         return res.status(201).send({
           message: messages.successOrderRated,
@@ -203,34 +209,34 @@ exports.updateOrder = async (req, res) => {
     } else {
       const order = await Order.findByIdAndUpdate(
         _id,
-        {...req.body},
-        {new: true}
+        { ...req.body },
+        { new: true }
       )
 
       const user = await Users.findOne({
         _id: order.userId,
       })
-      
+
       if (order.state === status.pending) {
         //sendEmail.sendAcceptOrderEmail(company, user)
       } else if (order.state === status.done) {
         await Company.findByIdAndUpdate(
           company._id,
-          {amount: company.amount - order.points},
-          {new: true}
+          { amount: company.amount - order.points },
+          { new: true }
         )
 
         await Users.findByIdAndUpdate(
           user._id,
-          {amount: user.amount + order.points,},
-          {new: true}
+          { amount: user.amount + order.points },
+          { new: true }
         )
 
         sendEmail.sendDoneOrderEmail(company, user)
       }
 
       return res.status(201).send({
-        id:req.userData.id,
+        id: req.userData.id,
         message: messages.successOrderUpdated,
       })
     }

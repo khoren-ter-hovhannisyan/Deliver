@@ -21,7 +21,7 @@ const orderSchema = new Schema({
   },
   createdTime: {
     type: Number,
-    default: Number(Date.now()),
+    default: () => Number(Date.now()),
   },
   order_start_time: {
     type: Date,
