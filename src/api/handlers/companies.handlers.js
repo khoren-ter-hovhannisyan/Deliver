@@ -24,23 +24,30 @@ exports.getAllCompanies = async (req, res) => {
 
     const companies = await Company.find({})
       .sort({ createdTime: -1 })
-    .where('createdTime')
-    .lt(last)
-    .limit(count).select(selectTypes.companyGetAll)
+      .where('createdTime')
+      .lt(last)
+      .limit(count)
+      .select(selectTypes.companyGetAll)
 
+    if (companies.length === 0) {
+      return res.status(206).send({
+        message: messages.errorNoContent,
+      })
+    }
+    
     const companiesOutput = []
 
     for (let i = 0; i < companies.length; i++) {
-      const orders_count = await Order.where({
-        companyId: companies[i]._doc._id,
-        type: types.pending,
-      }).count()
-      console.log(orders_count,"******");
-      
+      // const orders_count = await Order.where({
+      //   companyId: companies[i]._doc._id,
+      //   type: types.pending,
+      // }).count()
+      // console.log(orders_count,"******");
+
       const company = {
         id: companies[i]._doc._id,
         ...companies[i]._doc,
-        orders_count,
+        //orders_count,
       }
       companiesOutput.push(company)
     }

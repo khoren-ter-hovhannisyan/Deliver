@@ -137,6 +137,7 @@ exports.updateOrder = async (req, res) => {
       (req.body.state === undefined && orderCheck.state === status.done) ||
       req.body.order_create_time
     ) {
+      if (orderCheck.state === status.done){}
       return res.status(400).send({
         message: messages.errorMessage,
       })
