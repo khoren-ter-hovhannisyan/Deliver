@@ -140,6 +140,13 @@ exports.updateOrder = async (req, res) => {
       (req.body.state === undefined && orderCheck.state === status.done) ||
       req.body.order_create_time
     ) {
+      console.log(
+        orderCheck &&
+          company &&
+          orderCheck.state === status.done &&
+          req.body.rating
+      )
+
       if (
         orderCheck &&
         company &&
@@ -151,18 +158,23 @@ exports.updateOrder = async (req, res) => {
           { rating: req.body.rating },
           { new: true }
         )
+        console.log(order)
+
         const { rating } = await Users.findOne({ _id: order.userId })
         rating.push(req.body.rating)
+        console.log(user)
+
         await Users.findByIdAndUpdate(
           { _id: order.userId },
           { rating },
           { new: true }
         )
-        return res.status(200).send({message:"Order has been ratied"})
+        return res.status(200).send({ message: 'Order has been ratied' })
+      } else {
+        return res.status(400).send({
+          message: messages.errorMessage,
+        })
       }
-      return res.status(400).send({
-        message: messages.errorMessage,
-      })
     }
 
     const order = await Order.findByIdAndUpdate(
