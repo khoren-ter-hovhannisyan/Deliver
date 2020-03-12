@@ -82,9 +82,9 @@ exports.loginAdmin = async (req, res) => {
             message: messages.errorAuthfailed,
           })
         }
-        generateToken(res, user._id)
+        generateToken(res, admin._id)
         return res.status(200).send({
-          type: user.type,
+          type: admin.type,
           message: messages.succsessAuthMessage,
         })
       })
