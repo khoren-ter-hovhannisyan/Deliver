@@ -16,8 +16,6 @@ exports.createOrder = async (req, res) => {
       return res.status(500).send({ message: messages.errorMessage })
     }
 
-    console.log(typeof order.points, typeof company.amount)
-
     if (Number(order.points) > Number(company.amount)) {
       return res.status(400).send({ message: messages.errorMessage })
     }
