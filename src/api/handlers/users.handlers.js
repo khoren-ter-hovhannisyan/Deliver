@@ -18,32 +18,17 @@ exports.getAllUsers = async (req, res) => {
       .where('createdTime')
       .lt(last)
       .limit(count)
+      .select(selectTypes.userGetAll)
     if (users.length === 0) {
       return res.status(206).send({
-        message: 'No more content',
+        message: messages.errorNoContent,
       })
     }
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {
-      const orders_count = await Order.find({
-        userId: users[i]._id,
-        state: status.pending,
-      })
       const user = {
         id: users[i]._id,
-        name: users[i].name,
-        lastName: users[i].lastName,
-        email: users[i].email,
-        phone: users[i].phone,
-        address: users[i].address,
-        type: users[i].type,
-        approved: users[i].approved,
-        passportURL: users[i].passportURL,
-        avatar: users[i].avatar,
-        amount: users[i].amount,
-        rating: users[i].rating,
-        createdTime: users[i].createdTime,
-        orders_count: orders_count.length,
+        ...users[i]._doc,
       }
       usersOutput.push(user)
     }
@@ -60,21 +45,10 @@ exports.getUserById = async (req, res) => {
   try {
     const user = await Users.findOne({
       _id,
-    })
+    }).select(selectTypes.userGetbyId)
     return res.status(200).send({
       id: user._id,
-      name: user.name,
-      lastName: user.lastName,
-      email: user.email,
-      phone: user.phone,
-      address: user.address,
-      type: user.type,
-      approved: user.approved,
-      passportURL: user.passportURL,
-      avatar: user.avatar,
-      amount: user.amout,
-      rating: user.rating,
-      createdTime: user.createdTime,
+      ...user._doc,
     })
   } catch (err) {
     return res.status(500).send({
@@ -113,14 +87,14 @@ exports.createUser = async (req, res) => {
             sendEmail.sendInfoSignUp(user)
             sendEmail.sendWaitEmailForReceiver(user)
             res.status(201).send({
-              message: 'Deliverer created',
+              message: messages.successCreatedMessage,
             })
           })
         }
       })
     } else {
       return res.status(406).send({
-        message: 'Email already exists',
+        message: messages.errorAlreadyExists,
       })
     }
   } catch {
@@ -137,7 +111,7 @@ exports.delUser = async (req, res) => {
       _id,
     })
     res.status(202).send({
-      message: 'Deliverer deleted',
+      message: messages.successDeletedMessage,
     })
   } catch {
     return res.status(500).send({
@@ -171,7 +145,7 @@ exports.updateUser = async (req, res) => {
         (err, result) => {
           if (err || !result) {
             return res.status(401).send({
-              message: 'Old password is incorrect',
+              message: messages.errorOldPasswordMessage,
             })
           }
           bcrypt.hash(req.body.new_password, 10, (err, hash) => {
