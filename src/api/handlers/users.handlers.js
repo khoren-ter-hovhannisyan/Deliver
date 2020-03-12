@@ -135,14 +135,15 @@ exports.delUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
   try {
-    if (req.body.createdTime) {
+    const _id = req.params.id
+    const userCheck = await Users.findOne({ _id })
+    const admin = await Users.findOne({ type: types.admin })
+
+    if (Number(req.body.createdTime) !== Number(userCheck.createdTime)) {
       return res.status(500).send({
         message: message.errorMessage,
       })
     }
-    const _id = req.params.id
-    const userCheck = await Users.findOne({ _id })
-    const admin = await Users.findOne({ type: types.admin })
 
     if (
       !(

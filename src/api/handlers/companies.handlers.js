@@ -154,13 +154,13 @@ exports.delCompany = async (req, res) => {
 
 exports.updateCompany = async (req, res) => {
   try {
-    if (req.body.createdTime) {
-      return res.status(500).send({ message: messages.errorMessage })
-    }
-
     const _id = req.params.id
     const companyCheck = await Company.findOne({ _id })
     const adminId = await Users.findOne({ type: types.admin })
+
+    if (Number(req.body.createdTime)!== Number(companyCheck.createdTime)) {
+      return res.status(500).send({ message: messages.errorMessage })
+    }
 
     if (
       !(
