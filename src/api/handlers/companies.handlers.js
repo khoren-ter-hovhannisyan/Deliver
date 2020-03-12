@@ -21,6 +21,7 @@ exports.getAllCompanies = async (req, res) => {
     }
 
     const companies = await Company.find({}).select(selectTypes.companyGetAll)
+    
     const companiesOutput = []
 
     for (let i = 0; i < companies.length; i++) {
@@ -31,7 +32,7 @@ exports.getAllCompanies = async (req, res) => {
 
       const company = {
         id: companies[i]._doc._id,
-        ...company[i]._doc,
+        ...companies[i]._doc,
         orders_count: company_orders_count.length,
       }
       companiesOutput.push(company)

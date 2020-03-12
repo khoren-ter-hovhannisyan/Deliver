@@ -54,6 +54,9 @@ const orderSchema = new Schema({
     type: Number,
     required: true,
   },
+  rating: {
+    type: Number,
+  },
 })
 
 module.exports = model('Order', orderSchema)
