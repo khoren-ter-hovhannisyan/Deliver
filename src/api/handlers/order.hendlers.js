@@ -146,7 +146,7 @@ exports.updateOrder = async (req, res) => {
         orderCheck.state === status.done &&
         req.body.rating
       ) {
-        
+
         const order = await Order.findByIdAndUpdate(
           _id,
           { rating: req.body.rating },
@@ -161,7 +161,7 @@ exports.updateOrder = async (req, res) => {
           { rating },
           { new: true }
         )
-        return res.status(200).send({ message: 'Order has been ratied' })
+        return res.status(201).send({ message: 'Order has been ratied' })
       } else {
         return res.status(400).send({
           message: messages.errorMessage,
