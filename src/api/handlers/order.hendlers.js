@@ -6,20 +6,34 @@ const Order = require('../models/order.model')
 
 const sendEmail = require('../../services/sendEmail')
 
-const { types, status, messages, selectTypes } = require('../../utils/constans')
+const {
+  types,
+  status,
+  messages,
+  selectTypes
+} = require('../../utils/constans')
 
 exports.createOrder = async (req, res) => {
   try {
-    const { companyId, order } = req.body
-    const company = await Company.findOne({ _id: companyId })
+    const {
+      companyId,
+      order
+    } = req.body
+    const company = await Company.findOne({
+      _id: companyId
+    })
     if (`${companyId}` !== `${req.userData.id}`) {
-      return res.status(500).send({ message: messages.errorMessage })
+      return res.status(500).send({
+        message: messages.errorMessage
+      })
     }
 
     if (Number(order.points) > Number(company.amount)) {
       return res
         .status(400)
-        .send({ message: 'You can`t cratea order , you have no enough mony' })
+        .send({
+          message: `You can't create order, you have no enough money`
+        })
     }
     const newOrder = new Order({
       ...order,
@@ -32,7 +46,9 @@ exports.createOrder = async (req, res) => {
           message: messages.errorMessage,
         })
       }
-      return res.status(201).send({ message: 'Order created' })
+      return res.status(201).send({
+        message: 'Order created'
+      })
     })
   } catch {
     return res.status(500).send({
@@ -43,12 +59,16 @@ exports.createOrder = async (req, res) => {
 //TODO : pagination by scrole
 exports.getAllActiveOrder = async (req, res) => {
   try {
-    const orders = await Order.find({ state: status.active }).select(
+    const orders = await Order.find({
+      state: status.active
+    }).select(
       selectTypes.orderForActiveOrders
     )
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
-      const company = await Company.findOne({ _id: orders[0]._doc.companyId })
+      const company = await Company.findOne({
+        _id: orders[0]._doc.companyId
+      })
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
@@ -62,29 +82,41 @@ exports.getAllActiveOrder = async (req, res) => {
     }
     return res.status(200).send(ordersOutput)
   } catch (err) {
-    return res.status(500).send({ message: messages.errorMessage })
+    return res.status(500).send({
+      message: messages.errorMessage
+    })
   }
 }
 
 exports.getCompanyOrders = async (req, res) => {
   try {
     const _id = req.params.id
-    const company = await Company.findOne({ _id })
+    const company = await Company.findOne({
+      _id
+    })
     if (`${company._id}` !== req.userData.id) {
-      return res.status(500).send({ message: messages.errorMessage })
+      return res.status(500).send({
+        message: messages.errorMessage
+      })
     }
     const type =
-      req.query.type === 'all'
-        ? { $in: [status.active, status.pending, status.done] }
-        : req.query.type
+      req.query.type === 'all' ? {
+        $in: [status.active, status.pending, status.done]
+      } :
+      req.query.type
 
-    const orders = await Order.find({ companyId: _id, state: type }).select(
+    const orders = await Order.find({
+      companyId: _id,
+      state: type
+    }).select(
       selectTypes.orderForCompanies
     )
 
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
-      const user = await Users.findOne({ _id: orders[i]._doc.userId })
+      const user = await Users.findOne({
+        _id: orders[i]._doc.userId
+      })
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
@@ -106,17 +138,27 @@ exports.getCompanyOrders = async (req, res) => {
     }
     return res.status(200).send(ordersOutput)
   } catch (err) {
-    return res.status(500).send({ message: messages.errorMessage })
+    return res.status(500).send({
+      message: messages.errorMessage
+    })
   }
 }
 
 exports.delOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    const { companyId } = await Order.findOne({ _id })
-    const company = Company.findOne({ _id: companyId })
+    const {
+      companyId
+    } = await Order.findOne({
+      _id
+    })
+    const company = Company.findOne({
+      _id: companyId
+    })
     if (`${companyId}` !== `${company._id}`) {
-      return res.status(500).send({ message: messages.errorMessage })
+      return res.status(500).send({
+        message: messages.errorMessage
+      })
     }
     await Order.findByIdAndRemove({
       _id,
@@ -125,15 +167,21 @@ exports.delOrder = async (req, res) => {
       message: 'Order deleted',
     })
   } catch (err) {
-    return res.status(404).send({ message: messages.errorMessage })
+    return res.status(404).send({
+      message: messages.errorMessage
+    })
   }
 }
 
 exports.updateOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    const orderCheck = await Order.findOne({ _id })
-    const company = await Company.findOne({ _id: req.userData.id })
+    const orderCheck = await Order.findOne({
+      _id
+    })
+    const company = await Company.findOne({
+      _id: req.userData.id
+    })
     if (
       !orderCheck ||
       (req.body.state === undefined && orderCheck.state === status.pending) ||
@@ -148,20 +196,30 @@ exports.updateOrder = async (req, res) => {
       ) {
 
         const order = await Order.findByIdAndUpdate(
-          _id,
-          { rating: req.body.rating },
-          { new: true }
+          _id, {
+            rating: req.body.rating
+          }, {
+            new: true
+          }
         )
 
-        const { rating } = await Users.findOne({ _id: order.userId })
+        const {
+          rating
+        } = await Users.findOne({
+          _id: order.userId
+        })
         rating.push(req.body.rating)
 
-        await Users.findByIdAndUpdate(
-          { _id: order.userId },
-          { rating },
-          { new: true }
-        )
-        return res.status(201).send({ message: 'Order has been ratied' })
+        await Users.findByIdAndUpdate({
+          _id: order.userId
+        }, {
+          rating
+        }, {
+          new: true
+        })
+        return res.status(201).send({
+          message: 'Order has been ratied'
+        })
       } else {
         return res.status(400).send({
           message: messages.errorMessage,
@@ -169,45 +227,61 @@ exports.updateOrder = async (req, res) => {
       }
     } else {
       const order = await Order.findByIdAndUpdate(
-        _id,
-        { ...req.body },
-        { new: true }
+        _id, {
+          ...req.body
+        }, {
+          new: true
+        }
       ).select(selectTypes.orderForUpdate)
 
-      const user = await Users.findOne({ _id: order.userId })
+      const user = await Users.findOne({
+        _id: order.userId
+      })
 
       if (order._doc.state === status.pending) {
         sendEmail.sendAcceptOrderEmail(company, user)
       } else if (order._doc.state === status.done) {
         await Company.findByIdAndUpdate(
-          company._id,
-          { amount: company.amount - order._doc.points },
-          { new: true }
+          company._id, {
+            amount: company.amount - order._doc.points
+          }, {
+            new: true
+          }
         )
 
         await user.findByIdAndUpdate(
-          user._id,
-          { amount: user.amount + order._doc.amount },
-          { new: true }
+          user._id, {
+            amount: user.amount + order._doc.amount
+          }, {
+            new: true
+          }
         )
 
         sendEmail.sendDoneOrderEmail(company, user)
       }
 
-      return res.status(201).send({ message: 'Order updated' })
+      return res.status(201).send({
+        message: 'Order updated'
+      })
     }
   } catch {
-    return res.status(500).send({ message: messages.errorMessage })
+    return res.status(500).send({
+      message: messages.errorMessage
+    })
   }
 }
 
 exports.getUserOrders = async (req, res) => {
   try {
     const _id = req.params.id
-    const user = await Users.findOne({ _id })
+    const user = await Users.findOne({
+      _id
+    })
 
     if (req.userData.id !== `${user._id}`) {
-      return res.status(500).send({ message: messages.errorMessage })
+      return res.status(500).send({
+        message: messages.errorMessage
+      })
     }
     if (!user) {
       return res.status(400).send({
@@ -215,13 +289,17 @@ exports.getUserOrders = async (req, res) => {
       })
     }
 
-    const orders = await Order.find({ userId: _id }).select(
+    const orders = await Order.find({
+      userId: _id
+    }).select(
       selectTypes.orderForUser
     )
     const ordersOutput = []
 
     for (let i = 0; i < orders.length; i++) {
-      const company = await Company.findOne({ _id: orders[i].companyId })
+      const company = await Company.findOne({
+        _id: orders[i].companyId
+      })
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
@@ -235,6 +313,8 @@ exports.getUserOrders = async (req, res) => {
     }
     return res.status(200).send(ordersOutput)
   } catch (err) {
-    return res.status(500).send({ message: messages.errorMessage })
+    return res.status(500).send({
+      message: messages.errorMessage
+    })
   }
 }
