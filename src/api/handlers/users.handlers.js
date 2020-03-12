@@ -27,13 +27,13 @@ exports.getAllUsers = async (req, res) => {
     const usersOutput = []
     for (let i = 0; i < users.length; i++) {
       const user = {
-        id: users[i]._id,
+        id: users[i]._doc._id,
         ...users[i]._doc,
       }
       usersOutput.push(user)
     }
     return res.status(200).send(usersOutput)
-  } catch (err) {
+  } catch {
     return res.status(500).send({
       message: messages.errorMessage,
     })
@@ -43,9 +43,7 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
   const _id = req.params.id
   try {
-    const user = await Users.findOne({
-      _id,
-    }).select(selectTypes.userGetbyId)
+    const user = await Users.findOne({ _id }).select(selectTypes.userGetbyId)
     return res.status(200).send({
       id: user._doc._id,
       ...user._doc,
@@ -71,26 +69,25 @@ exports.createUser = async (req, res) => {
           return status(500).send({
             message: messages.errorMessage,
           })
-        } else {
-          const user = new Users({
-            ...req.body,
-            email: req.body.email.toLowerCase(),
-            password: hash,
-          })
-
-          user.save((err, user) => {
-            if (err) {
-              return res.status(500).send({
-                message: messages.errorMessage,
-              })
-            }
-            sendEmail.sendInfoSignUp(user)
-            sendEmail.sendWaitEmailForReceiver(user)
-            res.status(201).send({
-              message: messages.successCreatedMessage,
-            })
-          })
         }
+        const user = new Users({
+          ...req.body,
+          email: req.body.email.toLowerCase(),
+          password: hash,
+        })
+
+        user.save((err, user) => {
+          if (err) {
+            return res.status(500).send({
+              message: messages.errorMessage,
+            })
+          }
+          sendEmail.sendInfoSignUp(user)
+          sendEmail.sendWaitEmailForReceiver(user)
+          return res.status(201).send({
+            message: messages.successCreatedMessage,
+          })
+        })
       })
     } else {
       return res.status(406).send({
@@ -113,6 +110,18 @@ exports.delUser = async (req, res) => {
         message: messages.errorMessage,
       })
     }
+
+    const pendingOrder = await Order.findOne({
+      userId: _id,
+      stata: status.pending,
+    })
+
+    if (pendingOrder) {
+      return res.status(400).send({
+        message: messages.errorUserCannotDel,
+      })
+    }
+
     await Users.findByIdAndRemove({ _id })
     return res.status(202).send({
       message: messages.successDeletedMessage,
@@ -125,11 +134,27 @@ exports.delUser = async (req, res) => {
 }
 
 exports.updateUser = async (req, res) => {
-  const _id = req.params.id
   try {
-    const userCheck = await Users.findOne({
-      _id,
-    })
+    if (req.body.createdTime) {
+      return res.status(500).send({
+        message: message.errorMessage,
+      })
+    }
+    const _id = req.params.id
+    const userCheck = await Users.findOne({ _id })
+    const admin = await Users.findOne({ type: types.admin })
+
+    if (
+      !(
+        req.userData.id === `${userCheck._id}` ||
+        req.userData.id === `${admin._id}`
+      )
+    ) {
+      return res.status(500).send({
+        message: messages.errorMessage,
+      })
+    }
+
     if (
       req.body.approved === status.accepted &&
       userCheck.approved !== status.accepted
@@ -160,13 +185,9 @@ exports.updateUser = async (req, res) => {
             } else {
               Users.findByIdAndUpdate(
                 _id,
-                {
-                  password: hash,
-                },
-                {
-                  new: true,
-                }
-              ).then(user => {
+                { password: hash },
+                { new: true }
+              ).then(_ => {
                 return res.status(201).send({
                   message: 'Password chenged',
                 })
@@ -178,26 +199,12 @@ exports.updateUser = async (req, res) => {
     } else {
       const user = await Users.findByIdAndUpdate(
         _id,
-        {
-          ...req.body,
-        },
-        {
-          new: true,
-        }
-      )
+        { ...req.body },
+        { new: true }
+      ).select(selectTypes.userGetAll)
       return res.status(201).send({
-        id: user._id,
-        name: user.name,
-        lastName: user.lastName,
-        email: user.email,
-        phone: user.phone,
-        address: user.address,
-        approved: user.approved,
-        passportURL: user.passportURL,
-        avatar: user.avatar,
-        amount: user.amount,
-        rating: user.rating,
-        createdTime: user.createdTime,
+        id: user._doc._id,
+        ...user._doc,
       })
     }
   } catch {

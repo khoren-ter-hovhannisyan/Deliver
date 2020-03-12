@@ -26,21 +26,16 @@ exports.login = async (req, res) => {
         })
       }
       bcrypt.compare(req.body.password, company.password, (err, result) => {
-        if (err) {
+        if (err || !result) {
           return res.status(401).send({
             message: messages.errorAuthfailed,
           })
         }
-        if (result) {
-          generateToken(res, company._id)
-          return res.status(200).send({
-            id: company._id,
-            type: company.type,
-            message: messages.succsessAuthMessage,
-          })
-        }
-        return res.status(401).send({
-          message: messages.errorAuthfailed,
+        generateToken(res, company._id)
+        return res.status(200).send({
+          id: company._id,
+          type: company.type,
+          message: messages.succsessAuthMessage,
         })
       })
     } else if (user) {
@@ -54,59 +49,53 @@ exports.login = async (req, res) => {
         })
       }
       bcrypt.compare(req.body.password, user.password, (err, result) => {
-        if (err) {
+        if (err || !result) {
           return res.status(401).send({
             message: messages.errorAuthfailed,
           })
         }
-        if (result) {
-          generateToken(res, user._id)
-          return res.status(200).send({
-            id: user._id,
-            type: user.type,
-            message: messages.succsessAuthMessage,
-          })
-        }
-        return res.status(401).send({
-          message: messages.errorAuthfailed,
+        generateToken(res, user._id)
+        return res.status(200).send({
+          id: user._id,
+          type: user.type,
+          message: messages.succsessAuthMessage,
         })
       })
     } else {
       return res.status(401).send({ message: messages.errorAuthfailed })
     }
-  } catch (err) {
+  } catch {
     return res.status(500).send({ message: messages.errorMessage })
   }
 }
-exports.loginAdmin = (req, res) => {
-  Users.findOne({ email: req.body.email.toLowerCase(), type: types.admin })
-    .then(user => {
-      if (!user) {
-        return res.status(401).send({
-          message: messages.errorAuthfailed,
-        })
-      }
+
+exports.loginAdmin = async (req, res) => {
+  try {
+    const admin = await Users.findOne({
+      email: req.body.email.toLowerCase(),
+      type: types.admin,
+    })
+    if (admin) {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
-        if (err) {
+        if (err || !result) {
           return res.status(401).send({
             message: messages.errorAuthfailed,
           })
         }
-        if (result) {
-          generateToken(res, user._id)
-          return res.status(200).send({
-            type: user.type,
-            message: messages.succsessAuthMessage,
-          })
-        }
-        return res.status(401).send({
-          message: messages.errorAuthfailed,
+        generateToken(res, user._id)
+        return res.status(200).send({
+          type: user.type,
+          message: messages.succsessAuthMessage,
         })
       })
-    })
-    .catch(_ => {
+    } else {
       return res.status(401).send({
         message: messages.errorAuthfailed,
       })
+    }
+  } catch {
+    return res.status(500).send({
+      message: messages.errorAuthfailed,
     })
+  }
 }
