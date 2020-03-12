@@ -140,37 +140,21 @@ exports.updateOrder = async (req, res) => {
       (req.body.state === undefined && orderCheck.state === status.done) ||
       req.body.order_create_time
     ) {
-      console.log(
-        orderCheck &&
-          company &&
-          orderCheck.state === status.done &&
-          req.body.rating
-      )
-      console.log(orderCheck , "*********");
-      console.log(company, "222222222");
-      console.log(orderCheck.state === status.done);
-      console.log(req.body.rating);
-      
-
-      
-      
-
       if (
         orderCheck &&
         company &&
         orderCheck.state === status.done &&
         req.body.rating
       ) {
+        
         const order = await Order.findByIdAndUpdate(
           _id,
           { rating: req.body.rating },
           { new: true }
         )
-        console.log(order)
 
         const { rating } = await Users.findOne({ _id: order.userId })
         rating.push(req.body.rating)
-        console.log(rating, "******************" )
 
         await Users.findByIdAndUpdate(
           { _id: order.userId },
@@ -183,35 +167,35 @@ exports.updateOrder = async (req, res) => {
           message: messages.errorMessage,
         })
       }
-    }
-
-    const order = await Order.findByIdAndUpdate(
-      _id,
-      { ...req.body },
-      { new: true }
-    ).select(selectTypes.orderForUpdate)
-
-    const user = await Users.findOne({ _id: order.userId })
-
-    if (order._doc.state === status.pending) {
-      sendEmail.sendAcceptOrderEmail(company, user)
-    } else if (order._doc.state === status.done) {
-      await Company.findByIdAndUpdate(
-        company._id,
-        { amount: company.amount - order._doc.points },
+    } else {
+      const order = await Order.findByIdAndUpdate(
+        _id,
+        { ...req.body },
         { new: true }
-      )
+      ).select(selectTypes.orderForUpdate)
 
-      await user.findByIdAndUpdate(
-        user._id,
-        { amount: user.amount + order._doc.amount },
-        { new: true }
-      )
+      const user = await Users.findOne({ _id: order.userId })
 
-      sendEmail.sendDoneOrderEmail(company, user)
+      if (order._doc.state === status.pending) {
+        sendEmail.sendAcceptOrderEmail(company, user)
+      } else if (order._doc.state === status.done) {
+        await Company.findByIdAndUpdate(
+          company._id,
+          { amount: company.amount - order._doc.points },
+          { new: true }
+        )
+
+        await user.findByIdAndUpdate(
+          user._id,
+          { amount: user.amount + order._doc.amount },
+          { new: true }
+        )
+
+        sendEmail.sendDoneOrderEmail(company, user)
+      }
+
+      return res.status(201).send({ message: 'Order updated' })
     }
-
-    return res.status(201).send({ message: 'Order updated' })
   } catch {
     return res.status(500).send({ message: messages.errorMessage })
   }
