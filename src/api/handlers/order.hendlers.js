@@ -203,25 +203,25 @@ exports.updateOrder = async (req, res) => {
         _id,
         {...req.body},
         {new: true}
-      ).select(selectTypes.orderForUpdate)
+      )
 
       const user = await Users.findOne({
         _id: order.userId,
       })
       console.log(order,"**********");
       
-      if (order._doc.state === status.pending) {
+      if (order.state === status.pending) {
         sendEmail.sendAcceptOrderEmail(company, user)
-      } else if (order._doc.state === status.done) {
+      } else if (order.state === status.done) {
         await Company.findByIdAndUpdate(
           company._id,
-          {amount: company.amount - order._doc.points},
+          {amount: company.amount - order.points},
           {new: true}
         )
 
-        await user.findByIdAndUpdate(
+        await Users.findByIdAndUpdate(
           user._id,
-          {amount: user.amount + order._doc.amount,},
+          {amount: user.amount + order.points,},
           {new: true}
         )
 
