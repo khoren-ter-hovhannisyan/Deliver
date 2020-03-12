@@ -19,9 +19,9 @@ const orderSchema = new Schema({
     type: String,
     required: true,
   },
-  createTime: {
-    type: Date,
-    default:  Number(Date.now()),
+  createdTime: {
+    type: Number,
+    default: Number(Date.now()),
   },
   order_start_time: {
     type: Date,
@@ -56,7 +56,7 @@ const orderSchema = new Schema({
   },
   rating: {
     type: Number,
-    default: 0
+    default: 0,
   },
 })
 

@@ -86,6 +86,8 @@ exports.getCompanyOrders = async (req, res) => {
         message: messages.errorMessage,
       })
     }
+    const last = req.query.last
+    const count = Number(req.query.count) + 1
     const type =
       req.query.type === 'all'
         ? { $in: [status.active, status.pending, status.done] }
