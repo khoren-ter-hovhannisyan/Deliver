@@ -100,10 +100,12 @@ exports.getCompanyOrders = async (req, res) => {
     const orders = await Order.find({
       companyId: _id,
       state: type,
-    }).sort({ createdTime: -1 })
-    .where('_id')
-    .lt(last)
-    .limit(count).select(selectTypes.orderForCompanies)
+    })
+      .sort({ createdTime: -1 })
+      .where('_id')
+      .lt(last)
+      .limit(count)
+      .select(selectTypes.orderForCompanies)
 
     const ordersOutput = []
     for (let i = 0; i < orders.length; i++) {
@@ -264,9 +266,10 @@ exports.getUserOrders = async (req, res) => {
         message: messages.errorNoSuchUser,
       })
     }
-
+    const type = req.query.type
     const orders = await Order.find({
       userId: _id,
+      state: type,
     }).select(selectTypes.orderForUser)
     const ordersOutput = []
 
