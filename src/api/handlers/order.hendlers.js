@@ -229,6 +229,7 @@ exports.updateOrder = async (req, res) => {
       }
 
       return res.status(201).send({
+        id:req.userData.id,
         message: messages.successOrderUpdated,
       })
     }
@@ -278,7 +279,7 @@ exports.getUserOrders = async (req, res) => {
       ordersOutput.push(order)
     }
     return res.status(200).send(ordersOutput)
-  } catch (err) {
+  } catch {
     return res.status(500).send({
       message: messages.errorMessage,
     })
