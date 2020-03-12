@@ -211,7 +211,7 @@ exports.updateOrder = async (req, res) => {
       console.log(order,"**********");
       
       if (order.state === status.pending) {
-        sendEmail.sendAcceptOrderEmail(company, user)
+        //sendEmail.sendAcceptOrderEmail(company, user)
       } else if (order.state === status.done) {
         await Company.findByIdAndUpdate(
           company._id,
