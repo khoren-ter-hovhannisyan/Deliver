@@ -84,7 +84,7 @@ exports.socketListeners = socket => {
   })
   socket.on(socketListeners.userTakeOrder, (user) => {
     socket.broadcast.emit(socketEmiters.userTookOrder, {
-      data: `${user} took your order`
+      data: `${user.userId} took your order`
     })
   })
 }
