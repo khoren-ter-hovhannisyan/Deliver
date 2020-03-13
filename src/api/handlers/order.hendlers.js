@@ -183,7 +183,7 @@ exports.updateOrder = async (req, res) => {
     const _id = req.params.id
 
     const orderCheck = await Order.findOne({ _id })
-    const company = await Company.findOne({ _id: req.userData.id })
+    const company = await Company.findOne({ _id: orderCheck.companyId })
     if (
       !orderCheck ||
       (req.body.state === undefined && orderCheck.state === status.pending) ||
