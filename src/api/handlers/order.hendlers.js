@@ -13,7 +13,8 @@ exports.createOrder = async (req, res) => {
   try {
     const { companyId, order } = req.body
     const company = await Company.findOne({ _id: companyId })
-
+    console.log(company, companyId);
+    
     if (`${companyId}` !== `${req.userData.id}`) {
       return res.status(500).send({
         message: messages.errorMessage,
@@ -167,10 +168,6 @@ exports.delOrder = async (req, res) => {
     const order = await Order.findOne({
       _id,
     })
-    const company = Company.findOne({
-      _id: order.companyId,
-    })
-    console.log(order.companyId, "*",_id,"/",company );
     
     if (`${order.companyId}` !== `${req.userData.id}`) {
       return res.status(500).send({
