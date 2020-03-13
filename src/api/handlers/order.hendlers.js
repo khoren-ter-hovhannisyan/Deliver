@@ -168,13 +168,15 @@ exports.getCompanyOrders = async (req, res) => {
 exports.delOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    const { companyId } = await Order.findOne({
+    const order = await Order.findOne({
       _id,
     })
     const company = Company.findOne({
-      _id: companyId,
+      _id: order.companyId,
     })
-    if (`${companyId}` !== `${company._id}`) {
+    console.log(order.companyId, "*",_id,"/",company );
+    
+    if (`${order.companyId}` !== `${req.userData.id}`) {
       return res.status(500).send({
         message: messages.errorMessage,
       })
