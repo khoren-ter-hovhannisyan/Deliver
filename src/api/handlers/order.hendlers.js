@@ -49,9 +49,25 @@ exports.createOrder = async (req, res) => {
 //TODO : pagination by scrole
 exports.getAllActiveOrder = async (req, res) => {
   try {
+    // const last = Number(req.query.last)
+    // const count = Number(req.query.count)
+
     const orders = await Order.find({
       state: status.active,
-    }).select(selectTypes.orderForActiveOrders)
+    })
+      .sort({
+        createdTime: -1,
+      })
+      // .where('createdTime')
+      // .lt(last)
+      // .limit(count)
+      .select(selectTypes.orderForActiveOrders)
+
+    // if (orderss.length === 0) {
+    //   return res.status(206).send({
+    //     message: messages.errorNoContent,
+    //   })
+    // }
 
     const ordersOutput = []
 
@@ -63,8 +79,8 @@ exports.getAllActiveOrder = async (req, res) => {
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
-        order_start_time: moment(orders[i]._doc.order_start_time).format('L'),
-        order_end_time: moment(orders[i]._doc.order_end_time).format('L'),
+        order_start_time: moment(orders[i]._doc.order_start_time).format('LLL'),
+        order_end_time: moment(orders[i]._doc.order_end_time).format('LLL'),
         company_name: company.name,
         company_phone: company.phone,
         company_email: company.email,
@@ -85,32 +101,26 @@ exports.getCompanyOrders = async (req, res) => {
     const company = await Company.findOne({
       _id,
     })
-    console.log(company)
-
-    console.log(company._id, req.userData.id)
 
     if (`${company._id}` !== req.userData.id) {
       return res.status(500).send({
         message: messages.errorMessage,
       })
     }
-    const last =
-      req.query.last === 'a' ? new ObjectId() : new ObjectId(req.query.last)
+    const last = req.query.last 
     const count = Number(req.query.count)
     const type =
       req.query.type === 'all'
         ? { $in: [status.active, status.pending, status.done] }
         : req.query.type
 
-    console.log(last, count, type)
-
     const orders = await Order.find({
       companyId: _id,
       state: type,
     })
       .sort({ createdTime: -1 })
-      .where('_id')
-      .lt(last)
+      .where('createdTime')
+      .lte(last)
       .limit(count)
       .select(selectTypes.orderForCompanies)
 
@@ -127,8 +137,8 @@ exports.getCompanyOrders = async (req, res) => {
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
-        order_start_time: moment(orders[i]._doc.order_start_time).format('L'),
-        order_end_time: moment(orders[i]._doc.order_end_time).format('L'),
+        order_start_time: moment(orders[i]._doc.order_start_time).format('LLL'),
+        order_end_time: moment(orders[i]._doc.order_end_time).format('LLL'),
         user_name: undefined,
         user_phone: undefined,
         user_email: undefined,
@@ -154,13 +164,15 @@ exports.getCompanyOrders = async (req, res) => {
 exports.delOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    const { companyId } = await Order.findOne({
+    const order = await Order.findOne({
       _id,
     })
     const company = Company.findOne({
-      _id: companyId,
+      _id: order.companyId,
     })
-    if (`${companyId}` !== `${company._id}`) {
+    console.log(order.companyId, "*",_id,"/",company );
+    
+    if (`${order.companyId}` !== `${req.userData.id}`) {
       return res.status(500).send({
         message: messages.errorMessage,
       })
@@ -181,11 +193,9 @@ exports.delOrder = async (req, res) => {
 exports.updateOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    console.log(_id)
-    console.log(req.body)
 
     const orderCheck = await Order.findOne({ _id })
-    const company = await Company.findOne({ _id: req.userData.id })
+    const company = await Company.findOne({ _id: orderCheck.companyId })
     if (
       !orderCheck ||
       (req.body.state === undefined && orderCheck.state === status.pending) ||
@@ -236,17 +246,18 @@ exports.updateOrder = async (req, res) => {
       } else if (order.state === status.done) {
         await Company.findByIdAndUpdate(
           company._id,
-          { amount: company.amount - order.points },
+          { amount: Number(company.amount) - Number(order.points) },
           { new: true }
         )
+        console.log(order.state)
 
         await Users.findByIdAndUpdate(
           user._id,
-          { amount: user.amount + order.points },
+          { amount: Number(user.amount) + Number(order.points) },
           { new: true }
         )
 
-        sendEmail.sendDoneOrderEmail(company, user)
+        //sendEmail.sendDoneOrderEmail(company, user)
       }
 
       return res.status(201).send({
@@ -292,8 +303,8 @@ exports.getUserOrders = async (req, res) => {
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
-        order_start_time: moment(orders[i]._doc.order_start_time).format('L'),
-        order_end_time: moment(orders[i]._doc.order_end_time).format('L'),
+        order_start_time: moment(orders[i]._doc.order_start_time).format('LLL'),
+        order_end_time: moment(orders[i]._doc.order_end_time).format('LLL'),
         company_name: company.name,
         company_phone: company.phone,
         company_email: company.email,

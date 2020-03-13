@@ -30,7 +30,7 @@ exports.getAllUsers = async (req, res) => {
       })
     }
     const last = Number(req.query.last)
-    const count = Number(req.query.count) + 1
+    const count = Number(req.query.count)
     const users = await Users.find({
         type: types.user,
       })
