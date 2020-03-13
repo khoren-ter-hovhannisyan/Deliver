@@ -85,9 +85,6 @@ exports.getCompanyOrders = async (req, res) => {
     const company = await Company.findOne({
       _id,
     })
-    console.log(company)
-
-    console.log(company._id, req.userData.id)
 
     if (`${company._id}` !== req.userData.id) {
       return res.status(500).send({
@@ -102,13 +99,12 @@ exports.getCompanyOrders = async (req, res) => {
         ? { $in: [status.active, status.pending, status.done] }
         : req.query.type
 
-    console.log(last, count, type)
 
     const orders = await Order.find({
       companyId: _id,
       state: type,
     })
-      .sort({ createdTime: -1 })
+      //.sort({ createdTime: -1 })
       .where('_id')
       .lt(last)
       .limit(count)
@@ -232,7 +228,6 @@ exports.updateOrder = async (req, res) => {
       if (order.state === status.pending) {
         //sendEmail.sendAcceptOrderEmail(company, user)
       } else if (order.state === status.done) {
-        console.log(order.points,company,"********");
         await Company.findByIdAndUpdate(
           company._id,
           { amount: (Number(company.amount) - Number(order.points)) },
@@ -245,7 +240,6 @@ exports.updateOrder = async (req, res) => {
           { amount: (Number(user.amount) + Number(order.points)) },
           { new: true }
         )
-console.log(555555555555555555555555555555555);
 
         sendEmail.sendDoneOrderEmail(company, user)
       }
