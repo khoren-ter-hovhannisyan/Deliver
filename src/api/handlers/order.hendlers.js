@@ -13,9 +13,6 @@ exports.createOrder = async (req, res) => {
   try {
     const { companyId, order } = req.body
     const company = await Company.findOne({ _id: companyId })
-    console.log(company, companyId);
-    console.log(`${companyId}` !== `${req.userData.id}`);
-    console.log(`${companyId}`, `${req.userData.id}`);
     
     
     if (`${companyId}` !== `${req.userData.id}`) {
@@ -29,7 +26,6 @@ exports.createOrder = async (req, res) => {
         message: messages.errorNotEnoughMoney,
       })
     }
-    console.log(1);
     
     const newOrder = new Order({
       ...order,
@@ -44,7 +40,6 @@ exports.createOrder = async (req, res) => {
           message: messages.errorMessage,
         })
       }
-      console.log(2);
       
       return res.status(201).send({
         message: 'Order created',
