@@ -23,10 +23,6 @@ const orderSchema = new Schema({
     type: Number,
     default: () => Number(Date.now()),
   },
-  order_start_time: {
-    type: Date,
-    required: true,
-  },
   order_end_time: {
     type: Date,
     required: true,
