@@ -49,8 +49,8 @@ exports.createOrder = async (req, res) => {
 //TODO : pagination by scrole
 exports.getAllActiveOrder = async (req, res) => {
   try {
-    const last = Number(req.query.last)
-    const count = Number(req.query.count)
+    // const last = Number(req.query.last)
+    // const count = Number(req.query.count)
 
     const orders = await Order.find({
       state: status.active,
@@ -58,16 +58,16 @@ exports.getAllActiveOrder = async (req, res) => {
       .sort({
         createdTime: -1,
       })
-      .where('createdTime')
-      .lt(last)
-      .limit(count)
+      // .where('createdTime')
+      // .lt(last)
+      // .limit(count)
       .select(selectTypes.orderForActiveOrders)
 
-    if (orderss.length === 0) {
-      return res.status(206).send({
-        message: messages.errorNoContent,
-      })
-    }
+    // if (orderss.length === 0) {
+    //   return res.status(206).send({
+    //     message: messages.errorNoContent,
+    //   })
+    // }
 
     const ordersOutput = []
 
