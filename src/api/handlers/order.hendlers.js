@@ -107,12 +107,8 @@ exports.getCompanyOrders = async (req, res) => {
         message: messages.errorMessage,
       })
     }
-    const last =
-      req.query.last === 'a' ? new ObjectId() : new ObjectId(req.query.last)
-    const count =
-      req.query.last === 'a'
-        ? Number(req.query.count)
-        : Number(req.query.count) + 1
+    const last = req.query.last 
+    const count = Number(req.query.count)
     const type =
       req.query.type === 'all'
         ? { $in: [status.active, status.pending, status.done] }
@@ -122,8 +118,8 @@ exports.getCompanyOrders = async (req, res) => {
       companyId: _id,
       state: type,
     })
-      //.sort({ createdTime: -1 })
-      .where('_id')
+      .sort({ createdTime: -1 })
+      .where('createdTime')
       .lte(last)
       .limit(count)
       .select(selectTypes.orderForCompanies)
