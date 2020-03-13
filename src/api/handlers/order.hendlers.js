@@ -38,6 +38,8 @@ exports.createOrder = async (req, res) => {
 
     newOrder.save(err => {
       if (err) {
+        console.log(err);
+        
         return res.status(500).send({
           message: messages.errorMessage,
         })
