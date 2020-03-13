@@ -241,7 +241,7 @@ exports.updateOrder = async (req, res) => {
           { new: true }
         )
 
-        sendEmail.sendDoneOrderEmail(company, user)
+        //sendEmail.sendDoneOrderEmail(company, user)
       }
 
       return res.status(201).send({
