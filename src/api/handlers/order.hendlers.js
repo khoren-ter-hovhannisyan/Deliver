@@ -108,7 +108,7 @@ exports.getCompanyOrders = async (req, res) => {
     })
       //.sort({ createdTime: -1 })
       .where('_id')
-      .gt(last)
+      .lte(last)
       .limit(count)
       .select(selectTypes.orderForCompanies)
 
