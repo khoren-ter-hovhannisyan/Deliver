@@ -232,7 +232,7 @@ exports.updateOrder = async (req, res) => {
       if (order.state === status.pending) {
         //sendEmail.sendAcceptOrderEmail(company, user)
       } else if (order.state === status.done) {
-        console.log(order.points,company.amount,"********");
+        console.log(order.points,company,"********");
         await Company.findByIdAndUpdate(
           company._id,
           { amount: (Number(company.amount) - Number(order.points)) },
