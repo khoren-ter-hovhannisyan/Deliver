@@ -93,12 +93,14 @@ exports.getCompanyOrders = async (req, res) => {
     }
     const last =
       req.query.last === 'a' ? new ObjectId() : new ObjectId(req.query.last)
-    const count = Number(req.query.count)
+    const count =
+      req.query.last === 'a'
+        ? Number(req.query.count)
+        : Number(req.query.count) + 1
     const type =
       req.query.type === 'all'
         ? { $in: [status.active, status.pending, status.done] }
         : req.query.type
-
 
     const orders = await Order.find({
       companyId: _id,
@@ -230,14 +232,14 @@ exports.updateOrder = async (req, res) => {
       } else if (order.state === status.done) {
         await Company.findByIdAndUpdate(
           company._id,
-          { amount: (Number(company.amount) - Number(order.points)) },
+          { amount: Number(company.amount) - Number(order.points) },
           { new: true }
         )
-          console.log(order.state);
-          
+        console.log(order.state)
+
         await Users.findByIdAndUpdate(
           user._id,
-          { amount: (Number(user.amount) + Number(order.points)) },
+          { amount: Number(user.amount) + Number(order.points) },
           { new: true }
         )
 
