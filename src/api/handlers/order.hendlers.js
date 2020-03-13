@@ -63,8 +63,8 @@ exports.getAllActiveOrder = async (req, res) => {
       const order = {
         id: orders[i]._doc._id,
         ...orders[i]._doc,
-        order_start_time: moment(orders[i]._doc.order_start_time).format('L'),
-        order_end_time: moment(orders[i]._doc.order_end_time).format('L'),
+        order_start_time: moment(orders[i]._doc.order_start_time).format('LLL'),
+        order_end_time: moment(orders[i]._doc.order_end_time).format('LLL'),
         company_name: company.name,
         company_phone: company.phone,
         company_email: company.email,
