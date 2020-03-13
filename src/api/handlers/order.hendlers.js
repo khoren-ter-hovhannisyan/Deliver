@@ -181,8 +181,6 @@ exports.delOrder = async (req, res) => {
 exports.updateOrder = async (req, res) => {
   try {
     const _id = req.params.id
-    console.log(_id)
-    console.log(req.body)
 
     const orderCheck = await Order.findOne({ _id })
     const company = await Company.findOne({ _id: req.userData.id })
@@ -234,22 +232,22 @@ exports.updateOrder = async (req, res) => {
       if (order.state === status.pending) {
         //sendEmail.sendAcceptOrderEmail(company, user)
       } else if (order.state === status.done) {
-        console.log(order,"********");
+        console.log(order.points,company.amount,"********");
         await Company.findByIdAndUpdate(
           company._id,
-          { amount: Number(company.amount) - Number(order.points) },
+          { amount: (Number(company.amount) - Number(order.points)) },
           { new: true }
         )
           console.log(order.state);
           
         await Users.findByIdAndUpdate(
           user._id,
-          { amount: Number(user.amount) + Number(order.points) },
+          { amount: (Number(user.amount) + Number(order.points)) },
           { new: true }
         )
 console.log(555555555555555555555555555555555);
 
-        //sendEmail.sendDoneOrderEmail(company, user)
+        sendEmail.sendDoneOrderEmail(company, user)
       }
 
       return res.status(201).send({
