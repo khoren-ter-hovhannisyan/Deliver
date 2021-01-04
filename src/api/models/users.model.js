@@ -1,26 +1,48 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model } = require('mongoose')
 
 const usersSchema = new Schema({
-  username: {
+  type: {
     type: String,
-    unique: true,
-    required: true
+    default: 'user',
   },
-  email:{
+  name: {
     type: String,
     required: true,
-    validate: [isEmail, 'invalid email'],
-    createIndexes: { unique: true },
   },
-  password: { 
+  lastName: {
     type: String,
-    required: true
+    required: true,
   },
-  phoneNumber:{
-    type:Number,
-    required:true
+  email: {
+    type: String,
+    required: true,
+    unique: true,
   },
+  address: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: Number,
+    required: true,
+  },
+  approved: {
+    type: String,
+    default: 'panding',
+  },
+  passportURL: {
+    type: String,
+    required: true,
+  },
+  avatar: {
+    type: String,
+    default:
+      'https://res.cloudinary.com/dfeoo5iog/image/upload/v1583217677/q608defvqrdhobxrjhw1.png',
+  },
+})
 
-});
-
-module.exports = model('User', usersSchema);
+module.exports = model('User', usersSchema)
